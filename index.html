@@ -1,12 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Clisa Public Ledger</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Clisa Public Ledger — a one-person investment institution, every judgment and outcome on the record">
-</head>
-<body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Public Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Clisa Public Ledger — a new investment institution run by AI and its human verifier; every judgment and outcome on the record"></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
 :root{
@@ -28,7 +20,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 a{color:var(--accent)}
 .wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
 html:not([data-lang="en"]) [lang-en]{display:none}
@@ -51,6 +43,11 @@ html[data-lang="en"] [lang-ko]{display:none}
 .lede p{margin:0 0 14px;font-size:18px;line-height:1.6}
 .since{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .hv,.hero-shade{display:none}
+.lede::before{content:"C";position:absolute;right:-10px;top:-30px;font-family:var(--display);font-weight:900;font-size:300px;line-height:1;color:var(--accent);opacity:.07;pointer-events:none;z-index:0;animation:breathe 9s ease-in-out infinite;letter-spacing:-.04em}
+@keyframes breathe{0%,100%{transform:scale(1) translateY(0);opacity:.06}50%{transform:scale(1.06) translateY(-8px);opacity:.11}}
+@media (prefers-reduced-motion: reduce){.lede::before{animation:none}}
+@media (max-width:720px){.lede::before{font-size:200px;right:-20px;top:-10px}}
+.lede .hook, .lede p, .lede .since{position:relative;z-index:1}
 /* 영상이 있을 때: 히어로가 전폭 시네마 밴드가 된다 (body.has-video) */
 body.has-video .lede{max-width:none;margin:0 calc(50% - 50vw);padding:0}
 body.has-video .hv{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.85)}
@@ -67,7 +64,7 @@ body.has-video .strip{margin-top:0;border-top:0}
 @media (prefers-reduced-motion: reduce){body.has-video .hv{display:none} body.has-video .lede{background:var(--bg2)}}
 
 /* summary strip */
-.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
 .strip>div{padding:18px 16px 16px;border-left:1px solid var(--rule)}
 .strip>div:first-child{border-left:0;padding-left:0}
 .k{font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -85,7 +82,7 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,83,59,.5)}70%{box-shadow:0 0 0 10px rgba(229,83,59,0)}100%{box-shadow:0 0 0 0 rgba(229,83,59,0)}}
 .ctl .theme{font-size:14px;line-height:1;padding:4px 9px}
 @media (prefers-reduced-motion: reduce){.dot{animation:none}}
-@media (max-width:720px){.strip{grid-template-columns:1fr 1fr}.strip>div:nth-child(odd){border-left:0;padding-left:0}.strip>div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+@media (max-width:720px){.strip{grid-template-columns:1fr}.strip>div{border-left:0;padding-left:0;border-bottom:1px solid var(--rule)}.strip>div:last-child{border-bottom:0}}
 
 /* sections */
 h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
@@ -115,7 +112,13 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 .err{display:grid;grid-template-columns:72px 1fr;gap:0 16px;font-size:15px}
 .err>div{padding:10px 0;border-bottom:1px solid var(--rule)}
 .err .id{font-family:var(--display);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
-.disc{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
+.principle{margin-top:44px;padding-top:16px;border-top:2px solid var(--accent);font-size:15px;max-width:64ch;color:var(--ink)}
+.contact{margin-top:44px;padding-top:16px;border-top:2px solid var(--accent);max-width:64ch}
+.contact p{margin:0 0 14px;font-size:15px}
+.btn{display:inline-block;font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;background:var(--accent);color:var(--accent-ink);padding:12px 20px;border-radius:2px;transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.disc{margin-top:36px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
 .disc p{margin:0 0 8px}
 </style>
 
@@ -124,8 +127,8 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
     <div class="mark">
       <div class="mono" aria-hidden="true">C</div>
       <div>
-        <h1><span lang-ko>클리사 공개 원장</span><span lang-en>Clisa Public Ledger</span></h1>
-        <div class="tag"><span lang-ko>1인 기관의 실제 계좌 · 판정과 결과의 기록</span><span lang-en>A one-person institution's real account — judgments and outcomes, on the record</span></div>
+        <h1><span lang-ko>클리사 공개 기록</span><span lang-en>Clisa Public Ledger</span></h1>
+        <div class="tag"><span lang-ko>실제 계좌의 판단과 결과, 있는 그대로</span><span lang-en>Real account, real judgments — on the record</span></div>
       </div>
     </div>
     <div class="ctl" role="group" aria-label="Language">
@@ -142,73 +145,61 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
     </video>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="hero-in">
-      <h2 class="hook"><span lang-ko>기관을 살 수 없어서, 하나를 만들었습니다.</span><span lang-en>I couldn't buy an institution. So I built one.</span></h2>
-      <p lang-ko>1인 투자 기관. 미리 봉인한 규칙과 AI로 운영하고, 모든 판정과 결과를 — 오류까지 — 공개합니다. 실제 계좌, 실제 돈.</p>
-      <p lang-en>A one-person investment institution, run on rules sealed in advance and on AI — every judgment and every outcome published, errors included. Real account, real money.</p>
-      <div class="since"><span lang-ko>공개 시작 2026년 9월 2일 · 공개 전 판정은 채점하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing before that date is scored</span></div>
+      <h2 class="hook"><span lang-ko>AI와 검증자가 함께 운영하는 새로운 투자기관</span><span lang-en>A new investment institution, run by AI and its human verifier.</span></h2>
+      <p lang-ko>AI가 기업을 읽고, 사람이 검증하고 서명합니다. 미리 정한 원칙으로만 판단하며, 모든 판단과 그 결과를 있는 그대로 공개합니다. 실제 계좌, 실제 돈.</p>
+      <p lang-en>AI reads the companies; a human verifies and signs. Every judgment follows rules set in advance, and every judgment and outcome is published as it is. Real account, real money.</p>
+      <div class="since"><span lang-ko>2026년 9월 2일 공개 시작 · 그 이전의 판단은 평가하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing before that date is scored</span></div>
       <button id="snd" class="snd" aria-pressed="false" hidden><span class="ic">♪</span> <span lang-ko>소리 켜기</span><span lang-en>Sound on</span></button>
       <audio id="ha" loop preload="none"><source src="media/theme.mp3" type="audio/mpeg"></audio>
     </div>
   </section>
 
   <div class="strip">
-    <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터, 매일 늘어납니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
+    <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터 하루씩 쌓입니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
     <div><div class="k"><span lang-ko>포트폴리오</span><span lang-en>Portfolio</span></div><div class="v" id="s-port">—</div><svg id="spark" class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" hidden></svg><div class="sub"><span lang-ko>공개 시작 이후 수익률</span><span lang-en>return since public start</span></div></div>
-    <div><div class="k"><span lang-ko>보유 · 종결</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>진행 중인 자리 · 끝난 자리</span><span lang-en>positions open · positions closed</span></div></div>
-    <div><div class="k"><span lang-ko>오류 원장</span><span lang-en>Errors on record</span></div><div class="v"><span id="s-err" data-n="0">0</span></div><div class="sub"><span lang-ko>지우지 않고 번호를 매깁니다</span><span lang-en>numbered, never deleted</span></div></div>
+    <div><div class="k"><span lang-ko>보유 · 정리</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>보유 중인 종목 · 정리한 종목</span><span lang-en>positions open · positions closed</span></div></div>
   </div>
   <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
 
-  <h2><span lang-ko>진행 중인 자리</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
+  <h2><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
   <div class="tbl">
     <table>
       <thead><tr>
-        <th><span lang-ko>종목</span><span lang-en>Ticker</span></th>
-        <th><span lang-ko>자격 판정</span><span lang-en>Qualification</span></th>
-        <th class="num"><span lang-ko>매수 평단</span><span lang-en>Avg. entry</span></th>
+        <th><span lang-ko>종목 · 왜 골랐나</span><span lang-en>Company · why</span></th>
+        <th class="num"><span lang-ko>평균 매수가</span><span lang-en>Avg. entry</span></th>
         <th class="num"><span lang-ko>현재가</span><span lang-en>Last price</span></th>
         <th class="num"><span lang-ko>수익률</span><span lang-en>Return</span></th>
         <th class="num"><span lang-ko>비중</span><span lang-en>Weight</span></th>
-        <th><span lang-ko>기준선 · 관문</span><span lang-en>Baseline · Gate</span></th>
-        <th><span lang-ko>규정</span><span lang-en>Rules</span></th>
       </tr></thead>
       <tbody id="open"></tbody>
     </table>
   </div>
-  <p class="note"><span id="wnote"></span> <span lang-ko>진행 중인 자리의 기준선과 관문은 폐기·체결 후에만 공개합니다. 보유 주수, 투자 총액, 가격 산식은 공개하지 않습니다.</span><span lang-en>Baselines and gates for open positions are disclosed only after they are retired or executed. Share counts, total capital and the pricing formula are not disclosed.</span></p>
+  <p class="note"><span id="wnote"></span> <span lang-ko>보유 주수와 투자 총액은 공개하지 않습니다.</span><span lang-en>Share counts and total capital are not disclosed.</span></p>
 
-  <h2><span lang-ko>종결된 자리</span><span lang-en>Closed positions</span></h2>
+  <h2><span lang-ko>정리한 종목</span><span lang-en>Closed positions</span></h2>
   <div class="tbl">
     <table>
       <thead><tr>
         <th><span lang-ko>종목</span><span lang-en>Ticker</span></th>
         <th><span lang-ko>보유 기간</span><span lang-en>Held</span></th>
-        <th class="num"><span lang-ko>매수 평균</span><span lang-en>Avg. entry</span></th>
-        <th class="num"><span lang-ko>매도 평균</span><span lang-en>Avg. exit</span></th>
+        <th class="num"><span lang-ko>평균 매수가</span><span lang-en>Avg. entry</span></th>
+        <th class="num"><span lang-ko>평균 매도가</span><span lang-en>Avg. exit</span></th>
         <th class="num"><span lang-ko>결과</span><span lang-en>Result</span></th>
-        <th><span lang-ko>기준선 · 관문 (공개)</span><span lang-en>Baseline · Gate (disclosed)</span></th>
-        <th><span lang-ko>매도 사유</span><span lang-en>Reason</span></th>
+        <th><span lang-ko>왜 팔았나</span><span lang-en>Why sold</span></th>
       </tr></thead>
       <tbody id="closed"></tbody>
     </table>
   </div>
 
-  <h2><span lang-ko>판정 규칙</span><span lang-en>How judgments are made</span></h2>
-  <div class="rules">
-    <div><b lang-ko>자격이 먼저, 가격은 나중</b><b lang-en>Qualify first, price second</b><span lang-ko>여섯 원칙을 통과한 회사만 가격을 매깁니다.</span><span lang-en>Only companies that pass six principles get priced at all.</span></div>
-    <div><b lang-ko>관문 아래 지정가만</b><b lang-en>Limit orders below the gate</b><span lang-ko>시장가 없음, 추격 없음.</span><span lang-en>No market orders. No chasing.</span></div>
-    <div><b lang-ko>매도는 가격이 아니라 사유</b><b lang-en>Sell on reasons, not prices</b><span lang-ko>기준선 도달은 매도가 아니라 재심입니다. 매도 사유는 다섯 가지뿐입니다.</span><span lang-en>Hitting the baseline triggers a review, not a sale. There are five reasons to sell — no sixth.</span></div>
-    <div><b lang-ko>사람이 봉인, AI가 기록</b><b lang-en>Humans seal, AI records</b><span lang-ko>돈과 규칙은 사람이 서명합니다. AI는 읽고, 세고, 적습니다.</span><span lang-en>A person signs off on money and rules. AI reads, counts and writes.</span></div>
-    <div><b lang-ko>오류는 지우지 않는다</b><b lang-en>Errors are never deleted</b><span lang-ko>번호를 받아 영구히 남습니다. 좋은 결과가 나쁜 과정을 사면하지 않습니다.</span><span lang-en>Each gets a number and stays. A good outcome never pardons a bad process.</span></div>
-    <div><b lang-ko>목적은 현금흐름</b><b lang-en>The goal is cash flow</b><span lang-ko>원금 100만원당 월 1만원. 주가 상승은 경로 중 하나일 뿐입니다.</span><span lang-en>₩10,000 a month per ₩1,000,000. Price gains are just one road there.</span></div>
+  <p class="principle"><span lang-ko>미리 정한 여섯 가지 원칙으로만 판단하고, 사람이 검증해 서명한 뒤에만 실행합니다. 고친 판단은 지우지 않고 번호를 남깁니다 — 지금까지 <span id="s-err">—</span>건.</span><span lang-en>Every judgment follows six rules set in advance and is executed only after a human verifies and signs. Corrected judgments are never deleted; each keeps its number — <span id="s-err2">—</span> so far.</span></p>
+
+  <div class="contact">
+    <p><span lang-ko>궁금한 점이나 하고 싶은 말이 있으면 운영자에게 직접 보내 주세요. 답장은 운영자가 직접 씁니다.</span><span lang-en>Questions or comments go straight to the operator, who answers personally.</span></p>
+    <a class="btn" href="mailto:kojaeseong@gmail.com?subject=Clisa"><span lang-ko>이메일 보내기</span><span lang-en>Send an email</span> →</a>
   </div>
 
-  <h2><span lang-ko>오류 원장 (공개분)</span><span lang-en>Error ledger (public entries)</span><span class="n" id="errn"></span></h2>
-  <div class="err" id="errs"></div>
-  <p class="note"><span lang-ko>오류 원장은 삭제 없이 누적됩니다. 진행 중인 자리에 관련된 오류는 해당 자리 종결 후 공개합니다.</span><span lang-en>The error ledger only grows. Errors tied to an open position are published once that position closes.</span></p>
-
   <div class="disc">
-    <p lang-ko><b>고지.</b> 운영자 개인 계좌의 기록입니다. 매수·매도 권유나 투자 조언이 아니며, 대가를 받지 않고, 구독·회원·개별 문의를 운영하지 않습니다. 과거의 결과는 미래를 보장하지 않습니다.</p>
+    <p lang-ko><b>알려드립니다.</b> 이 페이지는 운영자 본인 계좌의 기록입니다. 특정 종목의 매수·매도를 권하거나 투자 조언을 드리는 것이 아니며, 어떤 대가도 받지 않고 구독·회원·개별 상담을 운영하지 않습니다. 과거의 결과가 앞으로의 결과를 보장하지 않습니다.</p>
     <p lang-en><b>Notice.</b> This is a record of the operator's own account. It is not a recommendation or investment advice; no fee is charged and there is no subscription, membership or individual query service. Past results do not guarantee future results.</p>
     <p><span lang-ko>클리사 · 서울 · </span><span lang-en>Clisa · Seoul · </span><a href="https://x.com/clisakorea">@clisakorea</a></p>
   </div>
@@ -219,9 +210,9 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 const DATA = {
   asOf: "2026-09-02",
   publicSince: "2026-09-02",
-  ruleAttainment: 67.9,
-  breaches: 0,
-  errorLedgerTotal: 49,
+  ruleAttainment: 67.9,           // 백만-만원 규칙 달성률 (%)
+  breaches: 0,                    // 공개 시작 이후 등재된 규정 위반 수
+  errorLedgerTotal: 49,           // 오류 원장 누적 건수
   open: [
     { ko:"메리츠금융지주", en:"Meritz Financial Group", mkt:"KRX 138040", ccy:"KRW",
       qual:"pass", entry:113596, price:null, compliance:"ok" },
@@ -233,12 +224,12 @@ const DATA = {
     { ko:"아치캐피탈", en:"Arch Capital Group", mkt:"NASDAQ ACGL", ccy:"USD",
       from:"2026-07-30", to:"2026-09-02", days:34, entry:98.44, exit:98.31, ret:-0.14,
       baseline:"$110.40 → $100.00–103.30", gate:"$96 → $89.87",
-      reasonKo:"오류 38(정상화 이익 낙관) 교정으로 기준선을 하향 재봉인한 뒤 전량 매도. 달러 기준 손익은 거의 제자리였고 원화 손실의 대부분은 환율 하락분.",
+      reasonKo:"이익 추정이 낙관적이었다는 교정(38번)에 따라 목표선을 낮춰 다시 확정한 뒤 전량 매도. 달러 기준으로는 거의 제자리였고, 원화 손실의 대부분은 환율 하락 때문.",
       reasonEn:"Baseline re-sealed lower after correcting Error 38 (optimistic earnings normalisation), then fully exited. Roughly flat in USD; most of the KRW loss came from the exchange rate." }
   ],
   errors: [
-    { id:38, ko:"정상화 이익을 낙관적으로 잡아 진입가가 19% 과대 산정됨. 기준선·관문을 하향 재봉인하고 해당 자리를 종결.", en:"Earnings normalisation was optimistic; the entry price was overstated by 19%. Baseline and gate re-sealed lower; position closed." },
-    { id:49, ko:"연차보고서(10-K) 원문을 완독하지 않은 채 편입. 이후 '원문 완독 판정'을 편입 전 필수 절차로 추가.", en:"Position taken without reading the full annual report (10-K). A mandatory 'full-source read' check was added before any entry." }
+    { id:38, ko:"이익을 낙관적으로 추정해 매수 기준가가 19% 높게 잡혔음. 목표선과 매수선을 낮춰 다시 확정하고 해당 종목을 정리.", en:"Earnings normalisation was optimistic; the entry price was overstated by 19%. Baseline and gate re-sealed lower; position closed." },
+    { id:49, ko:"연차보고서(10-K) 원문을 끝까지 읽지 않은 채 매수. 이후 '원문 완독 확인'을 매수 전 필수 절차로 추가.", en:"Position taken without reading the full annual report (10-K). A mandatory 'full-source read' check was added before any entry." }
   ]
 };
 
@@ -264,7 +255,7 @@ function render(){
   countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
   countUp(document.getElementById("s-hold"), DATA.open.length);
   countUp(document.getElementById("s-closed"), DATA.closed.length);
-  countUp(document.getElementById("s-err"), DATA.errorLedgerTotal);
+  document.getElementById("s-err").textContent = DATA.errorLedgerTotal; document.getElementById("s-err2").textContent = DATA.errorLedgerTotal;
   const port = DATA.portfolioSincePublic, days = daysSince(DATA.publicSince);
   const pe = document.getElementById("s-port");
   pe.innerHTML = port==null ? "—" : pct(port) + (days>=365 ? `<small>${t("연환산 ","ann. ")+pct((Math.pow(1+port/100,365/days)-1)*100)}</small>` : "");
@@ -275,22 +266,18 @@ function render(){
     const z=(28-(0-lo)/rng*26).toFixed(1);
     sp.innerHTML=`<line x1="0" y1="${z}" x2="120" y2="${z}" class="zero"/><polyline points="${pts}" class="line"/><circle cx="120" cy="${pts.split(" ").pop().split(",")[1]}" r="2.2" class="end"/>`; sp.hidden=false; } else sp.hidden=true;
   document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
-  const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 자리 종결", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
+  const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 정리 완료", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
   const lb = document.getElementById("latest");
-  if(ev){ document.getElementById("latest-text").textContent = t("최근 기록 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
-  document.getElementById("errn").textContent = t("누적 "+DATA.errorLedgerTotal+"건 중 공개 "+DATA.errors.length+"건", DATA.errors.length+" of "+DATA.errorLedgerTotal+" entries public");
+  if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
 
   document.getElementById("open").innerHTML = DATA.open.map(p=>{
     const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
     return `<tr>
-      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
-      <td><span class="pill ${p.qual==="pass"?"ok":"wait"}">${p.qual==="pass"?t("통과","PASS"):t("재심","REVIEW")}</span></td>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:`<small class="thesis hid">${t("선정 이유 준비 중","thesis to follow")}</small>`}</td>
       <td class="num">${fmt(p.entry,p.ccy)}</td>
       <td class="num">${fmt(p.price,p.ccy)}</td>
       <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
       <td class="num">${p.weight==null?"—":p.weight.toFixed(0)+"%"}</td>
-      <td class="hid">${t("종결 시 공개","disclosed on close")}</td>
-      <td><span class="pill ${p.compliance==="ok"?"ok":"open"}">${p.compliance==="ok"?t("준수","OK"):t("위반","BREACH")}</span></td>
     </tr>`;}).join("");
   const wsum = DATA.open.reduce((a,p)=>a+(p.weight||0),0);
   document.getElementById("wnote").textContent = wsum>0 ? t("비중은 투자 중인 금액을 100%로 한 값입니다. 현금은 제외.", "Weights are shares of invested capital (100%); cash excluded.") : "";
@@ -301,11 +288,9 @@ function render(){
       <td class="num">${fmt(p.entry,p.ccy)}</td>
       <td class="num">${fmt(p.exit,p.ccy)}</td>
       <td class="num ${cls(p.ret)}">${pct(p.ret)}<br><span class="hid" style="font-size:11px">${p.ccy}</span></td>
-      <td style="font-size:13px">${t("기준선","Baseline")} ${p.baseline}<br>${t("관문","Gate")} ${p.gate}</td>
-      <td style="font-size:13px;min-width:220px">${t(p.reasonKo,p.reasonEn)}</td>
+      <td style="font-size:13px;min-width:260px">${t(p.reasonKo,p.reasonEn)}</td>
     </tr>`).join("");
 
-  document.getElementById("errs").innerHTML = DATA.errors.map(e=>`<div class="id">${t("오류","Error")} ${e.id}</div><div>${t(e.ko,e.en)}</div>`).join("");
 }
 
 function setLang(l){
@@ -327,12 +312,13 @@ function setTheme(th){
 document.getElementById("theme").onclick = () => setTheme(document.documentElement.getAttribute("data-theme")==="light" ? "dark" : "light");
 (function(){ let th="dark"; try{ th = localStorage.getItem("clisa-theme") || "dark"; }catch(e){} setTheme(th); })();
 
-/* 히어로 영상·음악 — media/hero.webm·hero.mp4·hero.jpg·theme.mp3 가 있을 때만 켜진다. 없으면 조용한 히어로. */
+/* 히어로 영상·음악 — media/hero.mp4·hero.jpg·theme.mp3 가 있을 때만 켜진다. 없으면 조용한 히어로. */
 (function(){
   const v=document.getElementById("hv"), a=document.getElementById("ha"), btn=document.getElementById("snd");
   const on=()=>document.body.classList.add("has-video");
   v.addEventListener("loadeddata", on, {once:true});
   v.addEventListener("error", ()=>{ v.remove(); }, {once:true});
+  // 오디오는 자동 재생 불가 — 방문자가 켠다. 파일이 있을 때만 버튼을 보인다.
   a.addEventListener("canplay", ()=>{ btn.hidden=false; }, {once:true});
   a.addEventListener("error", ()=>{ btn.remove(); }, {once:true});
   a.load();
@@ -345,7 +331,7 @@ let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catc
 setLang(saved);
 
 /* ===== 원장 시트 연동 — 구글 시트 "클리사 공개원장 (홈페이지 데이터)"를 읽어 DATA를 갱신.
-   시트를 못 읽으면(비공개·오프라인) 위의 내장 DATA로 표시한다. ===== */
+   시트를 못 읽으면(비공개·오프라인·CSP) 위의 내장 DATA로 표시한다. ===== */
 const SHEET_ID = "1lrELJmG0azQZUkbOicE_vO1li9Eea91S4Y_NlSODuQ4";
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:csv";
 
