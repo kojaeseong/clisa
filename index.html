@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Clisa Public Ledger</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Clisa Public Ledger — a one-person investment institution, every judgment and outcome on the record">
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#0F0D0B; --bg2:#1A1612; --ink:#F4EDE1; --muted:#A89C8C; --rule:#2C2621;
+  --accent:#E5533B; --accent-ink:#FFF7F2; --good:#7FCB93; --warn:#E0B45C;
+  --display:"Archivo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;
+  --serif:var(--display);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F7F3EB; --bg2:#F0EADF; --ink:#1E1915; --muted:#7A6E62; --rule:#E3DACB;
+    --accent:#B93424; --accent-ink:#FFF7F2; --good:#3E6B4A; --warn:#8A6A1F;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F7F3EB; --bg2:#F0EADF; --ink:#1E1915; --muted:#7A6E62; --rule:#E3DACB;
+  --accent:#B93424; --accent-ink:#FFF7F2; --good:#3E6B4A; --warn:#8A6A1F;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
+html:not([data-lang="en"]) [lang-en]{display:none}
+html[data-lang="en"] [lang-ko]{display:none}
+
+/* masthead */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:16px}
+.mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px;letter-spacing:-.02em}
+.mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance}
+.mast .tag{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:4px}
+.ctl{display:flex;gap:8px;align-items:center;font-family:var(--sans);font-size:12px}
+.ctl button{font:inherit;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px}
+.ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* lede */
+.lede{position:relative;padding:36px 0 8px;max-width:60ch}
+.lede .hook{font-family:var(--display);font-size:40px;line-height:1.05;font-weight:900;letter-spacing:-0.03em;text-transform:uppercase;margin:0 0 14px;padding:0;border:0;color:var(--ink);display:block;text-wrap:balance}
+.lede p{margin:0 0 14px;font-size:18px;line-height:1.6}
+.since{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hv,.hero-shade{display:none}
+/* 영상이 있을 때: 히어로가 전폭 시네마 밴드가 된다 (body.has-video) */
+body.has-video .lede{max-width:none;margin:0 calc(50% - 50vw);padding:0}
+body.has-video .hv{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.85)}
+body.has-video .hero-shade{display:block;position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,16,12,.25) 0%,rgba(20,16,12,.62) 60%,rgba(20,16,12,.9) 100%)}
+body.has-video .hero-in{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:110px 24px 56px;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end}
+body.has-video .lede .hook{color:#F7F3EB;font-size:56px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+body.has-video .lede p{color:#EFE7DA;max-width:58ch}
+body.has-video .since{color:#D9CDBA}
+body.has-video .strip{margin-top:0;border-top:0}
+.snd{position:absolute;right:24px;bottom:24px;z-index:3;font:inherit;font-family:var(--sans);font-size:12px;letter-spacing:.06em;padding:8px 12px;border:1px solid rgba(247,243,235,.5);background:rgba(20,16,12,.35);color:#F7F3EB;cursor:pointer;border-radius:2px;backdrop-filter:blur(6px)}
+.snd[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.snd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){.lede .hook{font-size:27px} body.has-video .lede .hook{font-size:32px} body.has-video .hero-in{padding:80px 20px 48px;min-height:360px}}
+@media (prefers-reduced-motion: reduce){body.has-video .hv{display:none} body.has-video .lede{background:var(--bg2)}}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
+.strip>div{padding:18px 16px 16px;border-left:1px solid var(--rule)}
+.strip>div:first-child{border-left:0;padding-left:0}
+.k{font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.v{font-family:var(--display);font-size:34px;font-weight:800;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.v small{font-size:14px;color:var(--muted);font-weight:400;margin-left:4px}
+.sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px}
+.spark{display:block;width:100%;max-width:140px;height:30px;margin:6px 0 2px;overflow:visible}
+.spark .line{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.spark .zero{stroke:var(--rule);stroke-width:1}
+.spark .end{fill:var(--accent)}
+td.tk small.thesis{color:var(--ink);opacity:.8;margin-top:4px;white-space:normal;max-width:34ch;font-size:12px;line-height:1.45}
+td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
+.latest{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:13.5px;color:var(--ink);margin:-24px 0 36px;padding:10px 14px;border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--bg2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,83,59,.5)}70%{box-shadow:0 0 0 10px rgba(229,83,59,0)}100%{box-shadow:0 0 0 0 rgba(229,83,59,0)}}
+.ctl .theme{font-size:14px;line-height:1;padding:4px 9px}
+@media (prefers-reduced-motion: reduce){.dot{animation:none}}
+@media (max-width:720px){.strip{grid-template-columns:1fr 1fr}.strip>div:nth-child(odd){border-left:0;padding-left:0}.strip>div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+
+/* sections */
+h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
+h2 .n{font-weight:400;color:var(--muted);letter-spacing:0;text-transform:none;font-size:12px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:14px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:12px 10px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.num,th.num{text-align:right;padding-right:24px;padding-left:10px;white-space:nowrap}
+td.dt{white-space:nowrap}
+td.tk{font-family:var(--display);font-weight:800;font-size:16px;white-space:nowrap;letter-spacing:-.01em}
+td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;letter-spacing:.06em;padding:2px 8px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--good)} .pill.open{color:var(--accent)} .pill.closed{color:var(--muted)} .pill.wait{color:var(--warn)}
+.pos{color:var(--good)} .neg{color:var(--accent)}
+.hid{color:var(--muted);font-style:italic}
+.note{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:10px;max-width:70ch}
+
+/* prose blocks */
+.prose{max-width:64ch}
+.prose p{margin:0 0 12px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.rules div{padding:12px 0;border-bottom:1px solid var(--rule)}
+.rules b{display:block;font-family:var(--sans);font-size:13px;font-weight:700}
+.rules span{font-size:14.5px;color:var(--muted)}
+@media (max-width:720px){.rules{grid-template-columns:1fr}}
+.err{display:grid;grid-template-columns:72px 1fr;gap:0 16px;font-size:15px}
+.err>div{padding:10px 0;border-bottom:1px solid var(--rule)}
+.err .id{font-family:var(--display);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.disc{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
+.disc p{margin:0 0 8px}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mark">
+      <div class="mono" aria-hidden="true">C</div>
+      <div>
+        <h1><span lang-ko>클리사 공개 원장</span><span lang-en>Clisa Public Ledger</span></h1>
+        <div class="tag"><span lang-ko>1인 기관의 실제 계좌 · 판정과 결과의 기록</span><span lang-en>A one-person institution's real account — judgments and outcomes, on the record</span></div>
+      </div>
+    </div>
+    <div class="ctl" role="group" aria-label="Language">
+      <button id="en" aria-pressed="true">English</button>
+      <button id="ko" aria-pressed="false">한국어</button>
+      <button id="theme" class="theme" aria-pressed="true" title="Day / Night">☀</button>
+    </div>
+  </header>
+
+  <section class="lede" id="hero">
+    <video id="hv" class="hv" autoplay muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-hidden="true">
+      <source src="media/hero.webm" type="video/webm">
+      <source src="media/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="hero-in">
+      <h2 class="hook"><span lang-ko>기관을 살 수 없어서, 하나를 만들었습니다.</span><span lang-en>I couldn't buy an institution. So I built one.</span></h2>
+      <p lang-ko>1인 투자 기관. 미리 봉인한 규칙과 AI로 운영하고, 모든 판정과 결과를 — 오류까지 — 공개합니다. 실제 계좌, 실제 돈.</p>
+      <p lang-en>A one-person investment institution, run on rules sealed in advance and on AI — every judgment and every outcome published, errors included. Real account, real money.</p>
+      <div class="since"><span lang-ko>공개 시작 2026년 9월 2일 · 공개 전 판정은 채점하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing before that date is scored</span></div>
+      <button id="snd" class="snd" aria-pressed="false" hidden><span class="ic">♪</span> <span lang-ko>소리 켜기</span><span lang-en>Sound on</span></button>
+      <audio id="ha" loop preload="none"><source src="media/theme.mp3" type="audio/mpeg"></audio>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터, 매일 늘어납니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
+    <div><div class="k"><span lang-ko>포트폴리오</span><span lang-en>Portfolio</span></div><div class="v" id="s-port">—</div><svg id="spark" class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" hidden></svg><div class="sub"><span lang-ko>공개 시작 이후 수익률</span><span lang-en>return since public start</span></div></div>
+    <div><div class="k"><span lang-ko>보유 · 종결</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>진행 중인 자리 · 끝난 자리</span><span lang-en>positions open · positions closed</span></div></div>
+    <div><div class="k"><span lang-ko>오류 원장</span><span lang-en>Errors on record</span></div><div class="v"><span id="s-err" data-n="0">0</span></div><div class="sub"><span lang-ko>지우지 않고 번호를 매깁니다</span><span lang-en>numbered, never deleted</span></div></div>
+  </div>
+  <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
+
+  <h2><span lang-ko>진행 중인 자리</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr>
+        <th><span lang-ko>종목</span><span lang-en>Ticker</span></th>
+        <th><span lang-ko>자격 판정</span><span lang-en>Qualification</span></th>
+        <th class="num"><span lang-ko>매수 평단</span><span lang-en>Avg. entry</span></th>
+        <th class="num"><span lang-ko>현재가</span><span lang-en>Last price</span></th>
+        <th class="num"><span lang-ko>수익률</span><span lang-en>Return</span></th>
+        <th class="num"><span lang-ko>비중</span><span lang-en>Weight</span></th>
+        <th><span lang-ko>기준선 · 관문</span><span lang-en>Baseline · Gate</span></th>
+        <th><span lang-ko>규정</span><span lang-en>Rules</span></th>
+      </tr></thead>
+      <tbody id="open"></tbody>
+    </table>
+  </div>
+  <p class="note"><span id="wnote"></span> <span lang-ko>진행 중인 자리의 기준선과 관문은 폐기·체결 후에만 공개합니다. 보유 주수, 투자 총액, 가격 산식은 공개하지 않습니다.</span><span lang-en>Baselines and gates for open positions are disclosed only after they are retired or executed. Share counts, total capital and the pricing formula are not disclosed.</span></p>
+
+  <h2><span lang-ko>종결된 자리</span><span lang-en>Closed positions</span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr>
+        <th><span lang-ko>종목</span><span lang-en>Ticker</span></th>
+        <th><span lang-ko>보유 기간</span><span lang-en>Held</span></th>
+        <th class="num"><span lang-ko>매수 평균</span><span lang-en>Avg. entry</span></th>
+        <th class="num"><span lang-ko>매도 평균</span><span lang-en>Avg. exit</span></th>
+        <th class="num"><span lang-ko>결과</span><span lang-en>Result</span></th>
+        <th><span lang-ko>기준선 · 관문 (공개)</span><span lang-en>Baseline · Gate (disclosed)</span></th>
+        <th><span lang-ko>매도 사유</span><span lang-en>Reason</span></th>
+      </tr></thead>
+      <tbody id="closed"></tbody>
+    </table>
+  </div>
+
+  <h2><span lang-ko>판정 규칙</span><span lang-en>How judgments are made</span></h2>
+  <div class="rules">
+    <div><b lang-ko>자격이 먼저, 가격은 나중</b><b lang-en>Qualify first, price second</b><span lang-ko>여섯 원칙을 통과한 회사만 가격을 매깁니다.</span><span lang-en>Only companies that pass six principles get priced at all.</span></div>
+    <div><b lang-ko>관문 아래 지정가만</b><b lang-en>Limit orders below the gate</b><span lang-ko>시장가 없음, 추격 없음.</span><span lang-en>No market orders. No chasing.</span></div>
+    <div><b lang-ko>매도는 가격이 아니라 사유</b><b lang-en>Sell on reasons, not prices</b><span lang-ko>기준선 도달은 매도가 아니라 재심입니다. 매도 사유는 다섯 가지뿐입니다.</span><span lang-en>Hitting the baseline triggers a review, not a sale. There are five reasons to sell — no sixth.</span></div>
+    <div><b lang-ko>사람이 봉인, AI가 기록</b><b lang-en>Humans seal, AI records</b><span lang-ko>돈과 규칙은 사람이 서명합니다. AI는 읽고, 세고, 적습니다.</span><span lang-en>A person signs off on money and rules. AI reads, counts and writes.</span></div>
+    <div><b lang-ko>오류는 지우지 않는다</b><b lang-en>Errors are never deleted</b><span lang-ko>번호를 받아 영구히 남습니다. 좋은 결과가 나쁜 과정을 사면하지 않습니다.</span><span lang-en>Each gets a number and stays. A good outcome never pardons a bad process.</span></div>
+    <div><b lang-ko>목적은 현금흐름</b><b lang-en>The goal is cash flow</b><span lang-ko>원금 100만원당 월 1만원. 주가 상승은 경로 중 하나일 뿐입니다.</span><span lang-en>₩10,000 a month per ₩1,000,000. Price gains are just one road there.</span></div>
+  </div>
+
+  <h2><span lang-ko>오류 원장 (공개분)</span><span lang-en>Error ledger (public entries)</span><span class="n" id="errn"></span></h2>
+  <div class="err" id="errs"></div>
+  <p class="note"><span lang-ko>오류 원장은 삭제 없이 누적됩니다. 진행 중인 자리에 관련된 오류는 해당 자리 종결 후 공개합니다.</span><span lang-en>The error ledger only grows. Errors tied to an open position are published once that position closes.</span></p>
+
+  <div class="disc">
+    <p lang-ko><b>고지.</b> 운영자 개인 계좌의 기록입니다. 매수·매도 권유나 투자 조언이 아니며, 대가를 받지 않고, 구독·회원·개별 문의를 운영하지 않습니다. 과거의 결과는 미래를 보장하지 않습니다.</p>
+    <p lang-en><b>Notice.</b> This is a record of the operator's own account. It is not a recommendation or investment advice; no fee is charged and there is no subscription, membership or individual query service. Past results do not guarantee future results.</p>
+    <p><span lang-ko>클리사 · 서울 · </span><span lang-en>Clisa · Seoul · </span><a href="https://x.com/clisakorea">@clisakorea</a></p>
+  </div>
+</div>
+
+<script>
+/* ===== 데이터 — 서기/CEO가 갱신. 공개 범위(8/30 봉인) 밖의 항목은 여기에 넣지 않는다. ===== */
+const DATA = {
+  asOf: "2026-09-02",
+  publicSince: "2026-09-02",
+  ruleAttainment: 67.9,
+  breaches: 0,
+  errorLedgerTotal: 49,
+  open: [
+    { ko:"메리츠금융지주", en:"Meritz Financial Group", mkt:"KRX 138040", ccy:"KRW",
+      qual:"pass", entry:113596, price:null, compliance:"ok" },
+    { ko:"SLM", en:"SLM Corp.", mkt:"NASDAQ SLM", ccy:"USD",
+      qual:"pass", entry:null, price:null, compliance:"ok",
+      source:"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=SLM&type=10-K" }
+  ],
+  closed: [
+    { ko:"아치캐피탈", en:"Arch Capital Group", mkt:"NASDAQ ACGL", ccy:"USD",
+      from:"2026-07-30", to:"2026-09-02", days:34, entry:98.44, exit:98.31, ret:-0.14,
+      baseline:"$110.40 → $100.00–103.30", gate:"$96 → $89.87",
+      reasonKo:"오류 38(정상화 이익 낙관) 교정으로 기준선을 하향 재봉인한 뒤 전량 매도. 달러 기준 손익은 거의 제자리였고 원화 손실의 대부분은 환율 하락분.",
+      reasonEn:"Baseline re-sealed lower after correcting Error 38 (optimistic earnings normalisation), then fully exited. Roughly flat in USD; most of the KRW loss came from the exchange rate." }
+  ],
+  errors: [
+    { id:38, ko:"정상화 이익을 낙관적으로 잡아 진입가가 19% 과대 산정됨. 기준선·관문을 하향 재봉인하고 해당 자리를 종결.", en:"Earnings normalisation was optimistic; the entry price was overstated by 19%. Baseline and gate re-sealed lower; position closed." },
+    { id:49, ko:"연차보고서(10-K) 원문을 완독하지 않은 채 편입. 이후 '원문 완독 판정'을 편입 전 필수 절차로 추가.", en:"Position taken without reading the full annual report (10-K). A mandatory 'full-source read' check was added before any entry." }
+  ]
+};
+
+/* ===== 렌더 ===== */
+const lang = () => document.documentElement.getAttribute("data-lang") || "ko";
+const t = (ko,en) => lang()==="en" ? en : ko;
+const fmt = (v,ccy) => v==null ? "—" : (ccy==="USD" ? "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : v.toLocaleString("ko-KR")+"원");
+const pct = v => v==null ? "—" : (v>0?"+":"")+v.toFixed(2)+"%";
+const cls = v => v==null ? "hid" : (v<0?"neg":"pos");
+
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(el, target){
+  const from = +el.dataset.n || 0; el.dataset.n = target;
+  if(reduce || from===target){ el.textContent = target; return; }
+  const t0 = performance.now(), dur = 900;
+  const step = now => { const p = Math.min(1,(now-t0)/dur), e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(from + (target-from)*e); if(p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function daysSince(iso){ const d=(Date.now()-new Date(iso+"T00:00:00+09:00"))/864e5; return Math.max(0,Math.floor(d)); }
+
+function render(){
+  countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
+  countUp(document.getElementById("s-hold"), DATA.open.length);
+  countUp(document.getElementById("s-closed"), DATA.closed.length);
+  countUp(document.getElementById("s-err"), DATA.errorLedgerTotal);
+  const port = DATA.portfolioSincePublic, days = daysSince(DATA.publicSince);
+  const pe = document.getElementById("s-port");
+  pe.innerHTML = port==null ? "—" : pct(port) + (days>=365 ? `<small>${t("연환산 ","ann. ")+pct((Math.pow(1+port/100,365/days)-1)*100)}</small>` : "");
+  pe.className = "v "+(port==null?"":(port<0?"neg":"pos"));
+  const sp = document.getElementById("spark"); const H = (DATA.history||[]).filter(h=>h.v!=null);
+  if(H.length>=2){ const vs=H.map(h=>h.v), lo=Math.min(0,...vs), hi=Math.max(0,...vs), rng=(hi-lo)||1;
+    const pts=H.map((h,i)=>`${(i/(H.length-1)*120).toFixed(1)},${(28-(h.v-lo)/rng*26).toFixed(1)}`).join(" ");
+    const z=(28-(0-lo)/rng*26).toFixed(1);
+    sp.innerHTML=`<line x1="0" y1="${z}" x2="120" y2="${z}" class="zero"/><polyline points="${pts}" class="line"/><circle cx="120" cy="${pts.split(" ").pop().split(",")[1]}" r="2.2" class="end"/>`; sp.hidden=false; } else sp.hidden=true;
+  document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
+  const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 자리 종결", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
+  const lb = document.getElementById("latest");
+  if(ev){ document.getElementById("latest-text").textContent = t("최근 기록 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
+  document.getElementById("errn").textContent = t("누적 "+DATA.errorLedgerTotal+"건 중 공개 "+DATA.errors.length+"건", DATA.errors.length+" of "+DATA.errorLedgerTotal+" entries public");
+
+  document.getElementById("open").innerHTML = DATA.open.map(p=>{
+    const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
+    return `<tr>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
+      <td><span class="pill ${p.qual==="pass"?"ok":"wait"}">${p.qual==="pass"?t("통과","PASS"):t("재심","REVIEW")}</span></td>
+      <td class="num">${fmt(p.entry,p.ccy)}</td>
+      <td class="num">${fmt(p.price,p.ccy)}</td>
+      <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
+      <td class="num">${p.weight==null?"—":p.weight.toFixed(0)+"%"}</td>
+      <td class="hid">${t("종결 시 공개","disclosed on close")}</td>
+      <td><span class="pill ${p.compliance==="ok"?"ok":"open"}">${p.compliance==="ok"?t("준수","OK"):t("위반","BREACH")}</span></td>
+    </tr>`;}).join("");
+  const wsum = DATA.open.reduce((a,p)=>a+(p.weight||0),0);
+  document.getElementById("wnote").textContent = wsum>0 ? t("비중은 투자 중인 금액을 100%로 한 값입니다. 현금은 제외.", "Weights are shares of invested capital (100%); cash excluded.") : "";
+
+  document.getElementById("closed").innerHTML = DATA.closed.map(p=>`<tr>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}</small></td>
+      <td class="dt">${p.from} → ${p.to}<br><span class="hid">${p.days}${t("일","d")}</span></td>
+      <td class="num">${fmt(p.entry,p.ccy)}</td>
+      <td class="num">${fmt(p.exit,p.ccy)}</td>
+      <td class="num ${cls(p.ret)}">${pct(p.ret)}<br><span class="hid" style="font-size:11px">${p.ccy}</span></td>
+      <td style="font-size:13px">${t("기준선","Baseline")} ${p.baseline}<br>${t("관문","Gate")} ${p.gate}</td>
+      <td style="font-size:13px;min-width:220px">${t(p.reasonKo,p.reasonEn)}</td>
+    </tr>`).join("");
+
+  document.getElementById("errs").innerHTML = DATA.errors.map(e=>`<div class="id">${t("오류","Error")} ${e.id}</div><div>${t(e.ko,e.en)}</div>`).join("");
+}
+
+function setLang(l){
+  document.documentElement.setAttribute("data-lang", l);
+  document.getElementById("ko").setAttribute("aria-pressed", l==="ko");
+  document.getElementById("en").setAttribute("aria-pressed", l==="en");
+  try{ localStorage.setItem("clisa-lang", l); }catch(e){}
+  render();
+}
+document.getElementById("ko").onclick = () => setLang("ko");
+document.getElementById("en").onclick = () => setLang("en");
+/* 밤/낮 전환 — 기본은 밤. 같은 인장·같은 버밀리언, 바탕만 바뀐다 */
+function setTheme(th){
+  if(th==="light") document.documentElement.setAttribute("data-theme","light"); else document.documentElement.setAttribute("data-theme","dark");
+  const b=document.getElementById("theme"); const dark = th!=="light";
+  b.setAttribute("aria-pressed", dark); b.textContent = dark ? "☀" : "☾"; b.title = dark ? "Day" : "Night";
+  try{ localStorage.setItem("clisa-theme", dark?"dark":"light"); }catch(e){}
+}
+document.getElementById("theme").onclick = () => setTheme(document.documentElement.getAttribute("data-theme")==="light" ? "dark" : "light");
+(function(){ let th="dark"; try{ th = localStorage.getItem("clisa-theme") || "dark"; }catch(e){} setTheme(th); })();
+
+/* 히어로 영상·음악 — media/hero.webm·hero.mp4·hero.jpg·theme.mp3 가 있을 때만 켜진다. 없으면 조용한 히어로. */
+(function(){
+  const v=document.getElementById("hv"), a=document.getElementById("ha"), btn=document.getElementById("snd");
+  const on=()=>document.body.classList.add("has-video");
+  v.addEventListener("loadeddata", on, {once:true});
+  v.addEventListener("error", ()=>{ v.remove(); }, {once:true});
+  a.addEventListener("canplay", ()=>{ btn.hidden=false; }, {once:true});
+  a.addEventListener("error", ()=>{ btn.remove(); }, {once:true});
+  a.load();
+  btn.addEventListener("click", ()=>{
+    if(a.paused){ a.volume=.6; a.play().then(()=>btn.setAttribute("aria-pressed","true")).catch(()=>{}); }
+    else { a.pause(); btn.setAttribute("aria-pressed","false"); }
+  });
+})();
+let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catch(e){}
+setLang(saved);
+
+/* ===== 원장 시트 연동 — 구글 시트 "클리사 공개원장 (홈페이지 데이터)"를 읽어 DATA를 갱신.
+   시트를 못 읽으면(비공개·오프라인) 위의 내장 DATA로 표시한다. ===== */
+const SHEET_ID = "1lrELJmG0azQZUkbOicE_vO1li9Eea91S4Y_NlSODuQ4";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:csv";
+
+function parseCSV(text){
+  const rows=[]; let row=[], field="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){field+='"';i++;} else q=false; } else field+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(field); field=""; }
+    else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=""; }
+    else if(c!=='\r') field+=c;
+  }
+  if(field.length||row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+const num = v => (v===""||v==null) ? null : (isNaN(+v) ? null : +v);
+
+function applySheet(rows){
+  const h=rows[0]; const idx=k=>h.indexOf(k);
+  const get=(r,k)=>{const i=idx(k); return i<0?"":(r[i]??"");};
+  const D={ open:[], closed:[], errors:[] };
+  for(const r of rows.slice(1)){
+    const t=get(r,"type"); if(!t) continue;
+    if(t==="meta"){ const k=get(r,"key"), v=get(r,"ko");
+      if(k==="asOf") D.asOf=v; if(k==="publicSince") D.publicSince=v;
+      if(k==="ruleAttainment") D.ruleAttainment=num(v); if(k==="breaches") D.breaches=num(v);
+      if(k==="errorLedgerTotal") D.errorLedgerTotal=num(v);
+      if(k==="portfolioSincePublic") D.portfolioSincePublic=num(v);
+      if(k==="latest") D.latest={date:get(r,"en")||"", ko:v, en:get(r,"mkt")||v}; }
+    else if(t==="open") D.open.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
+    else if(t==="history"){ (D.history=D.history||[]).push({d:get(r,"key"), v:num(get(r,"ko"))}); }
+    else if(t==="closed") D.closed.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),to:get(r,"to"),days:num(get(r,"days")),entry:num(get(r,"entry")),exit:num(get(r,"exit")),ret:num(get(r,"ret")),baseline:get(r,"baseline"),gate:get(r,"gate"),reasonKo:get(r,"reason_ko"),reasonEn:get(r,"reason_en")});
+    else if(t==="error") D.errors.push({id:num(get(r,"key")),ko:get(r,"ko"),en:get(r,"en")});
+  }
+  if(!D.open.length && !D.closed.length) throw new Error("empty");
+  for(const k of ["asOf","publicSince","ruleAttainment","breaches","errorLedgerTotal"]) if(D[k]==null) D[k]=DATA[k];
+  Object.assign(DATA, D);
+}
+
+fetch(SHEET_URL, {cache:"no-store"})
+  .then(r => r.ok ? r.text() : Promise.reject(r.status))
+  .then(t => { applySheet(parseCSV(t)); render(); })
+  .catch(() => { /* 내장 DATA 유지 */ });
+</script>
+
+</body>
+</html>
