@@ -27,13 +27,13 @@ html:not([data-lang="en"]) [lang-en]{display:none}
 html[data-lang="en"] [lang-ko]{display:none}
 
 /* masthead */
-.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
 .mark{display:flex;align-items:center;gap:16px}
 .mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px;letter-spacing:-.02em}
 .mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance}
 .mast .tag{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:4px}
 .ctl{display:flex;gap:8px;align-items:center;font-family:var(--sans);font-size:12px}
-.ctl button{font:inherit;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px}
+.ctl button{font:inherit;white-space:nowrap;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px}
 .ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .ctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -64,7 +64,7 @@ body.has-video .strip{margin-top:0;border-top:0}
 @media (prefers-reduced-motion: reduce){body.has-video .hv{display:none} body.has-video .lede{background:var(--bg2)}}
 
 /* summary strip */
-.strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
+.strip{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
 .strip>div{padding:18px 16px 16px;border-left:1px solid var(--rule)}
 .strip>div:first-child{border-left:0;padding-left:0}
 .k{font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -83,6 +83,51 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 .ctl .theme{font-size:14px;line-height:1;padding:4px 9px}
 @media (prefers-reduced-motion: reduce){.dot{animation:none}}
 @media (max-width:720px){.strip{grid-template-columns:1fr}.strip>div{border-left:0;padding-left:0;border-bottom:1px solid var(--rule)}.strip>div:last-child{border-bottom:0}}
+
+/* performance chart */
+.perf{position:relative;margin:0 0 40px;padding:22px 0 0;border-top:1px solid var(--rule)}
+.perf-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:8px}
+.big{font-family:var(--display);font-size:56px;font-weight:900;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:6px}
+.big small{font-size:15px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:0}
+.perf-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);text-align:right;max-width:30ch}
+#chart{display:block;width:100%;height:240px;overflow:visible}
+#chart .area{fill:url(#g1)}
+#chart .line{fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#chart .zero{stroke:var(--rule);stroke-width:1;stroke-dasharray:4 6;vector-effect:non-scaling-stroke}
+#chart .grid{stroke:var(--rule);stroke-width:1;opacity:.5;vector-effect:non-scaling-stroke}
+#chart .end{fill:var(--accent)}
+#chart .halo{fill:var(--accent);opacity:.25;animation:halo 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes halo{0%{transform:scale(1);opacity:.35}100%{transform:scale(3.2);opacity:0}}
+#chart .draw{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1.6s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+#chart .fade{opacity:0;animation:fade 1.2s .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){#chart .halo,#chart .draw,#chart .fade{animation:none;stroke-dashoffset:0;opacity:1}}
+.axis{display:flex;justify-content:space-between;font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+@media (max-width:720px){.big{font-size:40px} #chart{height:180px} .perf-head{flex-direction:column;align-items:flex-start} .perf-note{text-align:left}}
+
+/* allocation band */
+.alloc{margin:0 0 28px}
+.alloc .band{display:flex;height:44px;border-radius:3px;overflow:hidden;gap:3px}
+.alloc .seg{position:relative;display:flex;align-items:center;padding:0 12px;font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.01em;color:var(--accent-ink);background:var(--accent);white-space:nowrap;overflow:hidden;min-width:0;transition:flex-grow .8s cubic-bezier(.4,0,.2,1)}
+.alloc .seg:nth-child(2){background:color-mix(in srgb,var(--accent) 72%,var(--bg))}
+.alloc .seg:nth-child(3){background:color-mix(in srgb,var(--accent) 50%,var(--bg))}
+.alloc .seg:nth-child(4){background:color-mix(in srgb,var(--accent) 34%,var(--bg))}
+.alloc .seg:nth-child(n+5){background:color-mix(in srgb,var(--accent) 22%,var(--bg))}
+.alloc .seg b{font-weight:400;opacity:.85;margin-left:8px;font-family:var(--sans);font-size:12px}
+.alloc .cap{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 0 0}
+
+/* return bars */
+.bars{margin:0 0 12px;display:grid;grid-template-columns:minmax(120px,180px) 1fr 84px;gap:10px 14px;align-items:center;font-family:var(--sans)}
+.bars .nm{font-family:var(--display);font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.bars .tr{position:relative;height:26px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.bars .tr::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
+.bars .fill{position:absolute;top:0;bottom:0;border-radius:2px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.bars .fill.pos{left:50%;background:var(--good)}
+.bars .fill.neg{right:50%;background:var(--accent)}
+.bars .vl{font-family:var(--display);font-weight:800;font-size:15px;text-align:right;font-variant-numeric:tabular-nums}
+.bars .cap{grid-column:1/-1;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
+@media (max-width:720px){.bars{grid-template-columns:1fr;gap:4px} .bars .vl{text-align:left;margin-bottom:8px}}
 
 /* sections */
 h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
@@ -156,10 +201,21 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 
   <div class="strip">
     <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터 하루씩 쌓입니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
-    <div><div class="k"><span lang-ko>포트폴리오</span><span lang-en>Portfolio</span></div><div class="v" id="s-port">—</div><svg id="spark" class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true" hidden></svg><div class="sub"><span lang-ko>공개 시작 이후 수익률</span><span lang-en>return since public start</span></div></div>
     <div><div class="k"><span lang-ko>보유 · 정리</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>보유 중인 종목 · 정리한 종목</span><span lang-en>positions open · positions closed</span></div></div>
   </div>
   <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
+
+  <section class="perf" aria-label="Portfolio chart">
+    <div class="perf-head">
+      <div><div class="k"><span lang-ko>포트폴리오 · 공개 시작 이후</span><span lang-en>Portfolio · since public start</span></div><div class="big" id="c-val">—</div></div>
+      <div class="perf-note" id="c-note"></div>
+    </div>
+    <svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none" role="img" aria-hidden="true"></svg>
+    <div class="axis"><span id="ax0"></span><span id="ax1"></span></div>
+  </section>
+
+  <div class="alloc" id="alloc" hidden></div>
+  <div class="bars" id="bars" hidden></div>
 
   <h2><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
   <div class="tbl">
@@ -251,20 +307,62 @@ function countUp(el, target){
 }
 function daysSince(iso){ const d=(Date.now()-new Date(iso+"T00:00:00+09:00"))/864e5; return Math.max(0,Math.floor(d)); }
 
+/* 큰 그래프 — 공개 시작 이후 포트폴리오 수익률. 점이 둘 이상이면 선, 하나면 출발점. */
+function drawChart(port, days){
+  const svg = document.getElementById("chart"), W=1000, Hh=260, padT=28, padB=24;
+  const H = (DATA.history||[]).filter(h=>h.v!=null).slice();
+  if(!H.length && port!=null) H.push({d:DATA.asOf, v:port});
+  if(!H.length || H[0].d!==DATA.publicSince) H.unshift({d:DATA.publicSince, v:0});
+  const cv = document.getElementById("c-val"), note = document.getElementById("c-note");
+  const last = H[H.length-1].v;
+  cv.innerHTML = H.length<2 && port==null ? `<span class="hid" style="font-style:normal">0.00%</span>` : pct(last) + (days>=365 ? `<small>${t("연환산 ","annualised ")+pct((Math.pow(1+last/100,365/days)-1)*100)}</small>` : "");
+  cv.className = "big "+(H.length<2 && port==null ? "" : (last<0?"neg":"pos"));
+  note.textContent = H.length<2 ? t("선은 매일 한 점씩 자랍니다. 지금은 출발점입니다.","The line grows one point a day. This is the starting point.") : t(`${H.length}일의 기록`,`${H.length} days on record`);
+  document.getElementById("ax0").textContent = H[0].d;
+  document.getElementById("ax1").textContent = H.length<2 ? t("오늘","today") : H[H.length-1].d;
+  const vs=H.map(h=>h.v); let lo=Math.min(0,...vs), hi=Math.max(0,...vs); if(H.length<2){lo=-1;hi=1;} const span=(hi-lo)||1, pad=span*.25;
+  const y=v=>padT+(Hh-padT-padB)*(1-((v-(lo-pad))/(span+2*pad)));
+  const x=i=>H.length<2 ? 0 : i/(H.length-1)*W;
+  const z=y(0).toFixed(1);
+  let inner=`<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".55"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
+  for(const g of [.25,.5,.75]) inner+=`<line class="grid" x1="0" x2="${W}" y1="${(padT+(Hh-padT-padB)*g).toFixed(1)}" y2="${(padT+(Hh-padT-padB)*g).toFixed(1)}"/>`;
+  inner+=`<line class="zero" x1="0" x2="${W}" y1="${z}" y2="${z}"/>`;
+  if(H.length>=2){
+    const pts=H.map((h,i)=>`${x(i).toFixed(1)},${y(h.v).toFixed(1)}`);
+    inner+=`<path class="area fade" d="M0,${z} L${pts.join(" L")} L${W},${z} Z"/>`;
+    inner+=`<polyline class="line draw" points="${pts.join(" ")}"/>`;
+    const [ex,ey]=pts[pts.length-1].split(",");
+    inner+=`<circle class="halo" cx="${ex}" cy="${ey}" r="7"/><circle class="end" cx="${ex}" cy="${ey}" r="6"/>`;
+  } else {
+    inner+=`<circle class="halo" cx="0" cy="${z}" r="7"/><circle class="end" cx="0" cy="${z}" r="6"/>`;
+  }
+  svg.innerHTML = inner;
+}
+
+/* 비중 띠 + 종목별 수익률 막대 */
+function drawPositions(){
+  const A=document.getElementById("alloc"), B=document.getElementById("bars");
+  const withW = DATA.open.filter(p=>p.weight>0);
+  if(withW.length){
+    A.innerHTML = `<div class="band">${withW.map(p=>`<div class="seg" style="flex-grow:${p.weight}" title="${t(p.ko,p.en)} ${p.weight.toFixed(0)}%">${t(p.ko,p.en)}<b>${p.weight.toFixed(0)}%</b></div>`).join("")}</div><div class="cap">${t("비중 · 투자 중인 금액 기준","Weight · share of invested capital")}</div>`;
+    A.hidden=false;
+  } else A.hidden=true;
+  const rows = DATA.open.map(p=>({n:t(p.ko,p.en), r:(p.entry&&p.price)?(p.price/p.entry-1)*100:null})).filter(r=>r.r!=null);
+  if(rows.length){
+    const mx = Math.max(10, ...rows.map(r=>Math.abs(r.r)));
+    B.innerHTML = rows.map(r=>`<div class="nm">${r.n}</div><div class="tr"><div class="fill ${r.r<0?"neg":"pos"}" style="width:${(Math.abs(r.r)/mx*50).toFixed(1)}%"></div></div><div class="vl ${cls(r.r)}">${pct(r.r)}</div>`).join("")+`<div class="cap">${t("종목별 수익률 · 평균 매수가 대비","Return per position · vs. average entry")}</div>`;
+    B.hidden=false;
+  } else B.hidden=true;
+}
+
 function render(){
+  drawPositions();
   countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
   countUp(document.getElementById("s-hold"), DATA.open.length);
   countUp(document.getElementById("s-closed"), DATA.closed.length);
   document.getElementById("s-err").textContent = DATA.errorLedgerTotal; document.getElementById("s-err2").textContent = DATA.errorLedgerTotal;
   const port = DATA.portfolioSincePublic, days = daysSince(DATA.publicSince);
-  const pe = document.getElementById("s-port");
-  pe.innerHTML = port==null ? "—" : pct(port) + (days>=365 ? `<small>${t("연환산 ","ann. ")+pct((Math.pow(1+port/100,365/days)-1)*100)}</small>` : "");
-  pe.className = "v "+(port==null?"":(port<0?"neg":"pos"));
-  const sp = document.getElementById("spark"); const H = (DATA.history||[]).filter(h=>h.v!=null);
-  if(H.length>=2){ const vs=H.map(h=>h.v), lo=Math.min(0,...vs), hi=Math.max(0,...vs), rng=(hi-lo)||1;
-    const pts=H.map((h,i)=>`${(i/(H.length-1)*120).toFixed(1)},${(28-(h.v-lo)/rng*26).toFixed(1)}`).join(" ");
-    const z=(28-(0-lo)/rng*26).toFixed(1);
-    sp.innerHTML=`<line x1="0" y1="${z}" x2="120" y2="${z}" class="zero"/><polyline points="${pts}" class="line"/><circle cx="120" cy="${pts.split(" ").pop().split(",")[1]}" r="2.2" class="end"/>`; sp.hidden=false; } else sp.hidden=true;
+  drawChart(port, days);
   document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
   const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 정리 완료", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
   const lb = document.getElementById("latest");
