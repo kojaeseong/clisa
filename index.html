@@ -81,6 +81,11 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,83,59,.5)}70%{box-shadow:0 0 0 10px rgba(229,83,59,0)}100%{box-shadow:0 0 0 0 rgba(229,83,59,0)}}
 .ctl .theme{font-size:14px;line-height:1;padding:4px 9px}
+.ctl .music .ic{display:inline-block;transition:transform .3s}
+.ctl .music[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ctl .music[aria-pressed="true"] .ic{animation:bob 1.1s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion: reduce){.ctl .music .ic{animation:none}}
 @media (prefers-reduced-motion: reduce){.dot{animation:none}}
 @media (max-width:720px){.strip{grid-template-columns:1fr}.strip>div{border-left:0;padding-left:0;border-bottom:1px solid var(--rule)}.strip>div:last-child{border-bottom:0}}
 
@@ -180,7 +185,9 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
       <button id="en" aria-pressed="true">English</button>
       <button id="ko" aria-pressed="false">한국어</button>
       <button id="theme" class="theme" aria-pressed="true" title="Day / Night">☀</button>
+      <button id="snd" class="music" aria-pressed="false" hidden title="Music"><span class="ic">♪</span> <span lang-ko>음악</span><span lang-en>Music</span></button>
     </div>
+    <audio id="ha" preload="metadata"></audio>
   </header>
 
   <section class="lede" id="hero">
@@ -194,8 +201,6 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
       <p lang-ko>AI가 기업을 읽고, 사람이 검증하고 서명합니다. 미리 정한 원칙으로만 판단하며, 모든 판단과 그 결과를 있는 그대로 공개합니다. 실제 계좌, 실제 돈.</p>
       <p lang-en>AI reads the companies; a human verifies and signs. Every judgment follows rules set in advance, and every judgment and outcome is published as it is. Real account, real money.</p>
       <div class="since"><span lang-ko>2026년 9월 2일 공개 시작 · 그 이전의 판단은 평가하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing before that date is scored</span></div>
-      <button id="snd" class="snd" aria-pressed="false" hidden><span class="ic">♪</span> <span lang-ko>소리 켜기</span><span lang-en>Sound on</span></button>
-      <audio id="ha" loop preload="none"><source src="media/theme.mp3" type="audio/mpeg"></audio>
     </div>
   </section>
 
@@ -410,19 +415,28 @@ function setTheme(th){
 document.getElementById("theme").onclick = () => setTheme(document.documentElement.getAttribute("data-theme")==="light" ? "dark" : "light");
 (function(){ let th="dark"; try{ th = localStorage.getItem("clisa-theme") || "dark"; }catch(e){} setTheme(th); })();
 
-/* 히어로 영상·음악 — media/hero.mp4·hero.jpg·theme.mp3 가 있을 때만 켜진다. 없으면 조용한 히어로. */
+/* 히어로 영상 — media/hero.webm·mp4·jpg 가 있을 때만 켜진다. */
 (function(){
-  const v=document.getElementById("hv"), a=document.getElementById("ha"), btn=document.getElementById("snd");
-  const on=()=>document.body.classList.add("has-video");
-  v.addEventListener("loadeddata", on, {once:true});
+  const v=document.getElementById("hv");
+  v.addEventListener("loadeddata", ()=>document.body.classList.add("has-video"), {once:true});
   v.addEventListener("error", ()=>{ v.remove(); }, {once:true});
-  // 오디오는 자동 재생 불가 — 방문자가 켠다. 파일이 있을 때만 버튼을 보인다.
-  a.addEventListener("canplay", ()=>{ btn.hidden=false; }, {once:true});
-  a.addEventListener("error", ()=>{ btn.remove(); }, {once:true});
-  a.load();
+})();
+/* 음악 — CEO가 Suno로 만든 4곡. 자동 재생 불가이므로 방문자가 ♪ 버튼으로 켠다. 무작위 곡부터 시작해 이어서 재생. */
+(function(){
+  const TRACKS=["media/track1.mp3","media/track2.mp3","media/track3.mp3","media/track4.mp3"];
+  const a=document.getElementById("ha"), btn=document.getElementById("snd");
+  let i=Math.floor(Math.random()*TRACKS.length), armed=false;
+  const load=()=>{ a.src=TRACKS[i]; };
+  a.addEventListener("loadedmetadata", ()=>{ if(!armed){ armed=true; btn.hidden=false; } }, {once:false});
+  a.addEventListener("error", ()=>{ if(!armed) btn.remove(); }, {once:true});
+  a.addEventListener("ended", ()=>{ i=(i+1)%TRACKS.length; load(); a.play().catch(()=>{}); });
+  load();
+  let fade;
   btn.addEventListener("click", ()=>{
-    if(a.paused){ a.volume=.6; a.play().then(()=>btn.setAttribute("aria-pressed","true")).catch(()=>{}); }
-    else { a.pause(); btn.setAttribute("aria-pressed","false"); }
+    clearInterval(fade);
+    if(a.paused){ a.volume=0; a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
+        fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }).catch(()=>{}); }
+    else { fade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=0){ clearInterval(fade); a.pause(); } },80); btn.setAttribute("aria-pressed","false"); }
   });
 })();
 let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catch(e){}
