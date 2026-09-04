@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa · Join</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"><!-- shared head/style/script for auth pages; assembled by build script -->
+<style>
+:root{--bg:#0F0D0B;--bg2:#1A1612;--ink:#F4EDE1;--muted:#A89C8C;--rule:#2C2621;--accent:#E5533B;--accent-ink:#FFF7F2;--good:#7FCB93;--warn:#E0B45C;
+--display:"Archivo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif}
+:root[data-theme="light"]{--bg:#F7F3EB;--bg2:#F0EADF;--ink:#1E1915;--muted:#7A6E62;--rule:#E3DACB;--accent:#B93424;--accent-ink:#FFF7F2;--good:#3E6B4A;--warn:#8A6A1F}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
+html:not([data-lang="en"]) [lang-en]{display:none}html[data-lang="en"] [lang-ko]{display:none}
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit}
+.mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px}
+.mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-.02em;text-transform:uppercase}
+.mast .tag{font-size:13px;color:var(--muted);margin-top:4px}
+.ctl{display:flex;gap:8px;align-items:center;font-size:12px}
+.ctl button,.ctl a.btnlike{font:inherit;white-space:nowrap;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px;text-decoration:none}
+.ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{max-width:520px;margin:40px 0;padding:0}
+h2.t{font-family:var(--display);font-size:32px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:0 0 8px;text-transform:uppercase}
+p.sub{color:var(--muted);margin:0 0 24px}
+label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+input,select{width:100%;font:inherit;font-size:16px;padding:12px 14px;background:var(--bg2);color:var(--ink);border:1px solid var(--rule);border-radius:2px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.row{grid-template-columns:1fr}}
+label.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:18px 0;text-transform:none;letter-spacing:0;color:var(--ink)}
+.chk input{width:18px;height:18px;margin-top:3px;flex:none}
+.btn{display:inline-block;font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;background:var(--accent);color:var(--accent-ink);padding:13px 22px;border:0;border-radius:2px;cursor:pointer;margin-top:18px}
+.btn[disabled]{opacity:.5;cursor:wait}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+.msg{margin-top:18px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--bg2);font-size:14.5px}
+.msg.ok{border-color:var(--good)}
+.small{font-size:13px;color:var(--muted)}
+details{margin-top:12px;font-size:13px;color:var(--muted)}summary{cursor:pointer;color:var(--ink)}
+.links{margin-top:22px;font-size:14px}.links a{margin-right:18px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL="https://kaqltuwwnegyidbygmdh.supabase.co", SB_KEY="sb_publishable_iCEHpkUVPH_bKxhxZ3Asjw_tyhDLLT4", ADMIN_EMAIL="kojaeseong@gmail.com", SITE="https://clisa.ai";
+const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+const lang = () => document.documentElement.getAttribute("data-lang") || "en";
+const t = (ko,en) => lang()==="en" ? en : ko;
+function setLang(l){ document.documentElement.setAttribute("data-lang", l); document.getElementById("ko").setAttribute("aria-pressed", l==="ko"); document.getElementById("en").setAttribute("aria-pressed", l==="en"); try{ localStorage.setItem("clisa-lang", l); }catch(e){} if(window.onLang) window.onLang(); }
+function setTheme(th){ document.documentElement.setAttribute("data-theme", th==="light"?"light":"dark"); const b=document.getElementById("theme"); b.textContent = th==="light" ? "☾" : "☀"; try{ localStorage.setItem("clisa-theme", th==="light"?"light":"dark"); }catch(e){} }
+function say(id, text, ok){ const m=document.getElementById(id); m.hidden=false; m.className="msg"+(ok?" ok":""); m.textContent=text; }
+window.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("ko").onclick=()=>setLang("ko"); document.getElementById("en").onclick=()=>setLang("en");
+  document.getElementById("theme").onclick=()=>setTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");
+  let th="dark", l="en"; try{ th=localStorage.getItem("clisa-theme")||"dark"; l=localStorage.getItem("clisa-lang")||"en"; }catch(e){}
+  setTheme(th); setLang(l);
+});
+</script>
+</head><body><div class="wrap"><header class="mast">
+  <a class="mark" href="/"><div class="mono" aria-hidden="true">C</div><div><h1><span lang-ko>클리사</span><span lang-en>Clisa</span></h1><div class="tag"><span lang-ko>회원 가입</span><span lang-en>Join</span></div></div></a>
+  <div class="ctl"><button id="en" aria-pressed="true">English</button><button id="ko" aria-pressed="false">한국어</button><button id="theme" title="Day / Night">☀</button><a class="btnlike" href="login.html"><span lang-ko>로그인</span><span lang-en>Log in</span></a></div>
+</header>
+<section class="card">
+  <h2 class="t"><span lang-ko>가입 신청</span><span lang-en>Request membership</span></h2>
+  <p class="sub"><span lang-ko>가입을 신청하면 이메일 인증 뒤 운영자가 검토합니다. 승인된 분만 종목·매수가·비중·선정 이유를 볼 수 있습니다. 승인은 무료입니다.</span><span lang-en>After you verify your email, the operator reviews each request personally. Approved members see positions, entry prices, weights and the reasoning. Membership is free.</span></p>
+  <form id="f" novalidate>
+    <label for="email">Email</label><input id="email" type="email" autocomplete="email" required>
+    <label for="pw"><span lang-ko>비밀번호 (8자 이상)</span><span lang-en>Password (8+ characters)</span></label><input id="pw" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="name"><span lang-ko>이름</span><span lang-en>Name</span></label><input id="name" autocomplete="name" required>
+    <label for="org"><span lang-ko>직장 · 소속</span><span lang-en>Company / affiliation</span></label><input id="org" autocomplete="organization" required>
+    <div class="row">
+      <div><label for="country"><span lang-ko>국가</span><span lang-en>Country</span></label><input id="country" autocomplete="country-name" required></div>
+      <div><label for="region"><span lang-ko>지역 (도시)</span><span lang-en>Region / city</span></label><input id="region" autocomplete="address-level2" required></div>
+    </div>
+    <label class="chk"><input id="agree" type="checkbox" required><span><span lang-ko>이메일·이름·소속·국가·지역을 회원 심사와 열람 관리 목적으로 보관하는 데 동의합니다. 탈퇴를 요청하면 지웁니다.</span><span lang-en>I agree that my email, name, affiliation, country and region are kept for membership review and access management, and deleted on request.</span></span></label>
+    <details><summary><span lang-ko>개인정보 처리 안내</span><span lang-en>Privacy notice</span></summary>
+      <p lang-ko>수집 항목: 이메일, 비밀번호(암호화 보관), 이름, 직장·소속, 국가, 지역. 목적: 회원 가입 심사, 로그인, 열람 권한 관리. 보관: 회원 자격이 있는 동안, 또는 삭제 요청 시까지. 제3자 제공 없음. 처리 위탁: 인증·저장 서비스(Supabase, 서울 리전). 문의·삭제 요청: kojaeseong@gmail.com</p>
+      <p lang-en>Collected: email, password (stored hashed), name, affiliation, country, region. Purpose: membership review, login, access management. Kept while you are a member or until you ask for deletion. Not shared with third parties. Processor: authentication and storage service (Supabase, Seoul region). Questions or deletion: kojaeseong@gmail.com</p>
+    </details>
+    <button class="btn" id="go" type="submit"><span lang-ko>인증 메일 받기</span><span lang-en>Send verification email</span> →</button>
+    <div class="msg" id="m" hidden></div>
+  </form>
+  <div class="links"><a href="login.html"><span lang-ko>이미 가입했어요 — 로그인</span><span lang-en>Already a member — log in</span></a></div>
+</section>
+<script>
+document.getElementById("f").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  if(!document.getElementById("agree").checked) return say("m", t("개인정보 보관에 동의해 주세요.","Please agree to the privacy notice."));
+  if(v("pw").length<8) return say("m", t("비밀번호는 8자 이상이어야 합니다.","Password must be at least 8 characters."));
+  const btn=document.getElementById("go"); btn.disabled=true;
+  const { data, error } = await sb.auth.signUp({ email: v("email"), password: v("pw"),
+    options: { emailRedirectTo: SITE+"/members.html", data: { name: v("name"), org: v("org"), country: v("country"), region: v("region") } } });
+  btn.disabled=false;
+  if(error) return say("m", t("가입에 실패했습니다: ","Sign-up failed: ")+error.message);
+  if(data.user && data.user.identities && data.user.identities.length===0) return say("m", t("이미 가입된 이메일입니다. 로그인하거나 비밀번호를 재설정하세요.","This email is already registered. Log in or reset your password."));
+  document.getElementById("f").querySelectorAll("input,button").forEach(x=>x.disabled=true);
+  say("m", t("인증 메일을 보냈습니다. 메일의 링크를 누르면 본인 확인이 끝나고, 운영자 승인 후 열람이 열립니다.","Verification email sent. Click the link in it to confirm; access opens after the operator approves your request."), true);
+});
+</script>
+</div></body></html>
