@@ -445,7 +445,7 @@ document.getElementById("theme").onclick = () => setTheme(document.documentEleme
   a.addEventListener("loadedmetadata", ()=>{ if(!armed){ armed=true; btn.hidden=false; } }, {once:false});
   a.addEventListener("error", ()=>{ if(!armed) btn.remove(); }, {once:true});
   a.addEventListener("ended", ()=>{ i=(i+1)%TRACKS.length; load(); a.play().catch(()=>{}); });
-  load();
+  load(); btn.hidden=false;
   let fade;
   const on=()=>{ clearInterval(fade); a.volume=0; return a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
         fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }); };
@@ -454,9 +454,10 @@ document.getElementById("theme").onclick = () => setTheme(document.documentEleme
   /* 기본은 "켜짐": 브라우저가 자동 재생을 막으므로 방문자의 첫 클릭·터치·키 입력 때 시작한다. 한 번 껐던 방문자는 다시 켜지 않는다. */
   let pref="on"; try{ pref=localStorage.getItem("clisa-music")||"on"; }catch(e){}
   if(pref!=="off"){
-    a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
-    const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(a.paused && armed){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(_){} } document.removeEventListener("pointerdown",arm,true); document.removeEventListener("keydown",arm,true); };
-    document.addEventListener("pointerdown",arm,true); document.addEventListener("keydown",arm,true);
+    a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; btn.classList.remove("hint"); }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
+    const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(!a.paused) return;
+      on().then(()=>{ try{localStorage.setItem("clisa-music","on");}catch(_){} btn.classList.remove("hint"); document.removeEventListener("pointerdown",arm,true); document.removeEventListener("keydown",arm,true); document.removeEventListener("touchend",arm,true); }).catch(()=>{}); };
+    document.addEventListener("pointerdown",arm,true); document.addEventListener("keydown",arm,true); document.addEventListener("touchend",arm,true);
     btn.classList.add("hint");
   }
 })();
