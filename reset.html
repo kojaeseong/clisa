@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa · New password</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"><!-- shared head/style/script for auth pages; assembled by build script -->
+<style>
+:root{--bg:#0F0D0B;--bg2:#1A1612;--ink:#F4EDE1;--muted:#A89C8C;--rule:#2C2621;--accent:#E5533B;--accent-ink:#FFF7F2;--good:#7FCB93;--warn:#E0B45C;
+--display:"Archivo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif}
+:root[data-theme="light"]{--bg:#F7F3EB;--bg2:#F0EADF;--ink:#1E1915;--muted:#7A6E62;--rule:#E3DACB;--accent:#B93424;--accent-ink:#FFF7F2;--good:#3E6B4A;--warn:#8A6A1F}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
+html:not([data-lang="en"]) [lang-en]{display:none}html[data-lang="en"] [lang-ko]{display:none}
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit}
+.mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px}
+.mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-.02em;text-transform:uppercase}
+.mast .tag{font-size:13px;color:var(--muted);margin-top:4px}
+.ctl{display:flex;gap:8px;align-items:center;font-size:12px}
+.ctl button,.ctl a.btnlike{font:inherit;white-space:nowrap;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px;text-decoration:none}
+.ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{max-width:520px;margin:40px 0;padding:0}
+h2.t{font-family:var(--display);font-size:32px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:0 0 8px;text-transform:uppercase}
+p.sub{color:var(--muted);margin:0 0 24px}
+label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+input,select{width:100%;font:inherit;font-size:16px;padding:12px 14px;background:var(--bg2);color:var(--ink);border:1px solid var(--rule);border-radius:2px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.row{grid-template-columns:1fr}}
+label.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:18px 0;text-transform:none;letter-spacing:0;color:var(--ink)}
+.chk input{width:18px;height:18px;margin-top:3px;flex:none}
+.btn{display:inline-block;font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;background:var(--accent);color:var(--accent-ink);padding:13px 22px;border:0;border-radius:2px;cursor:pointer;margin-top:18px}
+.btn[disabled]{opacity:.5;cursor:wait}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+.msg{margin-top:18px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--bg2);font-size:14.5px}
+.msg.ok{border-color:var(--good)}
+.small{font-size:13px;color:var(--muted)}
+details{margin-top:12px;font-size:13px;color:var(--muted)}summary{cursor:pointer;color:var(--ink)}
+.links{margin-top:22px;font-size:14px}.links a{margin-right:18px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL="https://kaqltuwwnegyidbygmdh.supabase.co", SB_KEY="sb_publishable_iCEHpkUVPH_bKxhxZ3Asjw_tyhDLLT4", ADMIN_EMAIL="kojaeseong@gmail.com", SITE="https://clisa.ai";
+const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+const lang = () => document.documentElement.getAttribute("data-lang") || "en";
+const t = (ko,en) => lang()==="en" ? en : ko;
+function setLang(l){ document.documentElement.setAttribute("data-lang", l); document.getElementById("ko").setAttribute("aria-pressed", l==="ko"); document.getElementById("en").setAttribute("aria-pressed", l==="en"); try{ localStorage.setItem("clisa-lang", l); }catch(e){} if(window.onLang) window.onLang(); }
+function setTheme(th){ document.documentElement.setAttribute("data-theme", th==="light"?"light":"dark"); const b=document.getElementById("theme"); b.textContent = th==="light" ? "☾" : "☀"; try{ localStorage.setItem("clisa-theme", th==="light"?"light":"dark"); }catch(e){} }
+function say(id, text, ok){ const m=document.getElementById(id); m.hidden=false; m.className="msg"+(ok?" ok":""); m.textContent=text; }
+window.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("ko").onclick=()=>setLang("ko"); document.getElementById("en").onclick=()=>setLang("en");
+  document.getElementById("theme").onclick=()=>setTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");
+  let th="dark", l="en"; try{ th=localStorage.getItem("clisa-theme")||"dark"; l=localStorage.getItem("clisa-lang")||"en"; }catch(e){}
+  setTheme(th); setLang(l);
+});
+</script>
+</head><body><div class="wrap"><header class="mast">
+  <a class="mark" href="/"><div class="mono" aria-hidden="true">C</div><div><h1><span lang-ko>클리사</span><span lang-en>Clisa</span></h1><div class="tag"><span lang-ko>비밀번호 재설정</span><span lang-en>New password</span></div></div></a>
+  <div class="ctl"><button id="en" aria-pressed="true">English</button><button id="ko" aria-pressed="false">한국어</button><button id="theme" title="Day / Night">☀</button></div>
+</header>
+<section class="card">
+  <h2 class="t"><span lang-ko>새 비밀번호</span><span lang-en>Set a new password</span></h2>
+  <form id="f" novalidate>
+    <label for="pw"><span lang-ko>새 비밀번호 (8자 이상)</span><span lang-en>New password (8+ characters)</span></label><input id="pw" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="btn" id="go" type="submit"><span lang-ko>저장</span><span lang-en>Save</span> →</button>
+    <div class="msg" id="m" hidden></div>
+  </form>
+</section>
+<script>
+document.getElementById("f").addEventListener("submit", async (e)=>{
+  e.preventDefault(); const pw=document.getElementById("pw").value;
+  if(pw.length<8) return say("m", t("8자 이상이어야 합니다.","At least 8 characters."));
+  const { data:{session} } = await sb.auth.getSession();
+  if(!session) return say("m", t("재설정 링크가 만료되었거나 잘못되었습니다. 로그인 화면에서 다시 요청해 주세요.","The reset link is invalid or expired. Request a new one from the login page."));
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if(error) return say("m", error.message);
+  say("m", t("저장했습니다. 열람자 원장으로 이동합니다.","Saved. Taking you to the members ledger."), true); setTimeout(()=>location.href="members.html", 1200);
+});
+</script>
+</div></body></html>
