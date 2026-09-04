@@ -384,8 +384,8 @@ document.getElementById("theme").onclick = () => setTheme(document.documentEleme
   if(pref!=="off"){
     a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; btn.classList.remove("hint"); }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
     const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(!a.paused) return;
-      on().then(()=>{ try{localStorage.setItem("clisa-music","on");}catch(_){} btn.classList.remove("hint"); document.removeEventListener("pointerdown",arm,true); document.removeEventListener("keydown",arm,true); document.removeEventListener("touchend",arm,true); }).catch(()=>{}); };
-    document.addEventListener("pointerdown",arm,true); document.addEventListener("keydown",arm,true); document.addEventListener("touchend",arm,true);
+      on().then(()=>{ try{localStorage.setItem("clisa-music","on");}catch(_){} btn.classList.remove("hint"); for(const ev of ["pointerdown","pointerup","touchend","click","keydown"]) document.removeEventListener(ev,arm,true); }).catch(()=>{}); };
+    for(const ev of ["pointerdown","pointerup","touchend","click","keydown"]) document.addEventListener(ev,arm,true);
     btn.classList.add("hint");
   }
 })();
