@@ -252,6 +252,7 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, b
     <table>
       <thead><tr>
         <th><span lang-ko>종목 · 왜 골랐나</span><span lang-en>Company · why</span></th>
+        <th><span lang-ko>보유 기간</span><span lang-en>Held</span></th>
         <th class="num"><span lang-ko>평균 매수가</span><span lang-en>Avg. entry</span></th>
         <th class="num"><span lang-ko>현재가</span><span lang-en>Last price</span></th>
         <th class="num"><span lang-ko>수익률</span><span lang-en>Return</span></th>
@@ -390,6 +391,7 @@ function render(){
     const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
     return `<tr>
       <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
+      <td class="dt">${p.from ? `${p.from} → ${t("오늘","today")}<br><span class="hid">${t(daysSince(p.from)+"일째","day "+daysSince(p.from))}</span>` : "—"}</td>
       <td class="num">${fmt(p.entry,p.ccy)}</td>
       <td class="num">${fmt(p.price,p.ccy)}</td>
       <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
@@ -492,7 +494,7 @@ function applySheet(rows){
       if(k==="errorLedgerTotal") D.errorLedgerTotal=num(v);
       if(k==="portfolioSincePublic") D.portfolioSincePublic=num(v);
       if(k==="latest") D.latest={date:get(r,"en")||"", ko:v, en:get(r,"mkt")||v}; }
-    else if(t==="open") D.open.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
+    else if(t==="open") D.open.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
     else if(t==="history"){ (D.history=D.history||[]).push({d:get(r,"key"), v:num(get(r,"ko"))}); }
     else if(t==="closed") D.closed.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),to:get(r,"to"),days:num(get(r,"days")),entry:num(get(r,"entry")),exit:num(get(r,"exit")),ret:num(get(r,"ret")),baseline:get(r,"baseline"),gate:get(r,"gate"),reasonKo:get(r,"reason_ko"),reasonEn:get(r,"reason_en")});
     else if(t==="error") D.errors.push({id:num(get(r,"key")),ko:get(r,"ko"),en:get(r,"en")});
