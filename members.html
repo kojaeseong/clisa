@@ -298,6 +298,7 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, b
 const DATA = {
   asOf: "2026-09-02",
   publicSince: "2026-09-02",
+  returnBase: "2026-09-04",         // 수익률 0% 기준일 (마감)
   ruleAttainment: 67.9,           // 백만-만원 규칙 달성률 (%)
   breaches: 0,                    // 공개 시작 이후 등재된 규정 위반 수
   errorLedgerTotal: 49,           // 오류 원장 누적 건수
@@ -328,12 +329,14 @@ function drawChart(port, days){
   const svg = document.getElementById("chart"), W=1000, Hh=260, padT=28, padB=24;
   const H = (DATA.history||[]).filter(h=>h.v!=null).slice();
   if(!H.length && port!=null) H.push({d:DATA.asOf, v:port});
-  if(!H.length || H[0].d!==DATA.publicSince) H.unshift({d:DATA.publicSince, v:0});
+  const base = DATA.returnBase || DATA.publicSince;
+  if(!H.length || H[0].d!==base) H.unshift({d:base, v:0});
   const cv = document.getElementById("c-val"), note = document.getElementById("c-note");
   const last = H[H.length-1].v;
-  cv.innerHTML = H.length<2 && port==null ? `<span class="hid" style="font-style:normal">0.00%</span>` : pct(last) + (days>=365 ? `<small>${t("연환산 ","annualised ")+pct((Math.pow(1+last/100,365/days)-1)*100)}</small>` : "");
+  const bdays = daysSince(base);
+  cv.innerHTML = H.length<2 && port==null ? `<span class="hid" style="font-style:normal">0.00%</span>` : pct(last) + (bdays>=365 ? `<small>${t("연환산 ","annualised ")+pct((Math.pow(1+last/100,365/bdays)-1)*100)}</small>` : "");
   cv.className = "big "+(H.length<2 && port==null ? "" : (last<0?"neg":"pos"));
-  note.textContent = H.length<2 ? t("선은 매일 한 점씩 자랍니다. 지금은 출발점입니다.","The line grows one point a day. This is the starting point.") : t(`${H.length}일의 기록`,`${H.length} days on record`);
+  note.textContent = (H.length<2 ? t("선은 매일 한 점씩 자랍니다. 지금은 출발점입니다.","The line grows one point a day. This is the starting point.") : t(`${H.length}일의 기록`,`${H.length} days on record`)) + (DATA.returnBase && DATA.returnBase!==DATA.publicSince ? t(` · 수익률 기준일 ${DATA.returnBase} 마감`,` · returns measured from the ${DATA.returnBase} close`) : "");
   document.getElementById("ax0").textContent = H[0].d;
   document.getElementById("ax1").textContent = H.length<2 ? t("오늘","today") : H[H.length-1].d;
   const vs=H.map(h=>h.v); let lo=Math.min(0,...vs), hi=Math.max(0,...vs); if(H.length<2){lo=-1;hi=1;} const span=(hi-lo)||1, pad=span*.25;
@@ -484,7 +487,7 @@ function applySheet(rows){
   for(const r of rows.slice(1)){
     const t=get(r,"type"); if(!t) continue;
     if(t==="meta"){ const k=get(r,"key"), v=get(r,"ko");
-      if(k==="asOf") D.asOf=v; if(k==="publicSince") D.publicSince=v;
+      if(k==="asOf") D.asOf=v; if(k==="publicSince") D.publicSince=v; if(k==="returnBase") D.returnBase=v;
       if(k==="ruleAttainment") D.ruleAttainment=num(v); if(k==="breaches") D.breaches=num(v);
       if(k==="errorLedgerTotal") D.errorLedgerTotal=num(v);
       if(k==="portfolioSincePublic") D.portfolioSincePublic=num(v);
