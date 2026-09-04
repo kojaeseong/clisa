@@ -84,6 +84,8 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 .ctl .music .ic{display:inline-block;transition:transform .3s}
 .ctl .music[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .ctl .music[aria-pressed="true"] .ic{animation:bob 1.1s ease-in-out infinite}
+.ctl .music.hint:not([aria-pressed="true"]){animation:hint 1.6s ease-in-out infinite;border-color:var(--accent);color:var(--accent)}
+@keyframes hint{0%,100%{box-shadow:0 0 0 0 rgba(229,83,59,.0)}50%{box-shadow:0 0 0 6px rgba(229,83,59,.25)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media (prefers-reduced-motion: reduce){.ctl .music .ic{animation:none}}
 @media (prefers-reduced-motion: reduce){.dot{animation:none}}
@@ -369,12 +371,18 @@ document.getElementById("theme").onclick = () => setTheme(document.documentEleme
   a.addEventListener("ended", ()=>{ i=(i+1)%TRACKS.length; load(); a.play().catch(()=>{}); });
   load();
   let fade;
-  btn.addEventListener("click", ()=>{
-    clearInterval(fade);
-    if(a.paused){ a.volume=0; a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
-        fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }).catch(()=>{}); }
-    else { fade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=0){ clearInterval(fade); a.pause(); } },80); btn.setAttribute("aria-pressed","false"); }
-  });
+  const on=()=>{ clearInterval(fade); a.volume=0; return a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
+        fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }); };
+  const off=()=>{ clearInterval(fade); fade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=0){ clearInterval(fade); a.pause(); } },80); btn.setAttribute("aria-pressed","false"); };
+  btn.addEventListener("click", ()=>{ if(a.paused){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(e){} } else { off(); try{localStorage.setItem("clisa-music","off");}catch(e){} } });
+  /* 기본은 "켜짐": 브라우저가 자동 재생을 막으므로 방문자의 첫 클릭·터치·키 입력 때 시작한다. 한 번 껐던 방문자는 다시 켜지 않는다. */
+  let pref="on"; try{ pref=localStorage.getItem("clisa-music")||"on"; }catch(e){}
+  if(pref!=="off"){
+    a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
+    const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(a.paused && armed){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(_){} } document.removeEventListener("pointerdown",arm,true); document.removeEventListener("keydown",arm,true); };
+    document.addEventListener("pointerdown",arm,true); document.addEventListener("keydown",arm,true);
+    btn.classList.add("hint");
+  }
 })();
 let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catch(e){}
 setLang(saved);
