@@ -1,0 +1,39 @@
+# Bakes the morning's ledger numbers into index.html and og.png.
+# The page itself fetches the ledger with JavaScript; crawlers and link-preview
+# bots usually do not run it, so without this they see an empty page. Runs after
+# the 07:00 KST calculation on the server. Commits only when something changed,
+# and the "[skip ci]" message keeps it from triggering itself.
+name: ledger snapshot
+
+on:
+  schedule:
+    - cron: "25 22 * * *"      # 07:25 KST, ~25 min after the daily job
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ledger-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet Pillow
+      - run: python3 tools/snapshot.py
+      - name: Commit if changed
+        run: |
+          git config user.name "clisa-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html og.png
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "Ledger snapshot $(TZ=Asia/Seoul date +%F) [skip ci]"
+            git push
+          fi
