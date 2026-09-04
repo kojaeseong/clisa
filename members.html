@@ -1,0 +1,540 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Members Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script></head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#0F0D0B; --bg2:#1A1612; --ink:#F4EDE1; --muted:#A89C8C; --rule:#2C2621;
+  --accent:#E5533B; --accent-ink:#FFF7F2; --good:#7FCB93; --warn:#E0B45C;
+  --display:"Archivo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;
+  --serif:var(--display);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F7F3EB; --bg2:#F0EADF; --ink:#1E1915; --muted:#7A6E62; --rule:#E3DACB;
+    --accent:#B93424; --accent-ink:#FFF7F2; --good:#3E6B4A; --warn:#8A6A1F;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F7F3EB; --bg2:#F0EADF; --ink:#1E1915; --muted:#7A6E62; --rule:#E3DACB;
+  --accent:#B93424; --accent-ink:#FFF7F2; --good:#3E6B4A; --warn:#8A6A1F;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
+html:not([data-lang="en"]) [lang-en]{display:none}
+html[data-lang="en"] [lang-ko]{display:none}
+
+/* masthead */
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:16px}
+.mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px;letter-spacing:-.02em}
+.mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance}
+.mast .tag{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:4px}
+.ctl{display:flex;gap:8px;align-items:center;font-family:var(--sans);font-size:12px}
+.ctl button{font:inherit;white-space:nowrap;background:none;border:1px solid var(--rule);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:2px}
+.ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* lede */
+.lede{position:relative;padding:36px 0 8px;max-width:60ch}
+.lede .hook{font-family:var(--display);font-size:40px;line-height:1.05;font-weight:900;letter-spacing:-0.03em;text-transform:uppercase;margin:0 0 14px;padding:0;border:0;color:var(--ink);display:block;text-wrap:balance}
+.lede p{margin:0 0 14px;font-size:18px;line-height:1.6}
+.since{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hv,.hero-shade{display:none}
+.lede::before{content:"C";position:absolute;right:-10px;top:-30px;font-family:var(--display);font-weight:900;font-size:300px;line-height:1;color:var(--accent);opacity:.07;pointer-events:none;z-index:0;animation:breathe 9s ease-in-out infinite;letter-spacing:-.04em}
+@keyframes breathe{0%,100%{transform:scale(1) translateY(0);opacity:.06}50%{transform:scale(1.06) translateY(-8px);opacity:.11}}
+@media (prefers-reduced-motion: reduce){.lede::before{animation:none}}
+@media (max-width:720px){.lede::before{font-size:200px;right:-20px;top:-10px}}
+.lede .hook, .lede p, .lede .since{position:relative;z-index:1}
+/* 영상이 있을 때: 히어로가 전폭 시네마 밴드가 된다 (body.has-video) */
+body.has-video .lede{max-width:none;margin:0 calc(50% - 50vw);padding:0}
+body.has-video .hv{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.85)}
+body.has-video .hero-shade{display:block;position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,16,12,.25) 0%,rgba(20,16,12,.62) 60%,rgba(20,16,12,.9) 100%)}
+body.has-video .hero-in{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:110px 24px 56px;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end}
+body.has-video .lede .hook{color:#F7F3EB;font-size:56px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+body.has-video .lede p{color:#EFE7DA;max-width:58ch}
+body.has-video .since{color:#D9CDBA}
+body.has-video .strip{margin-top:0;border-top:0}
+.snd{position:absolute;right:24px;bottom:24px;z-index:3;font:inherit;font-family:var(--sans);font-size:12px;letter-spacing:.06em;padding:8px 12px;border:1px solid rgba(247,243,235,.5);background:rgba(20,16,12,.35);color:#F7F3EB;cursor:pointer;border-radius:2px;backdrop-filter:blur(6px)}
+.snd[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.snd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){.lede .hook{font-size:27px} body.has-video .lede .hook{font-size:32px} body.has-video .hero-in{padding:80px 20px 48px;min-height:360px}}
+@media (prefers-reduced-motion: reduce){body.has-video .hv{display:none} body.has-video .lede{background:var(--bg2)}}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
+.strip>div{padding:18px 16px 16px;border-left:1px solid var(--rule)}
+.strip>div:first-child{border-left:0;padding-left:0}
+.k{font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.v{font-family:var(--display);font-size:34px;font-weight:800;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.v small{font-size:14px;color:var(--muted);font-weight:400;margin-left:4px}
+.sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px}
+.spark{display:block;width:100%;max-width:140px;height:30px;margin:6px 0 2px;overflow:visible}
+.spark .line{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.spark .zero{stroke:var(--rule);stroke-width:1}
+.spark .end{fill:var(--accent)}
+td.tk small.thesis{color:var(--ink);opacity:.8;margin-top:4px;white-space:normal;max-width:34ch;font-size:12px;line-height:1.45}
+td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
+.latest{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:13.5px;color:var(--ink);margin:-24px 0 36px;padding:10px 14px;border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--bg2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,83,59,.5)}70%{box-shadow:0 0 0 10px rgba(229,83,59,0)}100%{box-shadow:0 0 0 0 rgba(229,83,59,0)}}
+.ctl .theme{font-size:14px;line-height:1;padding:4px 9px}
+.ctl .music .ic{display:inline-block;transition:transform .3s}
+.ctl .music[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ctl .music[aria-pressed="true"] .ic{animation:bob 1.1s ease-in-out infinite}
+.ctl .music.hint:not([aria-pressed="true"]){animation:hint 1.6s ease-in-out infinite;border-color:var(--accent);color:var(--accent)}
+@keyframes hint{0%,100%{box-shadow:0 0 0 0 rgba(229,83,59,.0)}50%{box-shadow:0 0 0 6px rgba(229,83,59,.25)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion: reduce){.ctl .music .ic{animation:none}}
+@media (prefers-reduced-motion: reduce){.dot{animation:none}}
+@media (max-width:720px){.strip{grid-template-columns:1fr}.strip>div{border-left:0;padding-left:0;border-bottom:1px solid var(--rule)}.strip>div:last-child{border-bottom:0}}
+
+/* performance chart */
+.perf{position:relative;margin:0 0 40px;padding:22px 0 0;border-top:1px solid var(--rule)}
+.perf-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:8px}
+.big{font-family:var(--display);font-size:56px;font-weight:900;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:6px}
+.big small{font-size:15px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:0}
+.perf-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);text-align:right;max-width:30ch}
+#chart{display:block;width:100%;height:240px;overflow:visible}
+#chart .area{fill:url(#g1)}
+#chart .line{fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#chart .zero{stroke:var(--rule);stroke-width:1;stroke-dasharray:4 6;vector-effect:non-scaling-stroke}
+#chart .grid{stroke:var(--rule);stroke-width:1;opacity:.5;vector-effect:non-scaling-stroke}
+#chart .end{fill:var(--accent)}
+#chart .halo{fill:var(--accent);opacity:.25;animation:halo 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes halo{0%{transform:scale(1);opacity:.35}100%{transform:scale(3.2);opacity:0}}
+#chart .draw{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1.6s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+#chart .fade{opacity:0;animation:fade 1.2s .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){#chart .halo,#chart .draw,#chart .fade{animation:none;stroke-dashoffset:0;opacity:1}}
+.axis{display:flex;justify-content:space-between;font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+@media (max-width:720px){.big{font-size:40px} #chart{height:180px} .perf-head{flex-direction:column;align-items:flex-start} .perf-note{text-align:left}}
+
+/* allocation band */
+.alloc{margin:0 0 28px}
+.alloc .band{display:flex;height:44px;border-radius:3px;overflow:hidden;gap:3px}
+.alloc .seg{position:relative;display:flex;align-items:center;padding:0 12px;font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.01em;color:var(--accent-ink);background:var(--accent);white-space:nowrap;overflow:hidden;min-width:0;transition:flex-grow .8s cubic-bezier(.4,0,.2,1)}
+.alloc .seg:nth-child(2){background:color-mix(in srgb,var(--accent) 72%,var(--bg))}
+.alloc .seg:nth-child(3){background:color-mix(in srgb,var(--accent) 50%,var(--bg))}
+.alloc .seg:nth-child(4){background:color-mix(in srgb,var(--accent) 34%,var(--bg))}
+.alloc .seg:nth-child(n+5){background:color-mix(in srgb,var(--accent) 22%,var(--bg))}
+.alloc .seg b{font-weight:400;opacity:.85;margin-left:8px;font-family:var(--sans);font-size:12px}
+.alloc .cap{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 0 0}
+
+/* return bars */
+.bars{margin:0 0 12px;display:grid;grid-template-columns:minmax(120px,180px) 1fr 84px;gap:10px 14px;align-items:center;font-family:var(--sans)}
+.bars .nm{font-family:var(--display);font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.bars .tr{position:relative;height:26px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.bars .tr::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
+.bars .fill{position:absolute;top:0;bottom:0;border-radius:2px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.bars .fill.pos{left:50%;background:var(--good)}
+.bars .fill.neg{right:50%;background:var(--accent)}
+.bars .vl{font-family:var(--display);font-weight:800;font-size:15px;text-align:right;font-variant-numeric:tabular-nums}
+.bars .cap{grid-column:1/-1;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
+@media (max-width:720px){.bars{grid-template-columns:1fr;gap:4px} .bars .vl{text-align:left;margin-bottom:8px}}
+
+/* sections */
+h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
+h2 .n{font-weight:400;color:var(--muted);letter-spacing:0;text-transform:none;font-size:12px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:14px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:12px 10px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.num,th.num{text-align:right;padding-right:24px;padding-left:10px;white-space:nowrap}
+td.dt{white-space:nowrap}
+td.tk{font-family:var(--display);font-weight:800;font-size:16px;white-space:nowrap;letter-spacing:-.01em}
+td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;letter-spacing:.06em;padding:2px 8px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--good)} .pill.open{color:var(--accent)} .pill.closed{color:var(--muted)} .pill.wait{color:var(--warn)}
+.pos{color:var(--good)} .neg{color:var(--accent)}
+.hid{color:var(--muted);font-style:italic}
+.note{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:10px;max-width:70ch}
+
+/* prose blocks */
+.prose{max-width:64ch}
+.prose p{margin:0 0 12px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.rules div{padding:12px 0;border-bottom:1px solid var(--rule)}
+.rules b{display:block;font-family:var(--sans);font-size:13px;font-weight:700}
+.rules span{font-size:14.5px;color:var(--muted)}
+@media (max-width:720px){.rules{grid-template-columns:1fr}}
+.err{display:grid;grid-template-columns:72px 1fr;gap:0 16px;font-size:15px}
+.err>div{padding:10px 0;border-bottom:1px solid var(--rule)}
+.err .id{font-family:var(--display);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.principle{margin-top:44px;padding-top:16px;border-top:2px solid var(--accent);font-size:15px;max-width:64ch;color:var(--ink)}
+.contact{margin-top:44px;padding-top:16px;border-top:2px solid var(--accent);max-width:64ch}
+.contact p{margin:0 0 14px;font-size:15px}
+.btn{display:inline-block;font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;background:var(--accent);color:var(--accent-ink);padding:12px 20px;border-radius:2px;transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.gatebox{margin:40px 0;padding:24px;border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--bg2);max-width:64ch}
+.gatebox .gt{font-family:var(--display);font-size:24px;font-weight:900;margin:0 0 8px;letter-spacing:-.02em;text-transform:uppercase}
+.gatebox p{margin:0}
+.adminbox{margin:8px 0 32px}
+.adminbox td{font-size:13.5px;vertical-align:middle}
+.adminbox .st{display:inline-block;font-size:11px;letter-spacing:.06em;padding:2px 8px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.st.pending{color:var(--warn)} .st.approved{color:var(--good)} .st.rejected,.st.revoked{color:var(--muted)}
+.adminbox button{font:inherit;font-size:12px;padding:5px 10px;margin:2px 4px 2px 0;border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;border-radius:2px}
+.adminbox button.ok{border-color:var(--good);color:var(--good)} .adminbox button.no{border-color:var(--accent);color:var(--accent)}
+body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, body.locked .alloc, body.locked .bars, body.locked h2.sec, body.locked .tbl.sec, body.locked .note.sec, body.locked .principle{display:none}
+.disc{margin-top:36px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
+.disc p{margin:0 0 8px}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mark">
+      <div class="mono" aria-hidden="true">C</div>
+      <div>
+        <h1><span lang-ko>클리사 열람자 원장</span><span lang-en>Clisa Members Ledger</span></h1>
+        <div class="tag"><span lang-ko>승인된 열람자 전용 · 실제 계좌의 판단과 결과</span><span lang-en>Approved readers only · real account, real judgments</span></div>
+      </div>
+    </div>
+    <div class="ctl" role="group" aria-label="Language">
+      <button id="en" aria-pressed="true">English</button>
+      <button id="ko" aria-pressed="false">한국어</button>
+      <button id="theme" class="theme" aria-pressed="true" title="Day / Night">☀</button>
+      <button id="snd" class="music" aria-pressed="false" hidden title="Music"><span class="ic">♪</span> <span lang-ko>음악</span><span lang-en>Music</span></button>
+      <button id="logout" hidden><span lang-ko>로그아웃</span><span lang-en>Log out</span></button>
+    </div>
+    <audio id="ha" preload="metadata"></audio>
+  </header>
+
+
+  <section id="gate" class="gatebox" hidden>
+    <div id="g-pending" hidden><h2 class="gt"><span lang-ko>승인 대기 중</span><span lang-en>Awaiting approval</span></h2><p><span lang-ko>이메일 인증이 끝났습니다. 운영자가 신청 내용을 읽고 직접 결정합니다. 승인되면 이 페이지에서 바로 종목·매수가·현재가·비중·선정 이유를 볼 수 있습니다.</span><span lang-en>Your email is verified. The operator reads every request and decides personally. Once approved, this page shows positions, entry prices, current prices, weights and the reasoning.</span></p></div>
+    <div id="g-rejected" hidden><h2 class="gt"><span lang-ko>승인되지 않았습니다</span><span lang-en>Not approved</span></h2><p><span lang-ko>이번에는 열람을 열어 드리지 못했습니다.</span><span lang-en>Access was not granted this time.</span></p></div>
+    <div id="g-unverified" hidden><h2 class="gt"><span lang-ko>이메일 인증이 필요합니다</span><span lang-en>Email verification needed</span></h2><p><span lang-ko>가입 때 받은 메일의 링크를 눌러 주세요.</span><span lang-en>Please click the link in the verification email.</span></p></div>
+    <div id="g-error" hidden><h2 class="gt"><span lang-ko>원장을 불러오지 못했습니다</span><span lang-en>Could not load the ledger</span></h2><p id="g-error-text"></p></div>
+  </section>
+  <section id="admin" class="adminbox" hidden>
+    <h2><span lang-ko>가입 신청 — 운영자 전용</span><span lang-en>Membership requests — operator only</span><span class="n" id="admin-count"></span></h2>
+    <div class="tbl"><table><thead><tr><th><span lang-ko>신청일</span><span lang-en>Date</span></th><th><span lang-ko>이름 · 소속</span><span lang-en>Name · affiliation</span></th><th><span lang-ko>국가 · 지역</span><span lang-en>Country · region</span></th><th>Email</th><th><span lang-ko>상태</span><span lang-en>Status</span></th><th></th></tr></thead><tbody id="admin-rows"></tbody></table></div>
+  </section>
+
+  <section class="lede" id="hero">
+    <video id="hv" class="hv" autoplay muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-hidden="true">
+      <source src="media/hero.webm" type="video/webm">
+      <source src="media/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="hero-in">
+      <h2 class="hook"><span lang-ko>AI와 검증자가 함께 운영하는 새로운 투자기관</span><span lang-en>A new investment institution, run by AI and its human verifier.</span></h2>
+      <p lang-ko>AI가 기업을 읽고, 사람이 검증하고 서명합니다. 미리 정한 원칙으로만 판단하고, 모든 판단과 그 결과를 있는 그대로 공개합니다. 실제 계좌, 실제 자금으로 운용합니다.</p>
+      <p lang-en>AI reads the companies; a human verifies and signs. Every judgment follows rules set in advance, and every judgment and outcome is published as it is. Real account, real money.</p>
+      <div class="since"><span lang-ko>2026년 9월 2일부터 공개 · 그 이전 기록은 집계하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing earlier is counted</span></div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터 하루씩 쌓입니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
+    <div><div class="k"><span lang-ko>보유 · 정리</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>보유 중인 종목 · 정리한 종목</span><span lang-en>positions open · positions closed</span></div></div>
+  </div>
+  <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
+
+  <section class="perf" aria-label="Portfolio chart">
+    <div class="perf-head">
+      <div><div class="k"><span lang-ko>포트폴리오 · 공개 시작 이후</span><span lang-en>Portfolio · since public start</span></div><div class="big" id="c-val">—</div></div>
+      <div class="perf-note" id="c-note"></div>
+    </div>
+    <svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none" role="img" aria-hidden="true"></svg>
+    <div class="axis"><span id="ax0"></span><span id="ax1"></span></div>
+  </section>
+
+  <div class="alloc" id="alloc" hidden></div>
+  <div class="bars" id="bars" hidden></div>
+
+  <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
+  <div class="tbl sec">
+    <table>
+      <thead><tr>
+        <th><span lang-ko>종목 · 왜 골랐나</span><span lang-en>Company · why</span></th>
+        <th class="num"><span lang-ko>평균 매수가</span><span lang-en>Avg. entry</span></th>
+        <th class="num"><span lang-ko>현재가</span><span lang-en>Last price</span></th>
+        <th class="num"><span lang-ko>수익률</span><span lang-en>Return</span></th>
+        <th class="num"><span lang-ko>비중</span><span lang-en>Weight</span></th>
+      </tr></thead>
+      <tbody id="open"></tbody>
+    </table>
+  </div>
+  <p class="note sec"><span id="wnote"></span> <span lang-ko>보유 주수와 투자 총액은 공개하지 않습니다.</span><span lang-en>Share counts and total capital are not disclosed.</span></p>
+
+  <h2 class="sec"><span lang-ko>정리한 종목</span><span lang-en>Closed positions</span></h2>
+  <div class="tbl sec">
+    <table>
+      <thead><tr>
+        <th><span lang-ko>종목</span><span lang-en>Ticker</span></th>
+        <th><span lang-ko>보유 기간</span><span lang-en>Held</span></th>
+        <th class="num"><span lang-ko>평균 매수가</span><span lang-en>Avg. entry</span></th>
+        <th class="num"><span lang-ko>평균 매도가</span><span lang-en>Avg. exit</span></th>
+        <th class="num"><span lang-ko>결과</span><span lang-en>Result</span></th>
+        <th><span lang-ko>왜 팔았나</span><span lang-en>Why sold</span></th>
+      </tr></thead>
+      <tbody id="closed"></tbody>
+    </table>
+  </div>
+
+  <p class="principle"><span lang-ko>미리 정한 원칙으로만 판단하고, 사람이 검증해 서명한 뒤에만 실행합니다. 판단을 고친 기록도 지우지 않고 남깁니다.</span><span lang-en>Every judgment follows rules set in advance and is executed only after a human verifies and signs. When a judgment is corrected, the record stays.</span></p>
+
+  <div class="contact">
+    <p><span lang-ko>궁금한 점이 있으면 운영자에게 직접 메일을 보내 주세요. 답장도 운영자가 직접 씁니다.</span><span lang-en>Questions go straight to the operator — and he answers them personally.</span></p>
+    <a class="btn" href="mailto:kojaeseong@gmail.com?subject=Clisa"><span lang-ko>이메일 보내기</span><span lang-en>Send an email</span> →</a>
+  </div>
+
+  <div class="disc">
+    <p lang-ko><b>알려드립니다.</b> 이 페이지는 운영자 본인 계좌의 기록입니다. 특정 종목의 매수·매도를 권하거나 투자 조언을 드리는 것이 아닙니다. 열람 승인을 포함해 어떤 대가도 받지 않으며, 개별 투자 상담은 하지 않습니다. 과거의 결과가 앞으로의 결과를 보장하지 않습니다.</p>
+    <p lang-en><b>Notice.</b> This is a record of the operator's own account. It is not a recommendation or investment advice. Nothing here — reader access included — is sold, and no individual investment advice is given. Past results do not guarantee future results.</p>
+    <p lang-ko>이 페이지의 종목·가격·비중은 열람을 승인받은 분에게만 보여 드리는 정보입니다. 다른 곳에 옮기지 말아 주세요.</p>
+    <p lang-en>Positions, prices and weights on this page are shown to approved readers only. Please do not repost them.</p>
+    <p><span lang-ko>클리사 · 서울 · </span><span lang-en>Clisa · Seoul · </span><a href="https://x.com/clisakorea">@clisakorea</a></p>
+  </div>
+</div>
+
+<script>
+/* ===== 데이터 — 서기/CEO가 갱신. 공개 범위(8/30 봉인) 밖의 항목은 여기에 넣지 않는다. ===== */
+const DATA = {
+  asOf: "2026-09-02",
+  publicSince: "2026-09-02",
+  ruleAttainment: 67.9,           // 백만-만원 규칙 달성률 (%)
+  breaches: 0,                    // 공개 시작 이후 등재된 규정 위반 수
+  errorLedgerTotal: 49,           // 오류 원장 누적 건수
+  open: [], closed: [], errors: [
+  ]
+};
+
+/* ===== 렌더 ===== */
+const lang = () => document.documentElement.getAttribute("data-lang") || "ko";
+const t = (ko,en) => lang()==="en" ? en : ko;
+const fmt = (v,ccy) => v==null ? "—" : (ccy==="USD" ? "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : v.toLocaleString("ko-KR")+"원");
+const pct = v => v==null ? "—" : (v>0?"+":"")+v.toFixed(2)+"%";
+const cls = v => v==null ? "hid" : (v<0?"neg":"pos");
+
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(el, target){
+  const from = +el.dataset.n || 0; el.dataset.n = target;
+  if(reduce || from===target){ el.textContent = target; return; }
+  const t0 = performance.now(), dur = 900;
+  const step = now => { const p = Math.min(1,(now-t0)/dur), e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(from + (target-from)*e); if(p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function daysSince(iso){ const d=(Date.now()-new Date(iso+"T00:00:00+09:00"))/864e5; return Math.max(0,Math.floor(d)); }
+
+/* 큰 그래프 — 공개 시작 이후 포트폴리오 수익률. 점이 둘 이상이면 선, 하나면 출발점. */
+function drawChart(port, days){
+  const svg = document.getElementById("chart"), W=1000, Hh=260, padT=28, padB=24;
+  const H = (DATA.history||[]).filter(h=>h.v!=null).slice();
+  if(!H.length && port!=null) H.push({d:DATA.asOf, v:port});
+  if(!H.length || H[0].d!==DATA.publicSince) H.unshift({d:DATA.publicSince, v:0});
+  const cv = document.getElementById("c-val"), note = document.getElementById("c-note");
+  const last = H[H.length-1].v;
+  cv.innerHTML = H.length<2 && port==null ? `<span class="hid" style="font-style:normal">0.00%</span>` : pct(last) + (days>=365 ? `<small>${t("연환산 ","annualised ")+pct((Math.pow(1+last/100,365/days)-1)*100)}</small>` : "");
+  cv.className = "big "+(H.length<2 && port==null ? "" : (last<0?"neg":"pos"));
+  note.textContent = H.length<2 ? t("선은 매일 한 점씩 자랍니다. 지금은 출발점입니다.","The line grows one point a day. This is the starting point.") : t(`${H.length}일의 기록`,`${H.length} days on record`);
+  document.getElementById("ax0").textContent = H[0].d;
+  document.getElementById("ax1").textContent = H.length<2 ? t("오늘","today") : H[H.length-1].d;
+  const vs=H.map(h=>h.v); let lo=Math.min(0,...vs), hi=Math.max(0,...vs); if(H.length<2){lo=-1;hi=1;} const span=(hi-lo)||1, pad=span*.25;
+  const y=v=>padT+(Hh-padT-padB)*(1-((v-(lo-pad))/(span+2*pad)));
+  const x=i=>H.length<2 ? 0 : i/(H.length-1)*W;
+  const z=y(0).toFixed(1);
+  let inner=`<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".55"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
+  for(const g of [.25,.5,.75]) inner+=`<line class="grid" x1="0" x2="${W}" y1="${(padT+(Hh-padT-padB)*g).toFixed(1)}" y2="${(padT+(Hh-padT-padB)*g).toFixed(1)}"/>`;
+  inner+=`<line class="zero" x1="0" x2="${W}" y1="${z}" y2="${z}"/>`;
+  if(H.length>=2){
+    const pts=H.map((h,i)=>`${x(i).toFixed(1)},${y(h.v).toFixed(1)}`);
+    inner+=`<path class="area fade" d="M0,${z} L${pts.join(" L")} L${W},${z} Z"/>`;
+    inner+=`<polyline class="line draw" points="${pts.join(" ")}"/>`;
+    const [ex,ey]=pts[pts.length-1].split(",");
+    inner+=`<circle class="halo" cx="${ex}" cy="${ey}" r="7"/><circle class="end" cx="${ex}" cy="${ey}" r="6"/>`;
+  } else {
+    inner+=`<circle class="halo" cx="0" cy="${z}" r="7"/><circle class="end" cx="0" cy="${z}" r="6"/>`;
+  }
+  svg.innerHTML = inner;
+}
+
+/* 비중 띠 + 종목별 수익률 막대 */
+function drawPositions(){
+  const A=document.getElementById("alloc"), B=document.getElementById("bars");
+  const withW = DATA.open.filter(p=>p.weight>0);
+  if(withW.length){
+    A.innerHTML = `<div class="band">${withW.map(p=>`<div class="seg" style="flex-grow:${p.weight}" title="${t(p.ko,p.en)} ${p.weight.toFixed(0)}%">${t(p.ko,p.en)}<b>${p.weight.toFixed(0)}%</b></div>`).join("")}</div><div class="cap">${t("비중 · 투자 중인 금액 기준","Weight · share of invested capital")}</div>`;
+    A.hidden=false;
+  } else A.hidden=true;
+  const rows = DATA.open.map(p=>({n:t(p.ko,p.en), r:(p.entry&&p.price)?(p.price/p.entry-1)*100:null})).filter(r=>r.r!=null);
+  if(rows.length){
+    const mx = Math.max(10, ...rows.map(r=>Math.abs(r.r)));
+    B.innerHTML = rows.map(r=>`<div class="nm">${r.n}</div><div class="tr"><div class="fill ${r.r<0?"neg":"pos"}" style="width:${(Math.abs(r.r)/mx*50).toFixed(1)}%"></div></div><div class="vl ${cls(r.r)}">${pct(r.r)}</div>`).join("")+`<div class="cap">${t("종목별 수익률 · 평균 매수가 대비","Return per position · vs. average entry")}</div>`;
+    B.hidden=false;
+  } else B.hidden=true;
+}
+
+function render(){
+  drawPositions();
+  countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
+  countUp(document.getElementById("s-hold"), DATA.open.length);
+  countUp(document.getElementById("s-closed"), DATA.closed.length);
+  const port = DATA.portfolioSincePublic, days = daysSince(DATA.publicSince);
+  drawChart(port, days);
+  document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
+  const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 정리 완료", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
+  const lb = document.getElementById("latest");
+  if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
+
+  document.getElementById("open").innerHTML = DATA.open.map(p=>{
+    const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
+    return `<tr>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:`<small class="thesis hid">${t("선정 이유는 곷 올립니다","why we own it: to follow")}</small>`}</td>
+      <td class="num">${fmt(p.entry,p.ccy)}</td>
+      <td class="num">${fmt(p.price,p.ccy)}</td>
+      <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
+      <td class="num">${p.weight==null?"—":p.weight.toFixed(0)+"%"}</td>
+    </tr>`;}).join("");
+  const wsum = DATA.open.reduce((a,p)=>a+(p.weight||0),0);
+  document.getElementById("wnote").textContent = wsum>0 ? t("비중은 투자 중인 금액을 100%로 한 값입니다. 현금은 제외.", "Weights are shares of invested capital (100%); cash excluded.") : "";
+
+  document.getElementById("closed").innerHTML = DATA.closed.map(p=>`<tr>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}</small></td>
+      <td class="dt">${p.from} → ${p.to}<br><span class="hid">${p.days}${t("일","d")}</span></td>
+      <td class="num">${fmt(p.entry,p.ccy)}</td>
+      <td class="num">${fmt(p.exit,p.ccy)}</td>
+      <td class="num ${cls(p.ret)}">${pct(p.ret)}<br><span class="hid" style="font-size:11px">${p.ccy}</span></td>
+      <td style="font-size:13px;min-width:260px">${t(p.reasonKo,p.reasonEn)}</td>
+    </tr>`).join("");
+
+}
+
+function setLang(l){
+  document.documentElement.setAttribute("data-lang", l);
+  document.getElementById("ko").setAttribute("aria-pressed", l==="ko");
+  document.getElementById("en").setAttribute("aria-pressed", l==="en");
+  try{ localStorage.setItem("clisa-lang", l); }catch(e){}
+  render(); if(window.onLang) window.onLang();
+}
+document.getElementById("ko").onclick = () => setLang("ko");
+document.getElementById("en").onclick = () => setLang("en");
+/* 밤/낮 전환 — 기본은 밤. 같은 인장·같은 버밀리언, 바탕만 바뀜다 */
+function setTheme(th){
+  if(th==="light") document.documentElement.setAttribute("data-theme","light"); else document.documentElement.setAttribute("data-theme","dark");
+  const b=document.getElementById("theme"); const dark = th!=="light";
+  b.setAttribute("aria-pressed", dark); b.textContent = dark ? "☀" : "☾"; b.title = dark ? "Day" : "Night";
+  try{ localStorage.setItem("clisa-theme", dark?"dark":"light"); }catch(e){}
+}
+document.getElementById("theme").onclick = () => setTheme(document.documentElement.getAttribute("data-theme")==="light" ? "dark" : "light");
+(function(){ let th="dark"; try{ th = localStorage.getItem("clisa-theme") || "dark"; }catch(e){} setTheme(th); })();
+
+/* 히어로 영상 — media/hero.webm·mp4·jpg 가 있을 때만 켜진다. */
+(function(){
+  const v=document.getElementById("hv");
+  v.addEventListener("loadeddata", ()=>document.body.classList.add("has-video"), {once:true});
+  v.addEventListener("error", ()=>{ v.remove(); }, {once:true});
+})();
+/* 음악 — CEO가 Suno로 만든 4곡. 자동 재생 불가이므로 방문자가 ♪ 버튼으로 켠다. 무작위 곡부터 시작해 이어서 재생. */
+(function(){
+  const TRACKS=["media/track1.mp3","media/track2.mp3","media/track3.mp3","media/track4.mp3"];
+  const a=document.getElementById("ha"), btn=document.getElementById("snd");
+  let i=Math.floor(Math.random()*TRACKS.length), armed=false;
+  const load=()=>{ a.src=TRACKS[i]; };
+  a.addEventListener("loadedmetadata", ()=>{ if(!armed){ armed=true; btn.hidden=false; } }, {once:false});
+  a.addEventListener("error", ()=>{ if(!armed) btn.remove(); }, {once:true});
+  a.addEventListener("ended", ()=>{ i=(i+1)%TRACKS.length; load(); a.play().catch(()=>{}); });
+  load();
+  let fade;
+  const on=()=>{ clearInterval(fade); a.volume=0; return a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
+        fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }); };
+  const off=()=>{ clearInterval(fade); fade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=0){ clearInterval(fade); a.pause(); } },80); btn.setAttribute("aria-pressed","false"); };
+  btn.addEventListener("click", ()=>{ if(a.paused){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(e){} } else { off(); try{localStorage.setItem("clisa-music","off");}catch(e){} } });
+  /* 기본은 "켜짐": 브라우저가 자동 재생을 막으므로 방문자의 첫 클릭·터치·키 입력 때 시작한다. 한 번 껐던 방문자는 다시 켜지 않는다. */
+  let pref="on"; try{ pref=localStorage.getItem("clisa-music")||"on"; }catch(e){}
+  if(pref!=="off"){
+    a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
+    const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(a.paused && armed){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(_){} } document.removeEventListener("pointerdown",arm,true); document.removeEventListener("keydown",arm,true); };
+    document.addEventListener("pointerdown",arm,true); document.addEventListener("keydown",arm,true);
+    btn.classList.add("hint");
+  }
+})();
+let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catch(e){}
+setLang(saved);
+
+/* ===== 회원 인증 → 서버 함수(ledger)에서 비공개 원장 CSV 수신. 시트 주소는 이 페이지에 없다. ===== */
+const SB_URL="https://kaqltuwwnegyidbygmdh.supabase.co", SB_KEY="sb_publishable_iCEHpkUVPH_bKxhxZ3Asjw_tyhDLLT4", ADMIN_EMAIL="kojaeseong@gmail.com";
+const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+document.body.classList.add("locked");
+function parseCSV(text){
+  const rows=[]; let row=[], field="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){field+='"';i++;} else q=false; } else field+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(field); field=""; }
+    else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=""; }
+    else if(c!=='\r') field+=c;
+  }
+  if(field.length||row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+const num = v => (v===""||v==null) ? null : (isNaN(+v) ? null : +v);
+
+function applySheet(rows){
+  const h=rows[0]; const idx=k=>h.indexOf(k);
+  const get=(r,k)=>{const i=idx(k); return i<0?"":(r[i]??"");};
+  const D={ open:[], closed:[], errors:[] };
+  for(const r of rows.slice(1)){
+    const t=get(r,"type"); if(!t) continue;
+    if(t==="meta"){ const k=get(r,"key"), v=get(r,"ko");
+      if(k==="asOf") D.asOf=v; if(k==="publicSince") D.publicSince=v;
+      if(k==="ruleAttainment") D.ruleAttainment=num(v); if(k==="breaches") D.breaches=num(v);
+      if(k==="errorLedgerTotal") D.errorLedgerTotal=num(v);
+      if(k==="portfolioSincePublic") D.portfolioSincePublic=num(v);
+      if(k==="latest") D.latest={date:get(r,"en")||"", ko:v, en:get(r,"mkt")||v}; }
+    else if(t==="open") D.open.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
+    else if(t==="history"){ (D.history=D.history||[]).push({d:get(r,"key"), v:num(get(r,"ko"))}); }
+    else if(t==="closed") D.closed.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),to:get(r,"to"),days:num(get(r,"days")),entry:num(get(r,"entry")),exit:num(get(r,"exit")),ret:num(get(r,"ret")),baseline:get(r,"baseline"),gate:get(r,"gate"),reasonKo:get(r,"reason_ko"),reasonEn:get(r,"reason_en")});
+    else if(t==="error") D.errors.push({id:num(get(r,"key")),ko:get(r,"ko"),en:get(r,"en")});
+  }
+  if(!D.open.length && !D.closed.length) throw new Error("empty");
+  for(const k of ["asOf","publicSince","ruleAttainment","breaches","errorLedgerTotal"]) if(D[k]==null) D[k]=DATA[k];
+  Object.assign(DATA, D);
+}
+
+function showGate(id, text){ document.getElementById("gate").hidden=false; for(const k of ["g-pending","g-rejected","g-unverified","g-error"]) document.getElementById(k).hidden = (k!==id); if(text) document.getElementById("g-error-text").textContent=text; }
+async function loadLedger(session){
+  const r = await fetch(SB_URL+"/functions/v1/ledger", { headers: { Authorization: "Bearer "+session.access_token, apikey: SB_KEY }, cache:"no-store" });
+  if(r.status===403){ showGate("g-pending"); return; }
+  if(!r.ok){ showGate("g-error", "HTTP "+r.status); return; }
+  applySheet(parseCSV(await r.text())); document.body.classList.remove("locked"); document.getElementById("gate").hidden=true; render();
+}
+function esc(s){ return String(s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+async function loadAdmin(){
+  const { data, error } = await sb.from("profiles").select("id,email,name,org,country,region,status,created_at,decided_at").order("created_at",{ascending:false});
+  if(error){ console.warn(error); return; }
+  const order={pending:0,approved:1,revoked:2,rejected:3}; data.sort((a,b)=>order[a.status]-order[b.status]);
+  const rows=data.filter(p=>p.email!==ADMIN_EMAIL);
+  document.getElementById("admin-count").textContent = t("대기 ","pending ")+rows.filter(p=>p.status==="pending").length+" · "+t("전체 ","total ")+rows.length;
+  document.getElementById("admin-rows").innerHTML = rows.length ? rows.map(p=>`<tr>
+    <td class="dt">${p.created_at.slice(0,10)}</td><td><b>${esc(p.name)}</b><br><span class="hid">${esc(p.org)}</span></td><td>${esc(p.country)}<br><span class="hid">${esc(p.region)}</span></td><td>${esc(p.email)}</td>
+    <td><span class="st ${p.status}">${p.status}</span></td>
+    <td>${p.status==="pending"?`<button class="ok" data-a="approve" data-id="${p.id}">${t("승인","Approve")}</button><button class="no" data-a="reject" data-id="${p.id}">${t("거절","Reject")}</button>`:""}${p.status==="approved"?`<button class="no" data-a="revoke" data-id="${p.id}">${t("해제","Revoke")}</button>`:""}${(p.status==="rejected"||p.status==="revoked")?`<button class="ok" data-a="approve" data-id="${p.id}">${t("승인","Approve")}</button>`:""}</td></tr>`).join("") : `<tr><td colspan="6" class="hid">${t("아직 신청이 없습니다.","No requests yet.")}</td></tr>`;
+  document.getElementById("admin").hidden=false;
+  document.querySelectorAll("#admin-rows button").forEach(b=>b.onclick=async()=>{ b.disabled=true; const { error } = await sb.rpc("decide",{ p_id:b.dataset.id, p_action:b.dataset.a }); if(error) alert(error.message); await loadAdmin(); });
+}
+(async function(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ location.replace("login.html"); return; }
+  document.getElementById("logout").hidden=false;
+  document.getElementById("logout").onclick=async()=>{ await sb.auth.signOut(); location.replace("login.html"); };
+  const isAdmin = session.user.email===ADMIN_EMAIL;
+  if(!session.user.email_confirmed_at && !isAdmin){ showGate("g-unverified"); return; }
+  if(isAdmin){ await loadAdmin(); }
+  else { const { data:p } = await sb.from("profiles").select("status").eq("id", session.user.id).maybeSingle();
+    if(p && (p.status==="rejected"||p.status==="revoked")){ showGate("g-rejected"); return; }
+    if(!p || p.status!=="approved"){ showGate("g-pending"); return; } }
+  try{ await loadLedger(session); }catch(e){ showGate("g-error", String(e)); }
+})();
+window.onLang = ()=>{ if(!document.getElementById("admin").hidden) loadAdmin(); };
+</script>
+
+</body>
+</html>
