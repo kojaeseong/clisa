@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Public Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Clisa — a new investment institution run by AI and its human verifier; results on the record"><meta name="robots" content="index,follow"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="canonical" href="https://clisa.ai/"><meta property="og:type" content="website"><meta property="og:site_name" content="Clisa"><meta property="og:url" content="https://clisa.ai/"><meta property="og:title" content="Clisa — Public Ledger"><meta property="og:description" content="+3.45% since 2026-09-02 · 3 days on the record · 1 open, 2 closed. Real account, real judgments."><meta property="og:image" content="https://clisa.ai/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Clisa — Public Ledger"><meta name="twitter:image" content="https://clisa.ai/og.png"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Public Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Clisa — a new investment institution run by AI and its human verifier; results on the record"><meta name="robots" content="index,follow"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="canonical" href="https://clisa.ai/"><meta property="og:type" content="website"><meta property="og:site_name" content="Clisa"><meta property="og:url" content="https://clisa.ai/"><meta property="og:title" content="Clisa — Public Ledger"><meta property="og:description" content="+3.45% since 2026-09-02 · 3 days on the record · 1 open, 2 closed. Real account, real judgments."><meta property="og:image" content="https://clisa.ai/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Clisa — Public Ledger"><meta name="twitter:image" content="https://clisa.ai/og.png"><script src="music.js" defer></script></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
 :root{
@@ -449,31 +449,6 @@ document.getElementById("theme").onclick = () => setTheme(document.documentEleme
   build(box.querySelector(".sk.mid"),  {wMin:26,wMax:60,hMin:110,hMax:245,gapMin:4,gapVar:11,fill:"#120C11",lit:.40,strip:.16,setback:.40,mast:.26,win:true, beacon:true});
   build(box.querySelector(".sk.near"), {wMin:34,wMax:82,hMin:130,hMax:300,gapMin:5,gapVar:14,fill:"#08060A",lit:.46,strip:.22,setback:.46,mast:.30,win:true, beacon:true});
   document.body.classList.add("has-video","has-scene");
-})();
-/* 음악 — CEO가 Suno로 만든 4곡. 자동 재생 불가이므로 방문자가 ♪ 버튼으로 켠다. 무작위 곡부터 시작해 이어서 재생. */
-(function(){
-  const TRACKS=["media/track1.mp3","media/track2.mp3","media/track3.mp3","media/track4.mp3"];
-  const a=document.getElementById("ha"), btn=document.getElementById("snd");
-  let i=Math.floor(Math.random()*TRACKS.length), armed=false;
-  const load=()=>{ a.src=TRACKS[i]; };
-  a.addEventListener("loadedmetadata", ()=>{ if(!armed){ armed=true; btn.hidden=false; } }, {once:false});
-  a.addEventListener("error", ()=>{ if(!armed) btn.remove(); }, {once:true});
-  a.addEventListener("ended", ()=>{ i=(i+1)%TRACKS.length; load(); a.play().catch(()=>{}); });
-  load(); btn.hidden=false;
-  let fade;
-  const on=()=>{ clearInterval(fade); a.volume=0; return a.play().then(()=>{ btn.setAttribute("aria-pressed","true");
-        fade=setInterval(()=>{ a.volume=Math.min(.55,a.volume+.05); if(a.volume>=.55) clearInterval(fade); },120); }); };
-  const off=()=>{ clearInterval(fade); fade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=0){ clearInterval(fade); a.pause(); } },80); btn.setAttribute("aria-pressed","false"); };
-  btn.addEventListener("click", ()=>{ if(a.paused){ on().catch(()=>{}); try{localStorage.setItem("clisa-music","on");}catch(e){} } else { off(); try{localStorage.setItem("clisa-music","off");}catch(e){} } });
-  /* 기본은 "켜짐": 브라우저가 자동 재생을 막으므로 방문자의 첫 클릭·터치·키 입력 때 시작한다. 한 번 껐던 방문자는 다시 켜지 않는다. */
-  let pref="on"; try{ pref=localStorage.getItem("clisa-music")||"on"; }catch(e){}
-  if(pref!=="off"){
-    a.play().then(()=>{ btn.setAttribute("aria-pressed","true"); a.volume=.55; btn.classList.remove("hint"); }).catch(()=>{});   // 허용되는 브라우저에서는 즉시
-    const arm=(e)=>{ if(e && btn.contains(e.target)) return; if(!a.paused) return;
-      on().then(()=>{ try{localStorage.setItem("clisa-music","on");}catch(_){} btn.classList.remove("hint"); for(const ev of ["pointerdown","pointerup","touchend","click","keydown"]) document.removeEventListener(ev,arm,true); }).catch(()=>{}); };
-    for(const ev of ["pointerdown","pointerup","touchend","click","keydown"]) document.addEventListener(ev,arm,true);
-    btn.classList.add("hint");
-  }
 })();
 let saved = "en"; try{ saved = localStorage.getItem("clisa-lang") || "en"; }catch(e){}
 setLang(saved);
