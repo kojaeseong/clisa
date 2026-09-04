@@ -389,7 +389,7 @@ function render(){
   document.getElementById("open").innerHTML = DATA.open.map(p=>{
     const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
     return `<tr>
-      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:`<small class="thesis hid">${t("선정 이유는 곷 올립니다","why we own it: to follow")}</small>`}</td>
+      <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
       <td class="num">${fmt(p.entry,p.ccy)}</td>
       <td class="num">${fmt(p.price,p.ccy)}</td>
       <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
