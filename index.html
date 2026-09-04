@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Public Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Clisa — a new investment institution run by AI and its human verifier; results on the record"><meta name="robots" content="index,follow"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clisa Public Ledger</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Clisa — a new investment institution run by AI and its human verifier; results on the record"><meta name="robots" content="index,follow"><link rel="icon" href="favicon.svg" type="image/svg+xml"></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
 :root{
@@ -62,6 +62,47 @@ body.has-video .strip{margin-top:0;border-top:0}
 .snd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:720px){.lede .hook{font-size:27px} body.has-video .lede .hook{font-size:32px} body.has-video .hero-in{padding:80px 20px 48px;min-height:360px}}
 @media (prefers-reduced-motion: reduce){body.has-video .hv{display:none} body.has-video .lede{background:var(--bg2)}}
+
+/* ===== 히어로 야경 — 코드로 그린다(그림 파일 없음). 큰 C가 이 도시의 광원이 된다. ===== */
+body.has-scene .hv{background:#06050A}
+.hv .sky{position:absolute;inset:0;background:linear-gradient(180deg,#05040A 0%,#0A0810 34%,#170E13 54%,#2B1512 68%,#100B0D 100%)}
+.hv .halo{position:absolute;right:-14%;top:-26%;width:76%;height:104%;
+  background:radial-gradient(48% 48% at 50% 50%, rgba(229,83,59,.30), rgba(229,83,59,.07) 52%, rgba(229,83,59,0) 72%);
+  animation:emberPulse 9s ease-in-out infinite}
+.hv .glow{position:absolute;left:-15%;right:-15%;top:26%;height:50%;
+  background:radial-gradient(56% 74% at 64% 74%, rgba(229,83,59,.34), rgba(229,83,59,.08) 56%, rgba(229,83,59,0) 78%);
+  animation:emberPulse 9s ease-in-out infinite}
+@keyframes emberPulse{0%,100%{opacity:.72}50%{opacity:1}}
+.hv .sk{position:absolute;left:-8%;width:116%;bottom:0;display:block}
+.hv .sk.far {height:40%;opacity:.75;animation:drift  74s ease-in-out infinite alternate}
+.hv .sk.mid {height:56%;opacity:.92;animation:drift2 104s ease-in-out infinite alternate}
+.hv .sk.near{height:72%;animation:drift3 148s ease-in-out infinite alternate}
+@keyframes drift {from{transform:translate3d(0,0,0)}to{transform:translate3d(-4.2%,0,0)}}
+@keyframes drift2{from{transform:translate3d(0,0,0)}to{transform:translate3d(2.8%,0,0)}}
+@keyframes drift3{from{transform:translate3d(0,0,0)}to{transform:translate3d(-1.6%,0,0)}}
+.hv .sk .w0{fill:#FFEBCF;opacity:.95;animation:flick 6.5s steps(1,end) infinite}
+.hv .sk .w1{fill:#F7C98C;opacity:.66;animation:flick 10.5s steps(1,end) infinite .8s}
+.hv .sk .w2{fill:#E5533B;opacity:.44;animation:flick 16s steps(1,end) infinite 2.1s}
+@keyframes flick{0%,89%{opacity:inherit}91%{opacity:.2}93%,100%{opacity:inherit}}
+.hv .sk .beacon{fill:#FF5A3C;animation:blink 3.4s steps(1,end) infinite}
+@keyframes blink{0%,58%{opacity:.9}60%,100%{opacity:.12}}
+.hv .ship{position:absolute;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(255,235,207,0),rgba(255,235,207,.9),rgba(255,235,207,0));
+  box-shadow:0 0 12px rgba(255,235,207,.45)}
+.hv .ship.a{width:130px;top:56.5%;left:-16%;animation:sail 86s linear infinite}
+.hv .ship.b{width:78px;top:59.5%;left:-16%;opacity:.5;animation:sail 138s linear infinite 26s}
+@keyframes sail{from{transform:translateX(0)}to{transform:translateX(100vw)}}
+body.has-scene .hero-shade{background:linear-gradient(180deg,rgba(5,4,10,.30) 0%,rgba(5,4,10,.10) 38%,rgba(9,7,9,.50) 70%,rgba(9,7,9,.90) 100%)}
+/* 큰 C — 도시 위에 뜬 빛. 스카이라인보다 위, 그늘보다 아래에 놓아 배경과 한 덩어리로 만든다. */
+body.has-scene .lede::before{z-index:1;right:2%;top:-14%;font-size:min(46vw,420px);color:var(--accent);
+  opacity:.16;filter:drop-shadow(0 0 70px rgba(229,83,59,.45));animation:breatheC 9s ease-in-out infinite}
+@keyframes breatheC{0%,100%{transform:scale(1) translateY(0);opacity:.13}50%{transform:scale(1.045) translateY(-10px);opacity:.22}}
+@media (prefers-reduced-motion: reduce){
+  .hv .halo,.hv .glow,.hv .sk,.hv .sk g,.hv .ship,body.has-scene .lede::before{animation:none!important}
+  .hv .ship{opacity:.45}
+}
+@media (max-width:720px){ .hv .sk.near{height:62%} .hv .sk.mid{height:48%} .hv .sk.far{height:34%}
+  body.has-scene .lede::before{font-size:min(64vw,300px);top:-8%;right:-2%} }
 
 /* summary strip */
 .strip{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0 40px}
@@ -198,10 +239,13 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
   </header>
 
   <section class="lede" id="hero">
-    <video id="hv" class="hv" autoplay muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-hidden="true">
-      <source src="media/hero.webm" type="video/webm">
-      <source src="media/hero.mp4" type="video/mp4">
-    </video>
+    <div id="hv" class="hv" aria-hidden="true">
+      <div class="sky"></div><div class="halo"></div><div class="glow"></div>
+      <svg class="sk far"  viewBox="0 0 1200 320" preserveAspectRatio="none"></svg>
+      <svg class="sk mid"  viewBox="0 0 1200 320" preserveAspectRatio="none"></svg>
+      <svg class="sk near" viewBox="0 0 1200 320" preserveAspectRatio="none"></svg>
+      <i class="ship a"></i><i class="ship b"></i>
+    </div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="hero-in">
       <h2 class="hook"><span lang-ko>AI와 감사인이 함께 운영하는 새로운 투자기관</span><span lang-en>A new investment institution, run by AI and its human verifier.</span></h2>
@@ -358,11 +402,53 @@ function setTheme(th){
 document.getElementById("theme").onclick = () => setTheme(document.documentElement.getAttribute("data-theme")==="light" ? "dark" : "light");
 (function(){ let th="dark"; try{ th = localStorage.getItem("clisa-theme") || "dark"; }catch(e){} setTheme(th); })();
 
-/* 히어로 영상 — media/hero.webm·mp4·jpg 가 있을 때만 켜진다. */
+/* 히어로 야경 — 그림 파일 없이 코드로 그린다. 고정 시드라 항상 같은 도시. */
 (function(){
-  const v=document.getElementById("hv");
-  v.addEventListener("loadeddata", ()=>document.body.classList.add("has-video"), {once:true});
-  v.addEventListener("error", ()=>{ v.remove(); }, {once:true});
+  const box=document.getElementById("hv"); if(!box) return;
+  let seed=20260902; const rnd=()=>(seed=(seed*1103515245+12345)&0x7fffffff)/0x7fffffff;
+  const H=320;
+  function build(svg,o){
+    const body=[], win={w0:[],w1:[],w2:[]}, beacon=[];
+    const R=(x,y,w,h,f)=>body.push(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${f}"/>`);
+    const W=(g,x,y,w,h)=>win[g].push(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/>`);
+    function lights(x,y,w,h){
+      if(!o.win) return;
+      if(rnd()<o.strip && w>18){                       /* 유리 타워: 세로 광띠 */
+        const n=1+Math.floor(rnd()*2);
+        for(let i=0;i<n;i++){ const sx=x+w*(0.22+0.5*i)+rnd()*4; W(rnd()<.5?"w0":"w1", sx, y+6, 2.2, Math.max(8,h-12)); }
+        return;
+      }
+      const cols=Math.floor((w-7)/9), rows=Math.floor((h-12)/11);
+      for(let c=0;c<cols;c++) for(let r=0;r<rows;r++){
+        const t=rnd(); if(t>o.lit) continue;
+        W(t<o.lit*0.26?"w0":(t<o.lit*0.62?"w1":"w2"), x+5+c*9, y+8+r*11, 3.4, 5);
+      }
+    }
+    let x=-50;
+    while(x<1260){
+      const w=o.wMin+rnd()*(o.wMax-o.wMin), h=o.hMin+rnd()*(o.hMax-o.hMin), y=H-h;
+      R(x,y,w,h,o.fill); lights(x,y,w,h);
+      let topY=y, topX=x, topW=w;
+      if(rnd()<o.setback && h>90){                      /* 상층부 후퇴 */
+        const w2=w*(0.5+rnd()*0.22), h2=h*(0.10+rnd()*0.16), x2=x+(w-w2)/2, y2=y-h2;
+        R(x2,y2,w2,h2,o.fill); lights(x2,y2,w2,h2); topY=y2; topX=x2; topW=w2;
+        if(rnd()<0.5){ const w3=w2*0.5, h3=h2*0.7, x3=topX+(w2-w3)/2, y3=y2-h3; R(x3,y3,w3,h3,o.fill); topY=y3; topX=x3; topW=w3; }
+      }
+      if(rnd()<o.mast){                                  /* 첨탑 + 항공장애등 */
+        const sh=12+rnd()*34, sx=topX+topW/2-1;
+        R(sx,topY-sh,2,sh,o.fill);
+        if(o.beacon) beacon.push(`<circle cx="${(sx+1).toFixed(1)}" cy="${(topY-sh).toFixed(1)}" r="2.1"/>`);
+      }
+      x+=w+o.gapMin+rnd()*o.gapVar;
+    }
+    svg.innerHTML = body.join("")
+      + `<g class="w2">${win.w2.join("")}</g><g class="w1">${win.w1.join("")}</g><g class="w0">${win.w0.join("")}</g>`
+      + (beacon.length?`<g class="beacon">${beacon.join("")}</g>`:"");
+  }
+  build(box.querySelector(".sk.far"),  {wMin:20,wMax:44,hMin:70,hMax:175,gapMin:3,gapVar:9, fill:"#1B1319",lit:.30,strip:.10,setback:.30,mast:.18,win:true, beacon:false});
+  build(box.querySelector(".sk.mid"),  {wMin:26,wMax:60,hMin:110,hMax:245,gapMin:4,gapVar:11,fill:"#120C11",lit:.40,strip:.16,setback:.40,mast:.26,win:true, beacon:true});
+  build(box.querySelector(".sk.near"), {wMin:34,wMax:82,hMin:130,hMax:300,gapMin:5,gapVar:14,fill:"#08060A",lit:.46,strip:.22,setback:.46,mast:.30,win:true, beacon:true});
+  document.body.classList.add("has-video","has-scene");
 })();
 /* 음악 — CEO가 Suno로 만든 4곡. 자동 재생 불가이므로 방문자가 ♪ 버튼으로 켠다. 무작위 곡부터 시작해 이어서 재생. */
 (function(){
