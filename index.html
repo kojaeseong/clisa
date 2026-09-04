@@ -27,7 +27,7 @@ html:not([data-lang="en"]) [lang-en]{display:none}
 html[data-lang="en"] [lang-ko]{display:none}
 
 /* masthead */
-.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink)}
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 20px;border-bottom:2px solid var(--ink);position:relative;z-index:5}
 .mark{display:flex;align-items:center;gap:16px}
 .mono{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:34px;line-height:1;border-radius:2px;letter-spacing:-.02em}
 .mast h1{font-family:var(--display);font-size:26px;font-weight:800;margin:0;letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance}
@@ -50,7 +50,7 @@ html[data-lang="en"] [lang-ko]{display:none}
 .lede .hook, .lede p, .lede .since{position:relative;z-index:1}
 /* 영상이 있을 때: 히어로가 전폭 시네마 밴드가 된다 (body.has-video) */
 body.has-video .lede{max-width:none;margin:0 calc(50% - 50vw);padding:0}
-body.has-video .hv{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.85)}
+body.has-video .hv{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(.85);pointer-events:none}
 body.has-video .hero-shade{display:block;position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,16,12,.25) 0%,rgba(20,16,12,.62) 60%,rgba(20,16,12,.9) 100%)}
 body.has-video .hero-in{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:110px 24px 56px;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end}
 body.has-video .lede .hook{color:#F7F3EB;font-size:56px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
