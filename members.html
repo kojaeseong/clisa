@@ -101,6 +101,7 @@ body.has-scene .lede::before{z-index:1;right:2%;top:-14%;font-size:min(46vw,420p
 .k{font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .v{font-family:var(--display);font-size:34px;font-weight:800;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .v small{font-size:14px;color:var(--muted);font-weight:400;margin-left:4px}
+.v small.sep{margin:0 14px;font-size:20px}
 .sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:4px}
 .spark{display:block;width:100%;max-width:140px;height:30px;margin:6px 0 2px;overflow:visible}
 .spark .line{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
@@ -256,16 +257,16 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, b
     </div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="hero-in">
-      <h2 class="hook"><span lang-ko>사람과 AI가 함께 운영하는 새로운 투자기관</span><span lang-en>A new investment institution, run by a human and an AI.</span></h2>
+      <h2 class="hook"><span lang-ko>사람과 AI가 함께 운영하는 새로운 투자기관</span><span lang-en>A new investment institution, run by humans and AI.</span></h2>
       <p lang-ko>사람과 AI가 함께 기업을 읽고 서로의 판단을 검증합니다. 미리 정한 원칙으로만 판단하고, 최종 결정은 사람이 합니다. 모든 판단과 그 결과를 있는 그대로 공개합니다. 실제 계좌, 실제 자금.</p>
-      <p lang-en>A human and an AI read the companies together and check each other’s judgments. Every judgment follows rules set in advance; the final decision — and the signature — is the human’s. Every judgment and outcome is published as it is. Real account, real money.</p>
+      <p lang-en>Humans and AI read the companies together, and each checks the other’s judgment. Every judgment follows rules set in advance; the final decision — and the signature — is the human’s. Every judgment and outcome is published as it is. Real account, real money.</p>
       <div class="since"><span lang-ko>2026년 9월 2일부터 공개 · 그 이전 기록은 집계하지 않습니다</span><span lang-en>Public since 2 Sep 2026 · nothing earlier is counted</span></div>
     </div>
   </section>
 
   <div class="strip">
     <div><div class="k"><span lang-ko>공개 기록</span><span lang-en>On the record</span></div><div class="v"><span id="s-days" data-n="0">0</span><small><span lang-ko>일</span><span lang-en>days</span></small></div><div class="sub"><span lang-ko>2026년 9월 2일부터 매일 쌓입니다</span><span lang-en>since 2 Sep 2026 — and counting</span></div></div>
-    <div><div class="k"><span lang-ko>보유 · 청산</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small>·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>보유 중인 종목 · 청산한 종목</span><span lang-en>positions open · positions closed</span></div></div>
+    <div><div class="k"><span lang-ko>보유 · 청산</span><span lang-en>Open · Closed</span></div><div class="v"><span id="s-hold" data-n="0">0</span><small class="sep">·</small><span id="s-closed" data-n="0">0</span></div><div class="sub"><span lang-ko>보유 중인 종목 · 청산한 종목</span><span lang-en>positions open · positions closed</span></div></div>
   </div>
   <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
 
