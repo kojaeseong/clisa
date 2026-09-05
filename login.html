@@ -2,7 +2,7 @@
 <style>
 :root{--bg:#0F0D0B;--bg2:#1A1612;--ink:#F4EDE1;--muted:#A89C8C;--rule:#2C2621;--accent:#E5533B;--accent-ink:#FFF7F2;--good:#7FCB93;--warn:#E0B45C;
 --display:"Archivo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif;--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Helvetica,Arial,sans-serif}
-:root[data-theme="light"]{--bg:#F7F3EB;--bg2:#F0EADF;--ink:#1E1915;--muted:#7A6E62;--rule:#E3DACB;--accent:#B93424;--accent-ink:#FFF7F2;--good:#3E6B4A;--warn:#8A6A1F}
+
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 a{color:var(--accent)}
@@ -41,22 +41,21 @@ const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { flowType: "implicit",
 const lang = () => document.documentElement.getAttribute("data-lang") || "en";
 const t = (ko,en) => lang()==="en" ? en : ko;
 function setLang(l){ document.documentElement.setAttribute("data-lang", l); document.getElementById("ko").setAttribute("aria-pressed", l==="ko"); document.getElementById("en").setAttribute("aria-pressed", l==="en"); try{ localStorage.setItem("clisa-lang", l); }catch(e){} if(window.onLang) window.onLang(); }
-function setTheme(th){ document.documentElement.setAttribute("data-theme", th==="light"?"light":"dark"); const b=document.getElementById("theme"); b.textContent = th==="light" ? "☾" : "☀"; try{ localStorage.setItem("clisa-theme", th==="light"?"light":"dark"); }catch(e){} }
 function say(id, text, ok){ const m=document.getElementById(id); m.hidden=false; m.className="msg"+(ok?" ok":""); m.textContent=text; }
 window.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("ko").onclick=()=>setLang("ko"); document.getElementById("en").onclick=()=>setLang("en");
-  document.getElementById("theme").onclick=()=>setTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");
-  let th="dark", l="en"; try{ th=localStorage.getItem("clisa-theme")||"dark"; l=localStorage.getItem("clisa-lang")||"en"; }catch(e){}
-  setTheme(th); setLang(l);
+  let l="en"; try{ l=localStorage.getItem("clisa-lang")||"en"; }catch(e){}
+  document.documentElement.setAttribute("data-theme","dark");
+  setLang(l);
 });
 </script>
 <script src="music.js" defer></script></head><body><div class="wrap"><header class="mast">
   <a class="mark" href="/"><div class="mono" aria-hidden="true">C</div><div><h1><span lang-ko>클리사</span><span lang-en>Clisa</span></h1><div class="tag"><span lang-ko>로그인</span><span lang-en>Log in</span></div></div></a>
-  <div class="ctl"><button id="en" aria-pressed="true">English</button><button id="ko" aria-pressed="false">한국어</button><button id="theme" title="Day / Night">☀</button><a class="btnlike" href="join.html"><span lang-ko>가입</span><span lang-en>Join</span></a></div>
+  <div class="ctl"><button id="en" aria-pressed="true">English</button><button id="ko" aria-pressed="false">한국어</button><a class="btnlike" href="join.html"><span lang-ko>가입</span><span lang-en>Join</span></a></div>
 </header>
 <section class="card">
   <h2 class="t"><span lang-ko>로그인</span><span lang-en>Log in</span></h2>
-  <p class="sub"><span lang-ko>승인된 회원은 로그인 후 열람자 원장을 봅니다. 승인 전에는 대기 상태만 표시됩니다.</span><span lang-en>Approved members see the members ledger after logging in. Before approval you will see a pending notice.</span></p>
+  <p class="sub"><span lang-ko>승인된 회원은 로그인 후 회원 페이지를 봅니다. 승인 전에는 대기 상태만 표시됩니다.</span><span lang-en>Approved members see the members ledger after logging in. Before approval you will see a pending notice.</span></p>
   <form id="f" novalidate>
     <label for="email">Email</label><input id="email" type="email" autocomplete="email" required>
     <label for="pw"><span lang-ko>비밀번호</span><span lang-en>Password</span></label><input id="pw" type="password" autocomplete="current-password" required>
