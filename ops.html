@@ -394,8 +394,7 @@
 </aside>
 
 <script>
-const DOCS=[];
-const CONC={};
+let ARCH=[]; /* 서버(archive 함수)에서 로그인 뒤 받아온다. 정적 파일에는 아무것도 싣지 않는다. */
 
 const SHELF=[
  ["종목 판독","기업별 판독서·채점·기각 판정. 재평가 전에 반드시 먼저 읽는 선반."],
@@ -412,9 +411,10 @@ const shelves=document.getElementById("shelves");
 function render(q){
   q=(q||"").trim();
   shelves.innerHTML="";
+  if(!ARCH.length){ shelves.innerHTML='<p class="shelf-desc">'+(ARCH.msg||"자료실을 서버에서 불러오는 중…")+'</p>'; return; }
   let total=0;
   SHELF.forEach(([name,desc],i)=>{
-    const items=(DOCS[i]||[]).filter(d=>!q||d.includes(q)||(CONC[d]||"").includes(q));
+    const items=ARCH.filter(r=>r.shelf===i+1&&(!q||r.path.includes(q)||(r.conclusion||"").includes(q)));
     if(!items.length) return;
     total+=items.length;
     const sec=document.createElement("section");
@@ -422,18 +422,27 @@ function render(q){
     sec.innerHTML=`<div class="shelf-head"><h3>${name}</h3><span class="count">${items.length}</span></div>
       <p class="shelf-desc">${desc}</p>`;
     const ul=document.createElement("ul");
-    items.forEach(d=>{
+    items.forEach(r=>{
+      const d=r.path, c=r.conclusion||"";
       const li=document.createElement("li");
       li.className="docli";
-      const c=CONC[d]||"";
-      li.innerHTML=`<details class="doc"><summary><span class="d">${dt(d)}</span><span class="t">${esc(d.replace(/_20\d{6}$/,"").replace(/_/g," "))}</span></summary>`+
+      li.innerHTML=`<details class="doc"><summary><span class="d">${r.doc_date||dt(d)}</span><span class="t">${esc(d.replace(/_20\d{6}$/,"").replace(/_/g," "))}</span></summary>`+
         (c?`<div class="doc-body">${esc(c)}</div>`:`<div class="doc-body doc-none">결론 줄이 기록되지 않은 문서입니다.</div>`)+`</details>`;
       ul.appendChild(li);
     });
     sec.appendChild(ul);
     shelves.appendChild(sec);
   });
-  if(!total) shelves.innerHTML='<p class="shelf-desc">자료실 목록은 봉인 조치로 내렸습니다 — 정적 파일에 실리면 로그인 없이 읽힙니다. 서버 열람(archive) 개통 후 다시 엽니다.</p>';
+  if(!total) shelves.innerHTML='<p class="shelf-desc">찾는 문서가 없습니다.</p>';
+}
+async function loadArchive(){
+  try{
+    const r=await fetch(SB_URL+"/functions/v1/archive",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+TOKEN},body:JSON.stringify({action:"list"})});
+    const j=await r.json();
+    if(j.ok){ ARCH=j.docs||[]; if(!ARCH.length) ARCH.msg="자료실이 비어 있습니다."; }
+    else { ARCH=[]; ARCH.msg="자료실을 열지 못했습니다: "+(j.error||r.status); }
+  }catch(e){ ARCH=[]; ARCH.msg="자료실 서버에 닿지 못했습니다."; }
+  render(document.getElementById("find").value);
 }
 render("");
 const drawer=document.getElementById("drawer"), maildrawer=document.getElementById("maildrawer"), scrim=document.getElementById("scrim");
@@ -550,6 +559,7 @@ document.getElementById("c-send").addEventListener("click",async()=>{
   lo.onclick=async()=>{ await sb.auth.signOut(); location.replace("login.html"); };
   await refresh();
   await openBox("ceo");
+  loadArchive();
   setInterval(refresh, 60000);
 })();
 </script>
