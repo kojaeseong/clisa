@@ -168,6 +168,13 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 .bars .cap{grid-column:1/-1;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
 @media (max-width:720px){.bars{grid-template-columns:1fr;gap:4px} .bars .vl{text-align:left;margin-bottom:8px}}
 
+/* 일자별 기록 패널 */
+.ledgerpanel{margin:0 0 34px}
+.ledgerpanel svg{width:100%;display:block;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px}
+#lp-bot{margin-top:6px}
+.lp-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0 0;font-family:var(--sans);font-size:12px;color:var(--muted)}
+.lp-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
 /* sections */
 h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
 h2 .n{font-weight:400;color:var(--muted);letter-spacing:0;text-transform:none;font-size:12px}
@@ -211,7 +218,7 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 .st.pending{color:var(--warn)} .st.approved{color:var(--good)} .st.rejected,.st.revoked{color:var(--muted)}
 .adminbox button{font:inherit;font-size:12px;padding:5px 10px;margin:2px 4px 2px 0;border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;border-radius:2px}
 .adminbox button.ok{border-color:var(--good);color:var(--good)} .adminbox button.no{border-color:var(--accent);color:var(--accent)}
-body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, body.locked .alloc, body.locked .bars, body.locked h2.sec, body.locked .tbl.sec, body.locked .note.sec, body.locked .principle{display:none}
+body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, body.locked .alloc, body.locked .bars, body.locked .ledgerpanel, body.locked h2.sec, body.locked .tbl.sec, body.locked .note.sec, body.locked .principle{display:none}
 .disc{margin-top:36px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
 .disc p{margin:0 0 8px}
 </style>
@@ -281,6 +288,14 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, b
 
   <div class="alloc" id="alloc" hidden></div>
   <div class="bars" id="bars" hidden></div>
+
+  <section class="ledgerpanel" id="lpanel" hidden>
+    <h2 class="sec"><span lang-ko>일자별 기록</span><span lang-en>Day by day</span><span class="n" id="lp-note"></span></h2>
+    <svg id="lp-top" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="daily returns"></svg>
+    <svg id="lp-bot" viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="daily composition"></svg>
+    <div id="lp-legend" class="lp-legend"></div>
+    <p class="note"><span lang-ko>위는 수익률(%), 아래는 관할 자산 구성입니다. 막대 높이는 공개 시작일을 100으로 둔 지수이며 금액은 표시하지 않습니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%). Bottom: composition; bar height is an index (public start = 100), no amounts shown. Both share one date axis.</span></p>
+  </section>
 
   <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
   <div class="tbl sec">
@@ -553,6 +568,7 @@ async function loadLedger(session){
   if(r.status===403){ showGate("g-pending"); return; }
   if(!r.ok){ showGate("g-error", "HTTP "+r.status); return; }
   applySheet(parseCSV(await r.text())); document.body.classList.remove("locked"); document.getElementById("gate").hidden=true; render();
+  try{ await drawLedgerPanel(session); }catch(e){ console.warn("panel", e); }
 }
 function esc(s){ return String(s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 async function loadAdmin(){
@@ -581,6 +597,91 @@ async function loadAdmin(){
     if(!p || p.status!=="approved"){ showGate("g-pending"); return; } }
   try{ await loadLedger(session); }catch(e){ showGate("g-error", String(e)); }
 })();
+/* ===== 일자별 기록 — 위 수익률, 아래 구성 (회원 전용, 서버 열람) ===== */
+const LP_COLOR = { MERITZ:"#E5533B", HRB:"#F0A852", SLM:"#8C6350", ACGL:"#8C6350", CASH:"#1E90B8" };
+const LP_INK = "#F4EDE1", LP_MUTE = "#6B6156", LP_GRID = "#241F1A";
+function lpColor(id, i){ return LP_COLOR[id] || ["#E5533B","#F0A852","#8C6350","#1E90B8","#A89C8C"][i % 5]; }
+function lpEsc(s){ return String(s==null?"":s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+async function drawLedgerPanel(session){
+  const sec = document.getElementById("lpanel"); if(!sec) return;
+  let J;
+  try{
+    const r = await fetch(SB_URL+"/functions/v1/chart", { method:"POST",
+      headers:{ "Content-Type":"application/json", apikey: SB_KEY, Authorization:"Bearer "+session.access_token },
+      body:"{}", cache:"no-store" });
+    J = await r.json();
+  }catch(e){ return; }
+  if(!J || !J.ok) return;
+
+  const hp = J.history_positions || [];
+  const posName = {}; (J.positions||[]).forEach(p=>{ posName[p.id] = t(p.ko||p.id, p.en||p.id); });
+  const days = [...new Set(hp.map(r=>r.d))].sort();
+  const retBy = {}; (J.history||[]).filter(h=>h.ret!=null).forEach(h=>{ retBy[h.d] = Number(h.ret); });
+
+  const note = document.getElementById("lp-note");
+  if(!days.length){
+    note.textContent = t("적재 대기 — 내일 아침 첫 점이 찍힙니다","waiting for the first daily record");
+    sec.hidden = false; return;
+  }
+  note.textContent = t(days.length+"일", days.length+" days");
+
+  const ref = {}; (J.positions||[]).forEach(p=>{ ref[p.id] = { w0:Number(p.weight0)||0, rp:Number(p.ref_price)||1, rf:Number(p.ref_fx)||1 }; });
+  const rows = days.map(d=>{
+    const parts = hp.filter(r=>r.d===d).map(r=>{
+      const R = ref[r.pos_id] || { w0:0, rp:1, rf:1 };
+      const g = (Number(r.price)*Number(r.fx)) / (R.rp*R.rf);
+      return { id:r.pos_id, v: R.w0 * g, stale: !!r.stale };
+    }).filter(p=>p.v>0);
+    const sum = parts.reduce((s,p)=>s+p.v,0);
+    return { d, parts, sum, ret: retBy[d] };
+  }).filter(r=>r.sum>0);
+  if(!rows.length){ sec.hidden=false; return; }
+
+  const idx = rows.map(r=>100*(1+(r.ret||0)/100));
+  const ids = [...new Set(rows.flatMap(r=>r.parts.map(p=>p.id)))];
+  const W=1000, TH=220, padT=16, padB=24;
+  const vs = rows.map(r=>r.ret).filter(x=>x!=null);
+  const lo=Math.min(0,...vs), hi=Math.max(0,...vs), span=(hi-lo)||1, pad=span*0.25;
+  const ty = x => padT + (TH-padT-padB)*(1-((x-(lo-pad))/(span+2*pad)));
+  const X = i => rows.length<2 ? W/2 : i/(rows.length-1)*W;
+  let top = "";
+  for(const g of [0.25,0.5,0.75]){ const yy=(padT+(TH-padT-padB)*g).toFixed(1); top += '<line x1="0" x2="'+W+'" y1="'+yy+'" y2="'+yy+'" stroke="'+LP_GRID+'"/>'; }
+  top += '<line x1="0" x2="'+W+'" y1="'+ty(0).toFixed(1)+'" y2="'+ty(0).toFixed(1)+'" stroke="#3A332C"/>';
+  const withRet = rows.filter(r=>r.ret!=null);
+  if(withRet.length>=2){
+    const pts = withRet.map(r=>X(rows.indexOf(r)).toFixed(1)+","+ty(r.ret).toFixed(1));
+    top += '<polyline points="'+pts.join(" ")+'" fill="none" stroke="'+LP_INK+'" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>';
+    const last = withRet[withRet.length-1];
+    top += '<circle cx="'+X(rows.indexOf(last)).toFixed(1)+'" cy="'+ty(last.ret).toFixed(1)+'" r="5" fill="'+LP_INK+'"/>';
+  }
+  document.getElementById("lp-top").innerHTML = top;
+
+  const BH=240, bpadT=14, bpadB=26, maxIdx=Math.max.apply(null, idx.concat([100]))*1.08;
+  const bw = Math.max(6, Math.min(46, W/rows.length*0.62));
+  let bot = '<line x1="0" x2="'+W+'" y1="'+(BH-bpadB).toFixed(1)+'" y2="'+(BH-bpadB).toFixed(1)+'" stroke="#3A332C"/>';
+  const y100 = (BH-bpadB-(100/maxIdx)*(BH-bpadT-bpadB)).toFixed(1);
+  bot += '<line x1="0" x2="'+W+'" y1="'+y100+'" y2="'+y100+'" stroke="'+LP_MUTE+'" stroke-dasharray="4 4"/>';
+  rows.forEach((r,i)=>{
+    const cx = X(i), h = (idx[i]/maxIdx)*(BH-bpadT-bpadB), yTop = BH-bpadB-h;
+    let acc = yTop;
+    r.parts.forEach((p,k)=>{
+      const seg = (p.v/r.sum)*h - (k<r.parts.length-1 ? 2 : 0);
+      if(seg<=0) return;
+      bot += '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+acc.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+seg.toFixed(1)+'" fill="'+lpColor(p.id, ids.indexOf(p.id))+'"'+(p.stale?' opacity="0.55"':'')+'/>';
+      acc += seg + 2;
+    });
+    bot += '<text x="'+cx.toFixed(1)+'" y="'+(yTop-5).toFixed(1)+'" fill="'+LP_INK+'" font-size="11" text-anchor="middle">'+idx[i].toFixed(1)+'</text>';
+    bot += '<text x="'+cx.toFixed(1)+'" y="'+(BH-8).toFixed(1)+'" fill="'+LP_MUTE+'" font-size="10" text-anchor="middle">'+lpEsc(r.d.slice(5))+'</text>';
+  });
+  document.getElementById("lp-bot").innerHTML = bot;
+
+  document.getElementById("lp-legend").innerHTML =
+    ids.map((id,i)=>'<span><i style="background:'+lpColor(id,i)+'"></i>'+lpEsc(posName[id]||id)+'</span>').join("") +
+    '<span><i style="background:'+LP_INK+'"></i>'+t("전체 수익률","total return")+'</span>';
+  sec.hidden = false;
+}
+
 window.onLang = ()=>{ if(!document.getElementById("admin").hidden) loadAdmin(); };
 </script>
 
