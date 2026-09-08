@@ -598,9 +598,13 @@ async function loadAdmin(){
   try{ await loadLedger(session); }catch(e){ showGate("g-error", String(e)); }
 })();
 /* ===== 일자별 기록 — 위 수익률, 아래 구성 (회원 전용, 서버 열람) ===== */
-const LP_COLOR = { MERITZ:"#E5533B", HRB:"#F0A852", SLM:"#8C6350", ACGL:"#8C6350", CASH:"#1E90B8" };
+/* 종목 식별자를 정적 파일에 두지 않는다(오류 61). 색은 서버가 준 순서와 성격으로만 정한다. */
+const LP_WARM = ["#E5533B","#F0A852","#C4703A","#D98F5A","#A8724A"], LP_CASH = "#1E90B8", LP_CLOSED = "#8C6350";
 const LP_INK = "#F4EDE1", LP_MUTE = "#6B6156", LP_GRID = "#241F1A";
-function lpColor(id, i){ return LP_COLOR[id] || ["#E5533B","#F0A852","#8C6350","#1E90B8","#A89C8C"][i % 5]; }
+function lpColor(meta, i){ if(!meta) return LP_WARM[i % LP_WARM.length];
+  if(meta.cash) return LP_CASH;
+  if(meta.closed) return LP_CLOSED;
+  return LP_WARM[i % LP_WARM.length]; }
 function lpEsc(s){ return String(s==null?"":s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
 async function drawLedgerPanel(session){
@@ -626,7 +630,8 @@ async function drawLedgerPanel(session){
   }
   note.textContent = t(days.length+"일", days.length+" days");
 
-  const ref = {}; (J.positions||[]).forEach(p=>{ ref[p.id] = { w0:Number(p.weight0)||0, rp:Number(p.ref_price)||1, rf:Number(p.ref_fx)||1 }; });
+  const ref = {}; (J.positions||[]).forEach(p=>{ ref[p.id] = { w0:Number(p.weight0)||0, rp:Number(p.ref_price)||1, rf:Number(p.ref_fx)||1,
+    cash: Number(p.ref_price)===1 && Number(p.ref_fx)===1, closed: p.status && p.status!=="open" }; });
   const rows = days.map(d=>{
     const parts = hp.filter(r=>r.d===d).map(r=>{
       const R = ref[r.pos_id] || { w0:0, rp:1, rf:1 };
@@ -668,7 +673,7 @@ async function drawLedgerPanel(session){
     r.parts.forEach((p,k)=>{
       const seg = (p.v/r.sum)*h - (k<r.parts.length-1 ? 2 : 0);
       if(seg<=0) return;
-      bot += '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+acc.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+seg.toFixed(1)+'" fill="'+lpColor(p.id, ids.indexOf(p.id))+'"'+(p.stale?' opacity="0.55"':'')+'/>';
+      bot += '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+acc.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+seg.toFixed(1)+'" fill="'+lpColor(ref[p.id], ids.indexOf(p.id))+'"'+(p.stale?' opacity="0.55"':'')+'/>';
       acc += seg + 2;
     });
     bot += '<text x="'+cx.toFixed(1)+'" y="'+(yTop-5).toFixed(1)+'" fill="'+LP_INK+'" font-size="11" text-anchor="middle">'+idx[i].toFixed(1)+'</text>';
@@ -677,7 +682,7 @@ async function drawLedgerPanel(session){
   document.getElementById("lp-bot").innerHTML = bot;
 
   document.getElementById("lp-legend").innerHTML =
-    ids.map((id,i)=>'<span><i style="background:'+lpColor(id,i)+'"></i>'+lpEsc(posName[id]||id)+'</span>').join("") +
+    ids.map((id,i)=>'<span><i style="background:'+lpColor(ref[id],i)+'"></i>'+lpEsc(posName[id]||id)+'</span>').join("") +
     '<span><i style="background:'+LP_INK+'"></i>'+t("전체 수익률","total return")+'</span>';
   sec.hidden = false;
 }
