@@ -151,7 +151,7 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 .pill.ok{color:var(--good)} .pill.open{color:var(--accent)} .pill.closed{color:var(--muted)} .pill.wait{color:var(--warn)}
 .pos{color:var(--good)} .neg{color:var(--accent)}
 .hid{color:var(--muted);font-style:italic}
-.note{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:10px;max-width:70ch}
+.note{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:10px}
 
 /* prose blocks */
 .prose{max-width:64ch}
@@ -327,7 +327,9 @@ function daysSince(iso){ const d=(Date.now()-new Date(iso+"T00:00:00+09:00"))/86
 
 function render(){
   countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
-  countUp(document.getElementById("s-hold"), DATA.open.length);
+  const isCash = p => p.entry==null && p.price===1;   /* 현금 자리 — 표에서 제외, 비중 각주에만 적는다 */
+  const stocks = DATA.open.filter(p=>!isCash(p)), cash = DATA.open.find(isCash);
+  countUp(document.getElementById("s-hold"), stocks.length);
   countUp(document.getElementById("s-closed"), DATA.closed.length);
   if(window.__lpJ) drawLedgerFrom(window.__lpJ);
   document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
@@ -335,7 +337,7 @@ function render(){
   const lb = document.getElementById("latest");
   if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
 
-  document.getElementById("open").innerHTML = DATA.open.map(p=>{
+  document.getElementById("open").innerHTML = stocks.map(p=>{
     const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
     return `<tr>
       <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
@@ -346,7 +348,9 @@ function render(){
       <td class="num">${p.weight==null?"—":p.weight.toFixed(0)+"%"}</td>
     </tr>`;}).join("");
   const wsum = DATA.open.reduce((a,p)=>a+(p.weight||0),0);
-  document.getElementById("wnote").textContent = wsum>0 ? t("비중은 투자 중인 금액을 100%로 한 값입니다. 현금은 제외.", "Weights are shares of invested capital (100%); cash excluded.") : "";
+  document.getElementById("wnote").textContent = wsum>0 ? (cash && cash.weight!=null
+    ? t(`비중은 현금을 포함한 총자산 대비입니다. 현금 ${cash.weight.toFixed(0)}%는 표에 넣지 않았습니다.`, `Weights are shares of total assets, cash included. Cash (${cash.weight.toFixed(0)}%) is not listed above.`)
+    : t("비중은 투자 중인 금액을 100%로 한 값입니다. 현금은 제외.", "Weights are shares of invested capital (100%); cash excluded.")) : "";
 
   document.getElementById("closed").innerHTML = DATA.closed.map(p=>`<tr>
       <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}</small></td>
