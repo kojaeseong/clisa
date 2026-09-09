@@ -123,57 +123,17 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 @media (prefers-reduced-motion: reduce){.dot{animation:none}}
 @media (max-width:720px){.strip{grid-template-columns:1fr}.strip>div{border-left:0;padding-left:0;border-bottom:1px solid var(--rule)}.strip>div:last-child{border-bottom:0}}
 
-/* performance chart */
-.perf{position:relative;margin:0 0 40px;padding:22px 0 0;border-top:1px solid var(--rule)}
-.perf-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:8px}
+/* ledger panel — two stacked panels, one date axis */
+.perf-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:12px}
 .big{font-family:var(--display);font-size:56px;font-weight:900;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:6px}
 .big small{font-size:15px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:0}
 .perf-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);text-align:right;max-width:30ch}
-#chart{display:block;width:100%;height:240px;overflow:visible}
-#chart .area{fill:url(#g1)}
-#chart .line{fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
-#chart .zero{stroke:var(--rule);stroke-width:1;stroke-dasharray:4 6;vector-effect:non-scaling-stroke}
-#chart .grid{stroke:var(--rule);stroke-width:1;opacity:.5;vector-effect:non-scaling-stroke}
-#chart .end{fill:var(--accent)}
-#chart .halo{fill:var(--accent);opacity:.25;animation:halo 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
-@keyframes halo{0%{transform:scale(1);opacity:.35}100%{transform:scale(3.2);opacity:0}}
-#chart .draw{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1.6s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-#chart .fade{opacity:0;animation:fade 1.2s .6s ease forwards}
-@keyframes fade{to{opacity:1}}
-@media (prefers-reduced-motion: reduce){#chart .halo,#chart .draw,#chart .fade{animation:none;stroke-dashoffset:0;opacity:1}}
-.axis{display:flex;justify-content:space-between;font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
-@media (max-width:720px){.big{font-size:40px} #chart{height:180px} .perf-head{flex-direction:column;align-items:flex-start} .perf-note{text-align:left}}
-
-/* allocation band */
-.alloc{margin:0 0 28px}
-.alloc .band{display:flex;height:44px;border-radius:3px;overflow:hidden;gap:3px}
-.alloc .seg{position:relative;display:flex;align-items:center;padding:0 12px;font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.01em;color:var(--accent-ink);background:var(--accent);white-space:nowrap;overflow:hidden;min-width:0;transition:flex-grow .8s cubic-bezier(.4,0,.2,1)}
-.alloc .seg:nth-child(2){background:color-mix(in srgb,var(--accent) 72%,var(--bg))}
-.alloc .seg:nth-child(3){background:color-mix(in srgb,var(--accent) 50%,var(--bg))}
-.alloc .seg:nth-child(4){background:color-mix(in srgb,var(--accent) 34%,var(--bg))}
-.alloc .seg:nth-child(n+5){background:color-mix(in srgb,var(--accent) 22%,var(--bg))}
-.alloc .seg b{font-weight:400;opacity:.85;margin-left:8px;font-family:var(--sans);font-size:12px}
-.alloc .cap{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 0 0}
-
-/* return bars */
-.bars{margin:0 0 12px;display:grid;grid-template-columns:minmax(120px,180px) 1fr 84px;gap:10px 14px;align-items:center;font-family:var(--sans)}
-.bars .nm{font-family:var(--display);font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
-.bars .tr{position:relative;height:26px;background:var(--bg2);border-radius:2px;overflow:hidden}
-.bars .tr::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
-.bars .fill{position:absolute;top:0;bottom:0;border-radius:2px;transition:width .9s cubic-bezier(.4,0,.2,1)}
-.bars .fill.pos{left:50%;background:var(--good)}
-.bars .fill.neg{right:50%;background:var(--accent)}
-.bars .vl{font-family:var(--display);font-weight:800;font-size:15px;text-align:right;font-variant-numeric:tabular-nums}
-.bars .cap{grid-column:1/-1;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
-@media (max-width:720px){.bars{grid-template-columns:1fr;gap:4px} .bars .vl{text-align:left;margin-bottom:8px}}
-
-/* 일자별 기록 패널 */
-.ledgerpanel{margin:0 0 34px}
-.ledgerpanel svg{width:100%;display:block;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px}
-#lp-bot{margin-top:6px}
-.lp-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0 0;font-family:var(--sans);font-size:12px;color:var(--muted)}
-.lp-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.ledgerpanel{margin:0 0 40px;padding:22px 0 0;border-top:1px solid var(--rule)}
+#lp-wrap{width:100%}
+#lp{display:block;width:100%;height:auto;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px;font-family:var(--sans);font-variant-numeric:tabular-nums}
+#lp text{font-family:var(--sans)}
+#lp .lbl{font-family:var(--display);font-weight:800}
+@media (max-width:720px){.big{font-size:40px} .perf-head{flex-direction:column;align-items:flex-start} .perf-note{text-align:left}}
 
 /* sections */
 h2{font-size:15px;font-family:var(--sans);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--accent);display:flex;justify-content:space-between;align-items:baseline}
@@ -218,7 +178,7 @@ td.tk small{display:block;font-family:var(--sans);font-weight:400;font-size:12px
 .st.pending{color:var(--warn)} .st.approved{color:var(--good)} .st.rejected,.st.revoked{color:var(--muted)}
 .adminbox button{font:inherit;font-size:12px;padding:5px 10px;margin:2px 4px 2px 0;border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;border-radius:2px}
 .adminbox button.ok{border-color:var(--good);color:var(--good)} .adminbox button.no{border-color:var(--accent);color:var(--accent)}
-body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, body.locked .alloc, body.locked .bars, body.locked .ledgerpanel, body.locked h2.sec, body.locked .tbl.sec, body.locked .note.sec, body.locked .principle{display:none}
+body.locked .lede, body.locked .strip, body.locked .latest, body.locked .ledgerpanel, body.locked h2.sec, body.locked .tbl.sec, body.locked .note.sec, body.locked .principle{display:none}
 .disc{margin-top:36px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;color:var(--muted);max-width:72ch}
 .disc p{margin:0 0 8px}
 </style>
@@ -277,24 +237,13 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .perf, b
   </div>
   <div class="latest" id="latest" hidden><span class="dot" aria-hidden="true"></span><span id="latest-text"></span></div>
 
-  <section class="perf" aria-label="Portfolio chart">
+  <section class="ledgerpanel" id="lpanel" hidden aria-label="Ledger chart">
     <div class="perf-head">
       <div><div class="k"><span lang-ko>포트폴리오 · 공개 시작 이후</span><span lang-en>Portfolio · since public start</span></div><div class="big" id="c-val">—</div></div>
-      <div class="perf-note" id="c-note"></div>
+      <div class="perf-note" id="lp-note"></div>
     </div>
-    <svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none" role="img" aria-hidden="true"></svg>
-    <div class="axis"><span id="ax0"></span><span id="ax1"></span></div>
-  </section>
-
-  <div class="alloc" id="alloc" hidden></div>
-  <div class="bars" id="bars" hidden></div>
-
-  <section class="ledgerpanel" id="lpanel" hidden>
-    <h2 class="sec"><span lang-ko>일자별 기록</span><span lang-en>Day by day</span><span class="n" id="lp-note"></span></h2>
-    <svg id="lp-top" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="daily returns"></svg>
-    <svg id="lp-bot" viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="daily composition"></svg>
-    <div id="lp-legend" class="lp-legend"></div>
-    <p class="note"><span lang-ko>위는 수익률(%), 아래는 관할 자산 구성입니다. 막대 높이는 공개 시작일을 100으로 둔 지수이며 금액은 표시하지 않습니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%). Bottom: composition; bar height is an index (public start = 100), no amounts shown. Both share one date axis.</span></p>
+    <div id="lp-wrap"><svg id="lp" role="img" aria-label="daily returns and composition"></svg></div>
+    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 아래는 자산 규모와 구성 — 막대 높이는 공개 시작일 총자산을 100으로 둔 지수이며 금액은 표시하지 않습니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Bottom: size and composition — bar height is an index (total assets at public start = 100); no amounts shown. Shaded columns are market holidays, carried over from the previous session. Both share one date axis.</span></p>
   </section>
 
   <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
@@ -375,63 +324,11 @@ function countUp(el, target){
 }
 function daysSince(iso){ const d=(Date.now()-new Date(iso+"T00:00:00+09:00"))/864e5; return Math.max(0,Math.floor(d)); }
 
-/* 큰 그래프 — 공개 시작 이후 포트폴리오 수익률. 점이 둘 이상이면 선, 하나면 출발점. */
-function drawChart(port, days){
-  const svg = document.getElementById("chart"), W=1000, Hh=260, padT=28, padB=24;
-  const H = (DATA.history||[]).filter(h=>h.v!=null).slice();
-  if(!H.length && port!=null) H.push({d:DATA.asOf, v:port});
-  const base = DATA.returnBase || DATA.publicSince;
-  if(!H.length || H[0].d!==base) H.unshift({d:base, v:0});
-  const cv = document.getElementById("c-val"), note = document.getElementById("c-note");
-  const last = H[H.length-1].v;
-  const bdays = daysSince(base);
-  cv.innerHTML = H.length<2 && port==null ? `<span class="hid" style="font-style:normal">0.00%</span>` : pct(last) + (bdays>=365 ? `<small>${t("연환산 ","annualised ")+pct((Math.pow(1+last/100,365/bdays)-1)*100)}</small>` : "");
-  cv.className = "big "+(H.length<2 && port==null ? "" : (last<0?"neg":"pos"));
-  note.textContent = (H.length<2 ? t("선은 매일 한 점씩 자랍니다. 지금은 출발점입니다.","The line grows one point a day. This is the starting point.") : t(`${H.length}일의 기록`,`${H.length} days on record`)) + (DATA.returnBase && DATA.returnBase!==DATA.publicSince ? t(` · 수익률 기준일 ${DATA.returnBase} 마감`,` · returns measured from the ${DATA.returnBase} close`) : "");
-  document.getElementById("ax0").textContent = H[0].d;
-  document.getElementById("ax1").textContent = H.length<2 ? t("오늘","today") : H[H.length-1].d;
-  const vs=H.map(h=>h.v); let lo=Math.min(0,...vs), hi=Math.max(0,...vs); if(H.length<2){lo=-1;hi=1;} const span=(hi-lo)||1, pad=span*.25;
-  const y=v=>padT+(Hh-padT-padB)*(1-((v-(lo-pad))/(span+2*pad)));
-  const x=i=>H.length<2 ? 0 : i/(H.length-1)*W;
-  const z=y(0).toFixed(1);
-  let inner=`<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".55"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
-  for(const g of [.25,.5,.75]) inner+=`<line class="grid" x1="0" x2="${W}" y1="${(padT+(Hh-padT-padB)*g).toFixed(1)}" y2="${(padT+(Hh-padT-padB)*g).toFixed(1)}"/>`;
-  inner+=`<line class="zero" x1="0" x2="${W}" y1="${z}" y2="${z}"/>`;
-  if(H.length>=2){
-    const pts=H.map((h,i)=>`${x(i).toFixed(1)},${y(h.v).toFixed(1)}`);
-    inner+=`<path class="area fade" d="M0,${z} L${pts.join(" L")} L${W},${z} Z"/>`;
-    inner+=`<polyline class="line draw" points="${pts.join(" ")}"/>`;
-    const [ex,ey]=pts[pts.length-1].split(",");
-    inner+=`<circle class="halo" cx="${ex}" cy="${ey}" r="7"/><circle class="end" cx="${ex}" cy="${ey}" r="6"/>`;
-  } else {
-    inner+=`<circle class="halo" cx="0" cy="${z}" r="7"/><circle class="end" cx="0" cy="${z}" r="6"/>`;
-  }
-  svg.innerHTML = inner;
-}
-
-/* 비중 띠 + 종목별 수익률 막대 */
-function drawPositions(){
-  const A=document.getElementById("alloc"), B=document.getElementById("bars");
-  const withW = DATA.open.filter(p=>p.weight>0);
-  if(withW.length){
-    A.innerHTML = `<div class="band">${withW.map(p=>`<div class="seg" style="flex-grow:${p.weight}" title="${t(p.ko,p.en)} ${p.weight.toFixed(0)}%">${t(p.ko,p.en)}<b>${p.weight.toFixed(0)}%</b></div>`).join("")}</div><div class="cap">${t("비중 · 투자 중인 금액 기준","Weight · share of invested capital")}</div>`;
-    A.hidden=false;
-  } else A.hidden=true;
-  const rows = DATA.open.map(p=>({n:t(p.ko,p.en), r:(p.entry&&p.price)?(p.price/p.entry-1)*100:null})).filter(r=>r.r!=null);
-  if(rows.length){
-    const mx = Math.max(10, ...rows.map(r=>Math.abs(r.r)));
-    B.innerHTML = rows.map(r=>`<div class="nm">${r.n}</div><div class="tr"><div class="fill ${r.r<0?"neg":"pos"}" style="width:${(Math.abs(r.r)/mx*50).toFixed(1)}%"></div></div><div class="vl ${cls(r.r)}">${pct(r.r)}</div>`).join("")+`<div class="cap">${t("종목별 수익률 · 평균 매수가 대비","Return per position · vs. average entry")}</div>`;
-    B.hidden=false;
-  } else B.hidden=true;
-}
-
 function render(){
-  drawPositions();
   countUp(document.getElementById("s-days"), daysSince(DATA.publicSince));
   countUp(document.getElementById("s-hold"), DATA.open.length);
   countUp(document.getElementById("s-closed"), DATA.closed.length);
-  const port = DATA.portfolioSincePublic, days = daysSince(DATA.publicSince);
-  drawChart(port, days);
+  if(window.__lpJ) drawLedgerFrom(window.__lpJ);
   document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
   const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 정리 완료", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
   const lb = document.getElementById("latest");
@@ -552,9 +449,9 @@ function applySheet(rows){
       if(k==="errorLedgerTotal") D.errorLedgerTotal=num(v);
       if(k==="portfolioSincePublic") D.portfolioSincePublic=num(v);
       if(k==="latest") D.latest={date:get(r,"en")||"", ko:v, en:get(r,"mkt")||v}; }
-    else if(t==="open") D.open.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
+    else if(t==="open") D.open.push({id:get(r,"key"),ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),qual:get(r,"qual")||"pass",entry:num(get(r,"entry")),price:num(get(r,"price")),weight:num(get(r,"weight")),source:get(r,"source"),thesisKo:get(r,"thesis_ko"),thesisEn:get(r,"thesis_en"),compliance:get(r,"compliance")||"ok"});
     else if(t==="history"){ (D.history=D.history||[]).push({d:get(r,"key"), v:num(get(r,"ko"))}); }
-    else if(t==="closed") D.closed.push({ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),to:get(r,"to"),days:num(get(r,"days")),entry:num(get(r,"entry")),exit:num(get(r,"exit")),ret:num(get(r,"ret")),baseline:get(r,"baseline"),gate:get(r,"gate"),reasonKo:get(r,"reason_ko"),reasonEn:get(r,"reason_en")});
+    else if(t==="closed") D.closed.push({id:get(r,"key"),ko:get(r,"ko"),en:get(r,"en"),mkt:get(r,"mkt"),ccy:get(r,"ccy"),from:get(r,"from"),to:get(r,"to"),days:num(get(r,"days")),entry:num(get(r,"entry")),exit:num(get(r,"exit")),ret:num(get(r,"ret")),baseline:get(r,"baseline"),gate:get(r,"gate"),reasonKo:get(r,"reason_ko"),reasonEn:get(r,"reason_en")});
     else if(t==="error") D.errors.push({id:num(get(r,"key")),ko:get(r,"ko"),en:get(r,"en")});
   }
   if(!D.open.length && !D.closed.length) throw new Error("empty");
@@ -597,15 +494,18 @@ async function loadAdmin(){
     if(!p || p.status!=="approved"){ showGate("g-pending"); return; } }
   try{ await loadLedger(session); }catch(e){ showGate("g-error", String(e)); }
 })();
-/* ===== 일자별 기록 — 위 수익률, 아래 구성 (회원 전용, 서버 열람) ===== */
-/* 종목 식별자를 정적 파일에 두지 않는다(오류 61). 색은 서버가 준 순서와 성격으로만 정한다. */
-const LP_WARM = ["#E5533B","#F0A852","#C4703A","#D98F5A","#A8724A"], LP_CASH = "#1E90B8", LP_CLOSED = "#8C6350";
-const LP_INK = "#F4EDE1", LP_MUTE = "#6B6156", LP_GRID = "#241F1A";
-function lpColor(meta, i){ if(!meta) return LP_WARM[i % LP_WARM.length];
-  if(meta.cash) return LP_CASH;
-  if(meta.closed) return LP_CLOSED;
-  return LP_WARM[i % LP_WARM.length]; }
+/* ===== 일자별 기록 — 위 수익률(%), 아래 자산 규모·구성(지수). 회원 전용, 서버 열람(chart 함수). ===== */
+/* 종목 식별자·가격·평단을 이 파일에 두지 않는다(오류 61·69). 색은 서버가 준 데이터의 성격(현금/청산/진행)과 순서로만 정한다. */
+const LP = {
+  bg:"#0F0D0B", ink:"#F4EDE1", mute:"#A89C8C", grid:"#241F1A", axis:"#3A332C", foot:"#6B6156",
+  warm:["#E5533B","#F0A852","#C4703A","#D98F5A"], cash:"#1E90B8", closed:"#8C6350",
+  shadeBoth:"#1E1815", shadeOne:"#161210"
+};
+function lpColor(meta, i){ if(!meta) return LP.warm[i % LP.warm.length];
+  if(meta.cash) return LP.cash; if(meta.closed) return LP.closed; return LP.warm[i % LP.warm.length]; }
 function lpEsc(s){ return String(s==null?"":s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+const lpNum = v => (v==null||v==="") ? null : (isNaN(+v) ? null : +v);
+const lpPct = v => (v>0?"+":"")+v.toFixed(2)+"%";
 
 async function drawLedgerPanel(session){
   const sec = document.getElementById("lpanel"); if(!sec) return;
@@ -617,74 +517,163 @@ async function drawLedgerPanel(session){
     J = await r.json();
   }catch(e){ return; }
   if(!J || !J.ok) return;
+  window.__lpJ = J;
+  drawLedgerFrom(J);
+  let tm; window.addEventListener("resize", ()=>{ clearTimeout(tm); tm=setTimeout(()=>drawLedgerFrom(J), 120); });
+}
 
-  const hp = J.history_positions || [];
-  const posName = {}; (J.positions||[]).forEach(p=>{ posName[p.id] = t(p.ko||p.id, p.en||p.id); });
-  const days = [...new Set(hp.map(r=>r.d))].sort();
-  const retBy = {}; (J.history||[]).filter(h=>h.ret!=null).forEach(h=>{ retBy[h.d] = Number(h.ret); });
+/* 평균 매수가 — 서버 응답에 있으면 그 값, 없으면 원장(ledger)에서 같은 이름의 자리를 찾는다. 못 찾으면 결측(선을 긋지 않는다). */
+function lpEntry(p){
+  for(const k of ["entry","avg_entry","avg_price","entry_price"]) if(lpNum(p[k])!=null) return lpNum(p[k]);
+  const hit = [...(DATA.open||[]), ...(DATA.closed||[])].find(q => q.id && q.id===p.id);
+  return hit ? lpNum(hit.entry) : null;
+}
 
-  const note = document.getElementById("lp-note");
-  if(!days.length){
-    note.textContent = t("적재 대기 — 내일 아침 첫 점이 찍힙니다","waiting for the first daily record");
-    sec.hidden = false; return;
-  }
-  note.textContent = t(days.length+"일", days.length+" days");
+function drawLedgerFrom(J){
+  const sec = document.getElementById("lpanel"), svg = document.getElementById("lp"), note = document.getElementById("lp-note"), cv = document.getElementById("c-val");
+  const hp = J.history_positions || [], P = J.positions || [], H = (J.history||[]).filter(h=>lpNum(h.ret)!=null);
+  const asOf = (J.meta&&J.meta.asOf)||null, epochStart = (J.meta&&J.meta.epochStart)||null;
+  const days = [...new Set(hp.map(r=>r.d))].filter(d=>!asOf || d<=asOf).sort();
+  const retBy = {}; H.forEach(h=>{ retBy[h.d] = lpNum(h.ret); });
 
-  const ref = {}; (J.positions||[]).forEach(p=>{ ref[p.id] = { w0:Number(p.weight0)||0, rp:Number(p.ref_price)||1, rf:Number(p.ref_fx)||1,
-    cash: Number(p.ref_price)===1 && Number(p.ref_fx)===1, closed: p.status && p.status!=="open" }; });
-  const rows = days.map(d=>{
-    const parts = hp.filter(r=>r.d===d).map(r=>{
-      const R = ref[r.pos_id] || { w0:0, rp:1, rf:1 };
-      const g = (Number(r.price)*Number(r.fx)) / (R.rp*R.rf);
-      return { id:r.pos_id, v: R.w0 * g, stale: !!r.stale };
-    }).filter(p=>p.v>0);
-    const sum = parts.reduce((s,p)=>s+p.v,0);
-    return { d, parts, sum, ret: retBy[d] };
-  }).filter(r=>r.sum>0);
-  if(!rows.length){ sec.hidden=false; return; }
-
-  const idx = rows.map(r=>100*(1+(r.ret||0)/100));
-  const ids = [...new Set(rows.flatMap(r=>r.parts.map(p=>p.id)))];
-  const W=1000, TH=220, padT=16, padB=24;
-  const vs = rows.map(r=>r.ret).filter(x=>x!=null);
-  const lo=Math.min(0,...vs), hi=Math.max(0,...vs), span=(hi-lo)||1, pad=span*0.25;
-  const ty = x => padT + (TH-padT-padB)*(1-((x-(lo-pad))/(span+2*pad)));
-  const X = i => rows.length<2 ? W/2 : i/(rows.length-1)*W;
-  let top = "";
-  for(const g of [0.25,0.5,0.75]){ const yy=(padT+(TH-padT-padB)*g).toFixed(1); top += '<line x1="0" x2="'+W+'" y1="'+yy+'" y2="'+yy+'" stroke="'+LP_GRID+'"/>'; }
-  top += '<line x1="0" x2="'+W+'" y1="'+ty(0).toFixed(1)+'" y2="'+ty(0).toFixed(1)+'" stroke="#3A332C"/>';
-  const withRet = rows.filter(r=>r.ret!=null);
-  if(withRet.length>=2){
-    const pts = withRet.map(r=>X(rows.indexOf(r)).toFixed(1)+","+ty(r.ret).toFixed(1));
-    top += '<polyline points="'+pts.join(" ")+'" fill="none" stroke="'+LP_INK+'" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>';
-    const last = withRet[withRet.length-1];
-    top += '<circle cx="'+X(rows.indexOf(last)).toFixed(1)+'" cy="'+ty(last.ret).toFixed(1)+'" r="5" fill="'+LP_INK+'"/>';
-  }
-  document.getElementById("lp-top").innerHTML = top;
-
-  const BH=240, bpadT=14, bpadB=26, maxIdx=Math.max.apply(null, idx.concat([100]))*1.08;
-  const bw = Math.max(6, Math.min(46, W/rows.length*0.62));
-  let bot = '<line x1="0" x2="'+W+'" y1="'+(BH-bpadB).toFixed(1)+'" y2="'+(BH-bpadB).toFixed(1)+'" stroke="#3A332C"/>';
-  const y100 = (BH-bpadB-(100/maxIdx)*(BH-bpadT-bpadB)).toFixed(1);
-  bot += '<line x1="0" x2="'+W+'" y1="'+y100+'" y2="'+y100+'" stroke="'+LP_MUTE+'" stroke-dasharray="4 4"/>';
-  rows.forEach((r,i)=>{
-    const cx = X(i), h = (idx[i]/maxIdx)*(BH-bpadT-bpadB), yTop = BH-bpadB-h;
-    let acc = yTop;
-    r.parts.forEach((p,k)=>{
-      const seg = (p.v/r.sum)*h - (k<r.parts.length-1 ? 2 : 0);
-      if(seg<=0) return;
-      bot += '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+acc.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+seg.toFixed(1)+'" fill="'+lpColor(ref[p.id], ids.indexOf(p.id))+'"'+(p.stale?' opacity="0.55"':'')+'/>';
-      acc += seg + 2;
-    });
-    bot += '<text x="'+cx.toFixed(1)+'" y="'+(yTop-5).toFixed(1)+'" fill="'+LP_INK+'" font-size="11" text-anchor="middle">'+idx[i].toFixed(1)+'</text>';
-    bot += '<text x="'+cx.toFixed(1)+'" y="'+(BH-8).toFixed(1)+'" fill="'+LP_MUTE+'" font-size="10" text-anchor="middle">'+lpEsc(r.d.slice(5))+'</text>';
-  });
-  document.getElementById("lp-bot").innerHTML = bot;
-
-  document.getElementById("lp-legend").innerHTML =
-    ids.map((id,i)=>'<span><i style="background:'+lpColor(ref[id],i)+'"></i>'+lpEsc(posName[id]||id)+'</span>').join("") +
-    '<span><i style="background:'+LP_INK+'"></i>'+t("전체 수익률","total return")+'</span>';
+  /* 머리글 — 공개 개시 이후 누적 */
+  if(H.length){ const last = lpNum(H[H.length-1].ret); cv.textContent = lpPct(last); cv.className = "big "+(last<0?"neg":"pos"); }
+  else { cv.textContent = "—"; cv.className = "big"; }
   sec.hidden = false;
+  if(!days.length){ note.textContent = t("적재 대기 — 내일 아침 첫 점이 찍힙니다","waiting for the first daily record"); svg.innerHTML=""; return; }
+  note.textContent = t(days.length+"일의 기록 · 매일 07:00 갱신", days.length+" days on record · updated 07:00 KST");
+
+  /* 자리 메타 */
+  const meta = {}; P.forEach(p=>{ meta[p.id] = {
+    name: t(p.ko||p.id, p.en||p.id), ccy:p.ccy,
+    w0:lpNum(p.weight0)||0, rp:lpNum(p.ref_price)||1, rf:lpNum(p.ref_fx)||1,
+    cash: lpNum(p.ref_price)===1 && lpNum(p.ref_fx)===1,
+    closed: !!(p.status && p.status!=="open"), closedOn: p.closed||null, closedRet: lpNum(p.ret), entry: lpEntry(p) }; });
+  const ids = []; hp.forEach(r=>{ if(!ids.includes(r.pos_id)) ids.push(r.pos_id); });
+  const warmIdx = {}; let wi=0; ids.forEach(id=>{ const m=meta[id]; if(m && !m.cash && !m.closed) warmIdx[id]=wi++; });
+  ids.forEach(id=>{ if(warmIdx[id]==null) warmIdx[id]=wi++; });
+  const colorOf = id => lpColor(meta[id], warmIdx[id]);
+
+  /* 일자별 행: 구성(정규화 비중×지수), 자리별 수익률, 개장 여부 */
+  /* 구성 — 확실한 것만 그린다.
+     ① 행에 weight(그날 총자산 대비 %)가 있으면 그 값.
+     ② 없으면 에폭 개시일 이후이고 그날 모든 자리에 weight0·ref가 있을 때만 weight0×(price·fx)/(ref_price·ref_fx) 정규화.
+     ③ 둘 다 아니면 구성 결측 — 막대 높이(지수)만 그리고 "구성 미저장"으로 표기. 추정하지 않는다. */
+  const rows = days.map(d=>{
+    const rs = hp.filter(r=>r.d===d && meta[r.pos_id]);
+    const ret = retBy[d]; const idx = ret==null ? null : 100*(1+ret/100);
+    const parts = rs.map(r=>{ const m = meta[r.pos_id];
+      const px = lpNum(r.price), fx = lpNum(r.fx)==null ? 1 : lpNum(r.fx);
+      return { id:r.pos_id, price:px, w:lpNum(r.weight), hasW0: lpNum(r.pos_id && m.w0)!=null && m.w0>0 && lpNum(m.rp)!=null, stale:!!r.stale,
+        v: (px!=null && m.w0>0) ? m.w0*(px*fx)/(m.rp*m.rf) : null,
+        ret: (!m.cash && m.entry && px!=null) ? (px/m.entry-1)*100 : null }; });
+    let known = false;
+    if(parts.length && parts.every(p=>p.w!=null)){ const sw = parts.reduce((s,p)=>s+p.w,0); if(sw>0){ parts.forEach(p=>{ p.share=p.w/sw; }); known=true; } }
+    else if(parts.length && epochStart && d>=epochStart && parts.every(p=>p.v!=null && p.v>0)){ const sv = parts.reduce((s,p)=>s+p.v,0); parts.forEach(p=>{ p.share=p.v/sv; }); known=true; }
+    if(known && idx!=null) parts.forEach(p=>{ p.seg = p.share*idx; });
+    const kr = rs.find(r=>r.kr_open!=null), us = rs.find(r=>r.us_open!=null);
+    return { d, parts, idx, ret, known: known && idx!=null, stale: rs.some(r=>r.stale), kr: kr ? !!kr.kr_open : null, us: us ? !!us.us_open : null };
+  });
+
+  /* 기하 */
+  const W = Math.max(320, sec.clientWidth||0), narrow = W<560;
+  const padL = narrow?38:46, padR = narrow?104:150, padT = 30, gap = 26, TH = narrow?190:230, BH = narrow?200:250, padB = 30;
+  const Hh = padT+TH+gap+BH+padB;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.setAttribute("height", Hh);
+  const n = rows.length, colW = (W-padL-padR)/n, X = i => padL + colW*(i+0.5);
+  const bw = Math.max(8, Math.min(60, colW*0.62));
+  const fs = narrow?10:11;
+  let out = "";
+  const txt = (x,y,s,o={}) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${o.fill||LP.ink}" font-size="${o.fs||fs}" text-anchor="${o.anchor||"middle"}" ${o.cls?`class="${o.cls}"`:""} ${o.weight?`font-weight="${o.weight}"`:""} ${o.op?`opacity="${o.op}"`:""}>${lpEsc(s)}</text>`;
+
+  /* 휴장 음영 — 두 패널을 관통. 같은 상태가 이어지면 한 띠로 묶어 라벨 하나만 단다. */
+  const shadeOf = r => (r.kr===false && r.us===false) ? "both" : (r.kr===false ? "kr" : (r.us===false ? "us" : null));
+  for(let i=0;i<n;){
+    const st = shadeOf(rows[i]); if(!st){ i++; continue; }
+    let j=i; while(j+1<n && shadeOf(rows[j+1])===st) j++;
+    const x0 = padL+colW*i, wd = colW*(j-i+1);
+    out += `<rect x="${x0.toFixed(1)}" y="${(padT-12).toFixed(1)}" width="${wd.toFixed(1)}" height="${(TH+gap+BH+12).toFixed(1)}" fill="${st==="both"?LP.shadeBoth:LP.shadeOne}"/>`;
+    const lab = narrow ? (st==="both" ? "KR·US" : st.toUpperCase()) : (st==="both" ? t("한국 · 미국 휴장","KR · US closed") : (st==="kr" ? t("한국 휴장","KR closed") : t("미국 휴장","US closed")));
+    out += txt(x0+wd/2, padT-2, lab, {fill:LP.foot, fs:narrow?8:9.5, op:0.9});
+    i=j+1;
+  }
+  const short = s => (narrow && s.length>9) ? s.slice(0,8)+"…" : s;
+
+  /* ── 위: 수익률(%) — 한 축 ── */
+  const series = ids.filter(id=>meta[id] && !meta[id].cash).map(id=>({ id, pts: rows.map((r,i)=>{ const p=r.parts.find(q=>q.id===id); return (p&&p.ret!=null) ? {i, v:p.ret} : null; }).filter(Boolean) })).filter(sr=>sr.pts.length);
+  const closeMarks = ids.map(id=>meta[id]).filter(m=>m && m.closed && m.closedOn && m.closedRet!=null && days.includes(m.closedOn)).map(m=>({ m, i:days.indexOf(m.closedOn) }));
+  const tot = rows.map((r,i)=> r.ret==null ? null : {i, v:r.ret}).filter(Boolean);
+  const allV = [0, ...series.flatMap(s=>s.pts.map(p=>p.v)), ...tot.map(p=>p.v), ...closeMarks.map(c=>c.m.closedRet)];
+  let lo = Math.min(...allV), hi = Math.max(...allV); const span = (hi-lo)||1; lo -= span*0.12; hi += span*0.12;
+  const ty = v => padT + TH*(1-(v-lo)/(hi-lo));
+  const step = (()=>{ const raw=(hi-lo)/4, e=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/e; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*e; })();
+  for(let v=Math.ceil(lo/step)*step; v<=hi; v+=step){
+    const y=ty(v); out += `<line x1="${padL}" x2="${W-padR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${Math.abs(v)<1e-9?LP.axis:LP.grid}"/>`;
+    out += txt(padL-6, y+3.5, (v>0?"+":"")+(step<1?v.toFixed(1):v.toFixed(0))+"%", {fill:LP.mute, fs:fs-1, anchor:"end"});
+  }
+  const labels = [];
+  const drawLine = (pts, color, width, label, dash) => {
+    if(!pts.length) return;
+    const d = pts.map(p=>`${X(p.i).toFixed(1)},${ty(p.v).toFixed(1)}`);
+    if(pts.length>=2) out += `<polyline points="${d.join(" ")}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round"${dash?` stroke-dasharray="${dash}"`:""}/>`;
+    pts.forEach(p=>{ out += `<circle cx="${X(p.i).toFixed(1)}" cy="${ty(p.v).toFixed(1)}" r="${width>=3?4:2.6}" fill="${color}"/>`; });
+    const last = pts[pts.length-1];
+    labels.push({ x:X(last.i)+8, y:ty(last.v), text:`${short(label)} ${lpPct(last.v)}`, color, bold:width>=3 });
+  };
+  series.forEach(sr=>{ const m=meta[sr.id]; drawLine(sr.pts, colorOf(sr.id), 2.2, m.name); });
+  drawLine(tot, LP.ink, 3.2, t("전체","Total"));
+  closeMarks.forEach(c=>{ const x=X(c.i), y=ty(c.m.closedRet);
+    out += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${LP.bg}" stroke="${LP.closed}" stroke-width="2"/>`;
+    labels.push({ x:x+8, y, text:`${short(c.m.name)} ${t("청산","closed")} ${lpPct(c.m.closedRet)}`, color:LP.closed }); });
+  /* 끝 라벨 — 겹침 풀기 */
+  labels.sort((a,b)=>a.y-b.y); const lh = fs+3;
+  for(let k=1;k<labels.length;k++) if(labels[k].y < labels[k-1].y+lh) labels[k].y = labels[k-1].y+lh;
+  for(let k=labels.length-1;k>=0;k--){ const maxY = padT+TH-2; if(labels[k].y>maxY) labels[k].y=maxY; if(k<labels.length-1 && labels[k].y>labels[k+1].y-lh) labels[k].y=labels[k+1].y-lh; }
+  labels.forEach(l=>{ out += txt(l.x, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl", fs:l.bold?fs+1:fs}); });
+  out += txt(padL, padT-14, t("수익률 (%)","Return (%)"), {fill:LP.mute, fs:fs-1, anchor:"start"});
+
+  /* ── 아래: 자산 규모·구성(지수) ── */
+  const bTop = padT+TH+gap, base = bTop+BH;
+  const idxs = rows.map(r=>r.idx).filter(v=>v!=null);
+  const maxIdx = Math.max(100, ...idxs)*1.1;
+  const by = v => base - BH*(v/maxIdx);
+  out += `<line x1="${padL}" x2="${W-padR}" y1="${base.toFixed(1)}" y2="${base.toFixed(1)}" stroke="${LP.axis}"/>`;
+  out += `<line x1="${padL}" x2="${W-padR}" y1="${by(100).toFixed(1)}" y2="${by(100).toFixed(1)}" stroke="${LP.foot}" stroke-dasharray="4 4"/>`;
+  out += txt(padL-6, by(100)+3.5, "100", {fill:LP.mute, fs:fs-1, anchor:"end"});
+  out += txt(padL-6, base+3.5, "0", {fill:LP.mute, fs:fs-1, anchor:"end"});
+  out += txt(padL, bTop-8, t("자산 규모와 구성 · 공개 시작일 = 100","Size & composition · public start = 100"), {fill:LP.mute, fs:fs-1, anchor:"start"});
+  const segLabels = [];
+  out += `<defs><pattern id="lp-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${LP.axis}" stroke-width="1.5"/></pattern></defs>`;
+  rows.forEach((r,i)=>{
+    const cx = X(i);
+    out += txt(cx, Hh-10, r.d.slice(5), {fill:LP.mute, fs:fs-1});
+    if(r.idx==null){ out += txt(cx, base-8, t("결측","n/a"), {fill:LP.foot, fs:fs-1}); return; }
+    if(!r.known){
+      const h = BH*(r.idx/maxIdx), y = base-h;
+      out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="url(#lp-hatch)" stroke="${LP.axis}"/>`;
+      if(bw>=34 && h>=28) out += txt(cx, y+h/2+3.5, t("구성 미저장","no split"), {fill:LP.foot, fs:fs-1});
+      out += txt(cx, by(r.idx)-6, r.idx.toFixed(1), {fill:LP.ink, fs, weight:700});
+      if(i===n-1) segLabels.push({ y:y+h/2, text:t("구성 미저장","no split stored"), color:LP.foot });
+      return;
+    }
+    let acc = base; const rank = id => meta[id].cash ? -1 : (meta[id].closed ? 1000+ids.indexOf(id) : ids.indexOf(id));
+    const parts = r.parts.slice().sort((a,b)=>rank(a.id)-rank(b.id));
+    parts.forEach((p,k)=>{
+      const full = BH*(p.seg/maxIdx), h = Math.max(0, full-(k<parts.length-1?2:0)); if(h<=0){ acc -= full; return; }
+      const y = acc-h, col = colorOf(p.id);
+      out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}"${p.stale?' opacity="0.72"':''}/>`;
+      const pctS = (p.share*100).toFixed(narrow?0:1)+"%";
+      if(h>=13 && bw>=34) out += txt(cx, y+h/2+3.5, pctS, {fill:LP.bg, fs:fs-1, weight:700});
+      if(i===n-1) segLabels.push({ y:y+h/2, text:`${short(meta[p.id].name)} ${pctS}`, color:col });
+      acc -= full;
+    });
+    out += txt(cx, by(r.idx)-6, r.idx.toFixed(1), {fill:LP.ink, fs, weight:700});
+  });
+  segLabels.sort((a,b)=>a.y-b.y);
+  for(let k=1;k<segLabels.length;k++) if(segLabels[k].y < segLabels[k-1].y+lh) segLabels[k].y = segLabels[k-1].y+lh;
+  segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
+
+  svg.innerHTML = out;
 }
 
 window.onLang = ()=>{ if(!document.getElementById("admin").hidden) loadAdmin(); };
