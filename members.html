@@ -333,7 +333,13 @@ function render(){
   countUp(document.getElementById("s-closed"), DATA.closed.length);
   if(window.__lpJ) drawLedgerFrom(window.__lpJ);
   document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
-  const ev = DATA.latest || (DATA.closed.length ? {date:DATA.closed[DATA.closed.length-1].to, ko:DATA.closed[DATA.closed.length-1].ko+" 정리 완료", en:DATA.closed[DATA.closed.length-1].en+" position closed"} : null);
+  /* 최근 사건 — 손으로 적는 메타(latest)에 기대지 않고 매수일·청산일에서 가장 늦은 것을 고른다. 같은 날짜면 메타 문장을 우선. */
+  const evs = [
+    ...DATA.closed.filter(p=>p.to).map(p=>({date:p.to, ko:`${p.ko} 청산 (${pct(p.ret)})`, en:`${p.en} closed (${pct(p.ret)})`})),
+    ...stocks.filter(p=>p.from).map(p=>({date:p.from, ko:`${p.ko} 매수`, en:`${p.en} bought`})),
+    ...(DATA.latest && DATA.latest.date ? [{...DATA.latest, manual:true}] : [])
+  ].sort((a,b)=> a.date===b.date ? (b.manual?1:0)-(a.manual?1:0) : (a.date<b.date?1:-1));
+  const ev = evs[0] || null;
   const lb = document.getElementById("latest");
   if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
 
