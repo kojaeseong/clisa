@@ -244,7 +244,7 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .ledgerp
       <div class="perf-note" id="lp-note"></div>
     </div>
     <div id="lp-wrap"><svg id="lp" role="img" aria-label="daily returns and composition"></svg></div>
-    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 아래는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 외부 입출금은 지수에 반영되지 않습니다. 금액은 표시하지 않습니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Bottom: return index and composition — bar height is a cumulative return index (public start = 100); external deposits and withdrawals are not reflected in it. No amounts shown. Shaded columns are market holidays, carried over from the previous session. Both share one date axis.</span></p>
+    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 아래는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 외부 입출금은 지수에 반영되지 않습니다. 금액은 표시하지 않습니다. 구성은 투자 종목만으로 100%이며, 매수 예비금은 제외합니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Bottom: return index and composition — bar height is a cumulative return index (public start = 100); external deposits and withdrawals are not reflected in it. No amounts shown. Composition sums to 100% across holdings only; buying reserve is excluded. Shaded columns are market holidays, carried over from the previous session. Both share one date axis.</span></p>
   </section>
 
   <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
@@ -505,7 +505,7 @@ async function loadAdmin(){
     if(!p || p.status!=="approved"){ showGate("g-pending"); return; } }
   try{ await loadLedger(session); }catch(e){ showGate("g-error", String(e)); }
 })();
-/* ===== 일자별 기록 — 위 수익률(%), 아래 자산 규모·구성(지수). 회원 전용, 서버 열람(chart 함수). ===== */
+/* ===== 일자별 기록 — 위 수익률(%), 아래 수익 지수·구성. 회원 전용, 서버 열람(chart 함수). ===== */
 /* 종목 식별자·가격·평단을 이 파일에 두지 않는다(오류 61·69). 색은 서버가 준 데이터의 성격(현금/청산/진행)과 순서로만 정한다. */
 const LP = {
   bg:"#0F0D0B", ink:"#F4EDE1", mute:"#A89C8C", grid:"#241F1A", axis:"#3A332C", foot:"#6B6156",
@@ -643,7 +643,7 @@ function drawLedgerFrom(J){
   labels.forEach(l=>{ out += txt(l.x, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl", fs:l.bold?fs+1:fs}); });
   out += txt(padL, padT-14, t("수익률 (%)","Return (%)"), {fill:LP.mute, fs:fs-1, anchor:"start"});
 
-  /* ── 아래: 자산 규모·구성(지수) ── */
+  /* ── 아래: 수익 지수·구성 ── */
   const bTop = padT+TH+gap, base = bTop+BH;
   const idxs = rows.map(r=>r.idx).filter(v=>v!=null);
   const maxIdx = Math.max(100, ...idxs)*1.1;
@@ -652,7 +652,7 @@ function drawLedgerFrom(J){
   out += `<line x1="${padL}" x2="${W-padR}" y1="${by(100).toFixed(1)}" y2="${by(100).toFixed(1)}" stroke="${LP.foot}" stroke-dasharray="4 4"/>`;
   out += txt(padL-6, by(100)+3.5, "100", {fill:LP.mute, fs:fs-1, anchor:"end"});
   out += txt(padL-6, base+3.5, "0", {fill:LP.mute, fs:fs-1, anchor:"end"});
-  out += txt(padL, bTop-8, t("수익 지수와 구성 · 공개 시작일 = 100","Size & composition · public start = 100"), {fill:LP.mute, fs:fs-1, anchor:"start"});
+  out += txt(padL, bTop-8, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), {fill:LP.mute, fs:fs-1, anchor:"start"});
   const segLabels = [];
   out += `<defs><pattern id="lp-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${LP.axis}" stroke-width="1.5"/></pattern></defs>`;
   rows.forEach((r,i)=>{
