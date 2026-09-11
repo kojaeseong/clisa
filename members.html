@@ -132,7 +132,7 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 #lp-wrap{width:100%}
 #lp{display:block;width:100%;height:auto;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px;font-family:var(--sans);font-variant-numeric:tabular-nums}
 #lp text{font-family:var(--sans)}
-#lp .lbl{font-family:var(--display);font-weight:800}
+#lp .lbl{font-family:var(--display);font-weight:800;paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;stroke-linejoin:round}
 .ledgerpanel .note{max-width:none;margin-top:12px}
 @media (max-width:720px){.big{font-size:40px} .perf-head{flex-direction:column;align-items:flex-start} .perf-note{text-align:left}}
 
@@ -658,7 +658,7 @@ function drawLedgerFrom(J){
   const maxIdx = Math.max(100, ...idxs, ...invs)*1.08;
   out += `<defs><pattern id="lp-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${LP.axis}" stroke-width="1.5"/></pattern></defs>`;
   const rank = id => meta[id].cash ? -1 : (meta[id].closed ? 1000+ids.indexOf(id) : ids.indexOf(id));
-  const drawBars = (bTop, hgt, valOf, title, withDates) => {
+  const drawBars = (bTop, hgt, valOf, title, withDates, withLabels) => {
     const base = bTop+hgt, by = v => base - hgt*(v/maxIdx);
     out += `<line x1="${padL}" x2="${W-padR}" y1="${base.toFixed(1)}" y2="${base.toFixed(1)}" stroke="${LP.axis}"/>`;
     out += `<line x1="${padL}" x2="${W-padR}" y1="${by(100).toFixed(1)}" y2="${by(100).toFixed(1)}" stroke="${LP.foot}" stroke-dasharray="4 4"/>`;
@@ -675,7 +675,7 @@ function drawLedgerFrom(J){
         out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="url(#lp-hatch)" stroke="${LP.axis}"/>`;
         if(bw>=34 && h>=28) out += txt(cx, y+h/2+3.5, t("구성 미저장","no split"), {fill:LP.foot, fs:fs-1});
         out += txt(cx, by(val)-7, val.toFixed(1), {fill:LP.ink, fs, weight:700});
-        if(i===n-1) segLabels.push({ y:y+h/2, text:t("구성 미저장","no split stored"), color:LP.foot });
+        if(i===n-1 && withLabels) segLabels.push({ y:y+h/2, text:t("구성 미저장","no split stored"), color:LP.foot });
         return;
       }
       let acc = base;
@@ -686,7 +686,7 @@ function drawLedgerFrom(J){
         out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(2,h/2).toFixed(1)}" fill="${col}"${p.stale?' opacity="0.72"':''}/>`;
         const pctS = (p.share*100).toFixed(narrow?0:1)+"%";
         if(h>=13 && bw>=34) out += txt(cx, y+h/2+3.5, pctS, {fill:LP.bg, fs:fs-1, weight:700});
-        if(i===n-1) segLabels.push({ y:y+h/2, text:`${short(meta[p.id].name)} ${pctS}`, color:col });
+        if(i===n-1 && withLabels) segLabels.push({ y:y+h/2, text:`${short(meta[p.id].name)} ${pctS}`, color:col });
         acc -= full;
       });
       out += txt(cx, by(val)-7, val.toFixed(1), {fill:LP.ink, fs, weight:700});
@@ -695,8 +695,9 @@ function drawLedgerFrom(J){
     for(let k=1;k<segLabels.length;k++) if(segLabels[k].y < segLabels[k-1].y+lh) segLabels[k].y = segLabels[k-1].y+lh;
     segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
   };
-  drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), false);
-  drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수와 구성 · 공개 시작일 = 100","Invested amount index & composition · public start = 100"), true);
+  /* 구성 비율은 두 단이 같다 — 오른쪽 이름표는 가운데 단에만 단다. 같은 것을 두 번 적지 않는다. */
+  drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), false, true);
+  drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수와 구성 · 공개 시작일 = 100","Invested amount index & composition · public start = 100"), true, false);
 
   svg.innerHTML = out;
 }
