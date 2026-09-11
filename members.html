@@ -244,7 +244,7 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .ledgerp
       <div class="perf-note" id="lp-note"></div>
     </div>
     <div id="lp-wrap"><svg id="lp" role="img" aria-label="daily returns and composition"></svg></div>
-    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 아래는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 외부 입출금은 지수에 반영되지 않습니다. 금액은 표시하지 않습니다. 구성은 투자 종목만으로 100%이며, 매수 예비금은 제외합니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 두 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Bottom: return index and composition — bar height is a cumulative return index (public start = 100); external deposits and withdrawals are not reflected in it. No amounts shown. Composition sums to 100% across holdings only; buying reserve is excluded. Shaded columns are market holidays, carried over from the previous session. Both share one date axis.</span></p>
+    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 가운데는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 사고팔거나 돈을 넣어도 높이가 움직이지 않습니다. 아래는 투자 금액 지수와 구성 — 공개 시작일의 투자금을 100으로 둔 값이며, 매수·매도·입출금으로 높이가 움직입니다. 금액은 표시하지 않습니다. 구성은 두 막대 모두 투자 종목만으로 100%이며, 매수 예비금은 제외합니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 세 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Middle: return index and composition — bar height is a cumulative return index (public start = 100); it does not move when positions are traded or funds are added. Bottom: invested amount index and composition — invested capital at public start = 100; it moves when positions are bought or sold and when funds are added or withdrawn. No amounts shown. In both bar panels, composition sums to 100% across holdings only; buying reserve is excluded. Shaded columns are market holidays, carried over from the previous session. All three share one date axis.</span></p>
   </section>
 
   <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
@@ -581,13 +581,20 @@ function drawLedgerFrom(J){
     else if(parts.length && epochStart && d>=epochStart && parts.every(p=>p.v!=null && p.v>0)){ const sv = parts.reduce((s,p)=>s+p.v,0); parts.forEach(p=>{ p.share=p.v/sv; }); known=true; }
     if(known && idx!=null) parts.forEach(p=>{ p.seg = p.share*idx; });
     const kr = rs.find(r=>r.kr_open!=null), us = rs.find(r=>r.us_open!=null);
-    return { d, parts, idx, ret, known: known && idx!=null, stale: rs.some(r=>r.stale), kr: kr ? !!kr.kr_open : null, us: us ? !!us.us_open : null };
+    /* 투자 금액 — 그날 총자산 지수에서 예비금 몫을 덜어낸 값. 첫날을 100으로 다시 잡는다(아래 invBase). */
+    const cashRow = rs.find(r=>meta[r.pos_id].cash);
+    const allW = rs.every(r=>lpNum(r.weight)!=null) ? rs.reduce((s,r)=>s+lpNum(r.weight),0) : null;
+    const cashW = cashRow ? lpNum(cashRow.weight) : null;
+    const invRaw = (idx!=null && allW!=null && allW>0 && cashW!=null) ? idx*(1-cashW/allW) : null;
+    return { d, parts, idx, ret, invRaw, known: known && idx!=null, stale: rs.some(r=>r.stale), kr: kr ? !!kr.kr_open : null, us: us ? !!us.us_open : null };
   });
+  const invBase = (rows.find(r=>r.invRaw!=null)||{}).invRaw || null;
+  rows.forEach(r=>{ r.inv = (invBase && r.invRaw!=null) ? 100*r.invRaw/invBase : null; });
 
   /* 기하 */
   const W = Math.max(320, sec.clientWidth||0), narrow = W<560;
-  const padL = narrow?38:46, padR = narrow?104:150, padT = 30, gap = 26, TH = narrow?190:230, BH = narrow?200:250, padB = 30;
-  const Hh = padT+TH+gap+BH+padB;
+  const padL = narrow?38:46, padR = narrow?104:150, padT = 30, gap = narrow?24:30, TH = narrow?158:190, BH = narrow?150:184, BH2 = narrow?150:184, padB = 30;
+  const Hh = padT+TH+gap+BH+gap+BH2+padB;
   svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.setAttribute("height", Hh);
   const n = rows.length, colW = (W-padL-padR)/n, X = i => padL + colW*(i+0.5);
   const bw = Math.max(8, Math.min(60, colW*0.62));
@@ -601,7 +608,7 @@ function drawLedgerFrom(J){
     const st = shadeOf(rows[i]); if(!st){ i++; continue; }
     let j=i; while(j+1<n && shadeOf(rows[j+1])===st) j++;
     const x0 = padL+colW*i, wd = colW*(j-i+1);
-    out += `<rect x="${x0.toFixed(1)}" y="${(padT-12).toFixed(1)}" width="${wd.toFixed(1)}" height="${(TH+gap+BH+12).toFixed(1)}" fill="${st==="both"?LP.shadeBoth:LP.shadeOne}"/>`;
+    out += `<rect x="${x0.toFixed(1)}" y="${(padT-12).toFixed(1)}" width="${wd.toFixed(1)}" height="${(TH+gap+BH+gap+BH2+12).toFixed(1)}" fill="${st==="both"?LP.shadeBoth:LP.shadeOne}"/>`;
     const lab = narrow ? (st==="both" ? "KR·US" : st.toUpperCase()) : (st==="both" ? t("한국 · 미국 휴장","KR · US closed") : (st==="kr" ? t("한국 휴장","KR closed") : t("미국 휴장","US closed")));
     out += txt(x0+wd/2, padT-2, lab, {fill:LP.foot, fs:narrow?8:9.5, op:0.9});
     i=j+1;
@@ -641,46 +648,55 @@ function drawLedgerFrom(J){
   labels.forEach(l=>{ out += txt(l.x, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl", fs:l.bold?fs+1:fs}); });
   out += txt(padL, padT-14, t("수익률 (%)","Return (%)"), {fill:LP.mute, fs:fs-1, anchor:"start"});
 
-  /* ── 아래: 수익 지수·구성 ── */
-  const bTop = padT+TH+gap, base = bTop+BH;
+  /* ── 아래 두 단: 막대 ──
+     같은 구성 산식(투자 종목만으로 100%), 다른 높이.
+       ① 수익 지수   — 주가만 반영. 사고팔아도, 돈을 넣어도 높이가 변하지 않는다.
+       ② 투자 금액 지수 — 실제로 주식에 들어가 있는 몫. 매수·매도·입출금으로 변한다.
+     두 단은 같은 눈금을 쓴다 — 서로 대어 볼 수 있어야 하기 때문이다. */
   const idxs = rows.map(r=>r.idx).filter(v=>v!=null);
-  const maxIdx = Math.max(100, ...idxs)*1.1;
-  const by = v => base - BH*(v/maxIdx);
-  out += `<line x1="${padL}" x2="${W-padR}" y1="${base.toFixed(1)}" y2="${base.toFixed(1)}" stroke="${LP.axis}"/>`;
-  out += `<line x1="${padL}" x2="${W-padR}" y1="${by(100).toFixed(1)}" y2="${by(100).toFixed(1)}" stroke="${LP.foot}" stroke-dasharray="4 4"/>`;
-  out += txt(padL-6, by(100)+3.5, "100", {fill:LP.mute, fs:fs-1, anchor:"end"});
-  out += txt(padL-6, base+3.5, "0", {fill:LP.mute, fs:fs-1, anchor:"end"});
-  out += txt(padL, bTop-8, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), {fill:LP.mute, fs:fs-1, anchor:"start"});
-  const segLabels = [];
+  const invs = rows.map(r=>r.inv).filter(v=>v!=null);
+  const maxIdx = Math.max(100, ...idxs, ...invs)*1.08;
   out += `<defs><pattern id="lp-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${LP.axis}" stroke-width="1.5"/></pattern></defs>`;
-  rows.forEach((r,i)=>{
-    const cx = X(i);
-    out += txt(cx, Hh-10, r.d.slice(5), {fill:LP.mute, fs:fs-1});
-    if(r.idx==null){ out += txt(cx, base-8, t("결측","n/a"), {fill:LP.foot, fs:fs-1}); return; }
-    if(!r.known){
-      const h = BH*(r.idx/maxIdx), y = base-h;
-      out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="url(#lp-hatch)" stroke="${LP.axis}"/>`;
-      if(bw>=34 && h>=28) out += txt(cx, y+h/2+3.5, t("구성 미저장","no split"), {fill:LP.foot, fs:fs-1});
-      out += txt(cx, by(r.idx)-6, r.idx.toFixed(1), {fill:LP.ink, fs, weight:700});
-      if(i===n-1) segLabels.push({ y:y+h/2, text:t("구성 미저장","no split stored"), color:LP.foot });
-      return;
-    }
-    let acc = base; const rank = id => meta[id].cash ? -1 : (meta[id].closed ? 1000+ids.indexOf(id) : ids.indexOf(id));
-    const parts = r.parts.slice().sort((a,b)=>rank(a.id)-rank(b.id));
-    parts.forEach((p,k)=>{
-      const full = BH*(p.seg/maxIdx), h = Math.max(0, full-(k<parts.length-1?2:0)); if(h<=0){ acc -= full; return; }
-      const y = acc-h, col = colorOf(p.id);
-      out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}"${p.stale?' opacity="0.72"':''}/>`;
-      const pctS = (p.share*100).toFixed(narrow?0:1)+"%";
-      if(h>=13 && bw>=34) out += txt(cx, y+h/2+3.5, pctS, {fill:LP.bg, fs:fs-1, weight:700});
-      if(i===n-1) segLabels.push({ y:y+h/2, text:`${short(meta[p.id].name)} ${pctS}`, color:col });
-      acc -= full;
+  const rank = id => meta[id].cash ? -1 : (meta[id].closed ? 1000+ids.indexOf(id) : ids.indexOf(id));
+  const drawBars = (bTop, hgt, valOf, title, withDates) => {
+    const base = bTop+hgt, by = v => base - hgt*(v/maxIdx);
+    out += `<line x1="${padL}" x2="${W-padR}" y1="${base.toFixed(1)}" y2="${base.toFixed(1)}" stroke="${LP.axis}"/>`;
+    out += `<line x1="${padL}" x2="${W-padR}" y1="${by(100).toFixed(1)}" y2="${by(100).toFixed(1)}" stroke="${LP.foot}" stroke-dasharray="4 4"/>`;
+    out += txt(padL-6, by(100)+3.5, "100", {fill:LP.mute, fs:fs-1, anchor:"end"});
+    out += txt(padL-6, base+3.5, "0", {fill:LP.mute, fs:fs-1, anchor:"end"});
+    out += txt(padL, bTop-8, title, {fill:LP.mute, fs:fs-1, anchor:"start"});
+    const segLabels = [];
+    rows.forEach((r,i)=>{
+      const cx = X(i), val = valOf(r);
+      if(withDates) out += txt(cx, Hh-10, r.d.slice(5), {fill:LP.mute, fs:fs-1});
+      if(val==null){ out += txt(cx, base-8, t("결측","n/a"), {fill:LP.foot, fs:fs-1}); return; }
+      if(!r.known){
+        const h = hgt*(val/maxIdx), y = base-h;
+        out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="url(#lp-hatch)" stroke="${LP.axis}"/>`;
+        if(bw>=34 && h>=28) out += txt(cx, y+h/2+3.5, t("구성 미저장","no split"), {fill:LP.foot, fs:fs-1});
+        out += txt(cx, by(val)-7, val.toFixed(1), {fill:LP.ink, fs, weight:700});
+        if(i===n-1) segLabels.push({ y:y+h/2, text:t("구성 미저장","no split stored"), color:LP.foot });
+        return;
+      }
+      let acc = base;
+      const parts = r.parts.slice().sort((a,b)=>rank(a.id)-rank(b.id));
+      parts.forEach((p,k)=>{
+        const full = hgt*(p.share*val/maxIdx), h = Math.max(0, full-(k<parts.length-1?1.5:0)); if(h<=0){ acc -= full; return; }
+        const y = acc-h, col = colorOf(p.id);
+        out += `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(2,h/2).toFixed(1)}" fill="${col}"${p.stale?' opacity="0.72"':''}/>`;
+        const pctS = (p.share*100).toFixed(narrow?0:1)+"%";
+        if(h>=13 && bw>=34) out += txt(cx, y+h/2+3.5, pctS, {fill:LP.bg, fs:fs-1, weight:700});
+        if(i===n-1) segLabels.push({ y:y+h/2, text:`${short(meta[p.id].name)} ${pctS}`, color:col });
+        acc -= full;
+      });
+      out += txt(cx, by(val)-7, val.toFixed(1), {fill:LP.ink, fs, weight:700});
     });
-    out += txt(cx, by(r.idx)-6, r.idx.toFixed(1), {fill:LP.ink, fs, weight:700});
-  });
-  segLabels.sort((a,b)=>a.y-b.y);
-  for(let k=1;k<segLabels.length;k++) if(segLabels[k].y < segLabels[k-1].y+lh) segLabels[k].y = segLabels[k-1].y+lh;
-  segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
+    segLabels.sort((a,b)=>a.y-b.y);
+    for(let k=1;k<segLabels.length;k++) if(segLabels[k].y < segLabels[k-1].y+lh) segLabels[k].y = segLabels[k-1].y+lh;
+    segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
+  };
+  drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), false);
+  drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수와 구성 · 공개 시작일 = 100","Invested amount index & composition · public start = 100"), true);
 
   svg.innerHTML = out;
 }
