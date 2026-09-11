@@ -244,7 +244,7 @@ body.locked .lede, body.locked .strip, body.locked .latest, body.locked .ledgerp
       <div class="perf-note" id="lp-note"></div>
     </div>
     <div id="lp-wrap"><svg id="lp" role="img" aria-label="daily returns and composition"></svg></div>
-    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 가운데는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 사고팔거나 돈을 넣어도 높이가 움직이지 않습니다. 아래는 투자 금액 지수와 구성 — 공개 시작일의 투자금을 100으로 둔 값이며, 매수·매도·입출금으로 높이가 움직입니다. 금액은 표시하지 않습니다. 구성은 두 막대 모두 투자 종목만으로 100%이며, 매수 예비금은 제외합니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 세 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Middle: return index and composition — bar height is a cumulative return index (public start = 100); it does not move when positions are traded or funds are added. Bottom: invested amount index and composition — invested capital at public start = 100; it moves when positions are bought or sold and when funds are added or withdrawn. No amounts shown. In both bar panels, composition sums to 100% across holdings only; buying reserve is excluded. Shaded columns are market holidays, carried over from the previous session. All three share one date axis.</span></p>
+    <p class="note"><span lang-ko>위는 수익률(%) — 자리별은 평균 매수가 대비(자국 통화), 전체는 공개 시작일 대비 누적. 가운데는 수익 지수와 구성 — 막대 높이는 공개 시작일을 100으로 둔 누적 수익 지수이며, 사고팔거나 돈을 넣어도 높이가 움직이지 않습니다.</span><span lang-ko id="lp-cap3"> 아래는 투자 금액 지수 — 보유 주식의 평가액만 담습니다(예수금 제외). 공개 시작일을 100으로 두며, 주가와 매매로 움직입니다.</span><span lang-ko> 금액은 표시하지 않습니다. 구성 비율은 투자 종목만으로 100%이며, 매수 예비금은 제외합니다. 음영은 휴장일이며 값은 직전 거래일에서 이월됩니다. 세 그림은 같은 날짜 축을 씁니다.</span><span lang-en>Top: returns (%) — per position vs. average entry in local currency; total is cumulative since public start. Middle: return index and composition — bar height is a cumulative return index (public start = 100); it does not move when positions are traded or funds are added.</span><span lang-en id="lp-cap3en"> Bottom: invested amount index — the market value of holdings only (buying reserve excluded), public start = 100; it moves with prices and with buying or selling.</span><span lang-en> No amounts shown. Composition sums to 100% across holdings only; buying reserve is excluded. Shaded columns are market holidays, carried over from the previous session. All three share one date axis.</span></p>
   </section>
 
   <h2 class="sec"><span lang-ko>보유 종목</span><span lang-en>Open positions</span><span class="n" id="asof"></span></h2>
@@ -540,6 +540,7 @@ function lpEntry(p){
 
 function drawLedgerFrom(J){
   const sec = document.getElementById("lpanel"), svg = document.getElementById("lp"), note = document.getElementById("lp-note"), cv = document.getElementById("c-val");
+  const INV_ID = "__INVESTED__";   /* 종목이 아니라 파생 지표 행 — 구성 막대에서는 제외된다(meta 에 없으므로 자동) */
   const hp = J.history_positions || [], P = J.positions || [], H = (J.history||[]).filter(h=>lpNum(h.ret)!=null);
   const asOf = (J.meta&&J.meta.asOf)||null, epochStart = (J.meta&&J.meta.epochStart)||null;
   const days = [...new Set(hp.map(r=>r.d))].filter(d=>!asOf || d<=asOf).sort();
@@ -581,20 +582,19 @@ function drawLedgerFrom(J){
     else if(parts.length && epochStart && d>=epochStart && parts.every(p=>p.v!=null && p.v>0)){ const sv = parts.reduce((s,p)=>s+p.v,0); parts.forEach(p=>{ p.share=p.v/sv; }); known=true; }
     if(known && idx!=null) parts.forEach(p=>{ p.seg = p.share*idx; });
     const kr = rs.find(r=>r.kr_open!=null), us = rs.find(r=>r.us_open!=null);
-    /* 투자 금액 — 그날 총자산 지수에서 예비금 몫을 덜어낸 값. 첫날을 100으로 다시 잡는다(아래 invBase). */
-    const cashRow = rs.find(r=>meta[r.pos_id].cash);
-    const allW = rs.every(r=>lpNum(r.weight)!=null) ? rs.reduce((s,r)=>s+lpNum(r.weight),0) : null;
-    const cashW = cashRow ? lpNum(cashRow.weight) : null;
-    const invRaw = (idx!=null && allW!=null && allW>0 && cashW!=null) ? idx*(1-cashW/allW) : null;
-    return { d, parts, idx, ret, invRaw, known: known && idx!=null, stale: rs.some(r=>r.stale), kr: kr ? !!kr.kr_open : null, us: us ? !!us.us_open : null };
+    /* 투자 금액 지수 — 보유 주식의 평가액만(예수금 제외). 서버가 '__INVESTED__' 행에 지수로 실어 준다.
+       화면에서 만들어 내지 않는다: 과거 총자산은 화면에서 복원할 수 없다(예수금의 원화·달러 구분이 저장되지 않는다).
+       2026-09-12 오류 87 교정 — 이전 산식 '수익지수 x (1-예비금비중)' 은 외부 입금이 현금에 머무는 날 반대로 움직였다. */
+    const invRow = hp.find(r=>r.d===d && r.pos_id===INV_ID);
+    return { d, parts, idx, ret, inv: invRow ? lpNum(invRow.price) : null,
+             known: known && idx!=null, stale: rs.some(r=>r.stale), kr: kr ? !!kr.kr_open : null, us: us ? !!us.us_open : null };
   });
-  const invBase = (rows.find(r=>r.invRaw!=null)||{}).invRaw || null;
-  rows.forEach(r=>{ r.inv = (invBase && r.invRaw!=null) ? 100*r.invRaw/invBase : null; });
+  const hasInv = rows.some(r=>r.inv!=null);   /* 자료가 없으면 아래 단을 아예 그리지 않는다 */
 
   /* 기하 */
   const W = Math.max(320, sec.clientWidth||0), narrow = W<560;
   const padL = narrow?38:46, padR = narrow?104:150, padT = 30, gap = narrow?24:30, TH = narrow?158:190, BH = narrow?150:184, BH2 = narrow?150:184, padB = 30;
-  const Hh = padT+TH+gap+BH+gap+BH2+padB;
+  const Hh = padT+TH+gap+BH+(hasInv?gap+BH2:0)+padB;
   svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.setAttribute("height", Hh);
   const n = rows.length, colW = (W-padL-padR)/n, X = i => padL + colW*(i+0.5);
   const bw = Math.max(8, Math.min(60, colW*0.62));
@@ -608,7 +608,7 @@ function drawLedgerFrom(J){
     const st = shadeOf(rows[i]); if(!st){ i++; continue; }
     let j=i; while(j+1<n && shadeOf(rows[j+1])===st) j++;
     const x0 = padL+colW*i, wd = colW*(j-i+1);
-    out += `<rect x="${x0.toFixed(1)}" y="${(padT-12).toFixed(1)}" width="${wd.toFixed(1)}" height="${(TH+gap+BH+gap+BH2+12).toFixed(1)}" fill="${st==="both"?LP.shadeBoth:LP.shadeOne}"/>`;
+    out += `<rect x="${x0.toFixed(1)}" y="${(padT-12).toFixed(1)}" width="${wd.toFixed(1)}" height="${(TH+gap+BH+(hasInv?gap+BH2:0)+12).toFixed(1)}" fill="${st==="both"?LP.shadeBoth:LP.shadeOne}"/>`;
     const lab = narrow ? (st==="both" ? "KR·US" : st.toUpperCase()) : (st==="both" ? t("한국 · 미국 휴장","KR · US closed") : (st==="kr" ? t("한국 휴장","KR closed") : t("미국 휴장","US closed")));
     out += txt(x0+wd/2, padT-2, lab, {fill:LP.foot, fs:narrow?8:9.5, op:0.9});
     i=j+1;
@@ -696,8 +696,9 @@ function drawLedgerFrom(J){
     segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
   };
   /* 구성 비율은 두 단이 같다 — 오른쪽 이름표는 가운데 단에만 단다. 같은 것을 두 번 적지 않는다. */
-  drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), false, true);
-  drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수와 구성 · 공개 시작일 = 100","Invested amount index & composition · public start = 100"), true, false);
+  drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), !hasInv, true);
+  if(hasInv) drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수 · 공개 시작일 = 100","Invested amount index · public start = 100"), true, false);
+  ["lp-cap3","lp-cap3en"].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden = !hasInv; });
 
   svg.innerHTML = out;
 }
