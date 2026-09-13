@@ -332,7 +332,7 @@ function render(){
   countUp(document.getElementById("s-hold"), stocks.length);
   countUp(document.getElementById("s-closed"), DATA.closed.length);
   if(window.__lpJ) drawLedgerFrom(window.__lpJ);
-  document.getElementById("asof").textContent = t("기준일 ","as of ")+DATA.asOf;
+  document.getElementById("asof").textContent = t("기준일 ","as of ")+(((window.__lpJ||{}).meta||{}).asOf || DATA.asOf);
   /* 최근 사건 — 손으로 적는 메타(latest)에 기대지 않고 매수일·청산일에서 가장 늦은 것을 고른다. 같은 날짜면 메타 문장을 우선. */
   const evs = [
     ...DATA.closed.filter(p=>p.to).map(p=>({date:p.to, ko:`${p.ko} 청산 (${pct(p.ret)})`, en:`${p.en} closed (${pct(p.ret)})`})),
@@ -343,16 +343,20 @@ function render(){
   const lb = document.getElementById("latest");
   if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
 
-  const wsum = stocks.reduce((a,p)=>a+(p.weight||0),0);   /* 비중 분모 = 투자 종목 합계 (CEO 결정 2026-09-11). 매수 예비금은 제외한다. */
+  const live = {}; stocks.forEach(p=>{ const L = liveOf(p.id); if(L) live[p.id] = L; });
+  const pxOf = p => (live[p.id] && live[p.id].price  != null) ? live[p.id].price  : null;
+  const wtOf = p => (live[p.id] && live[p.id].weight != null) ? live[p.id].weight : null;
+  const wsum = stocks.reduce((a,p)=>a+(wtOf(p)||0),0);   /* 비중 분모 = 투자 종목 합계 (CEO 결정 2026-09-11). 매수 예비금은 제외한다. */
   document.getElementById("open").innerHTML = stocks.map(p=>{
-    const r = (p.entry&&p.price) ? (p.price/p.entry-1)*100 : null;
+    const px = pxOf(p);
+    const r = (p.entry && px!=null) ? (px/p.entry-1)*100 : null;
     return `<tr>
       <td class="tk">${t(p.ko,p.en)}<small>${p.mkt}${p.source?` · <a href="${p.source}" target="_blank" rel="noopener">${t("공시 원문","filings")}</a>`:""}</small>${(p.thesisKo||p.thesisEn)?`<small class="thesis">${t(p.thesisKo,p.thesisEn)}</small>`:""}</td>
       <td class="dt">${p.from ? `${p.from} → ${t("오늘","today")}<br><span class="hid">${t(daysSince(p.from)+"일째","day "+daysSince(p.from))}</span>` : "—"}</td>
       <td class="num">${fmt(p.entry,p.ccy)}</td>
-      <td class="num">${fmt(p.price,p.ccy)}</td>
+      <td class="num">${px==null?"—":fmt(px,p.ccy)}</td>
       <td class="num ${cls(r)}">${r==null?"—":pct(r)}</td>
-      <td class="num">${(p.weight==null||wsum<=0)?"—":(p.weight/wsum*100).toFixed(0)+"%"}</td>
+      <td class="num">${(wtOf(p)==null||wsum<=0)?"—":(wtOf(p)/wsum*100).toFixed(0)+"%"}</td>
     </tr>`;}).join("");
   document.getElementById("wnote").textContent = wsum>0 ? t("비중은 투자 종목 합계를 100%로 한 값입니다. 매수 예비금은 제외합니다.", "Weights are shares of holdings only (100%); buying reserve is excluded.") : "";
 
@@ -527,11 +531,22 @@ async function drawLedgerPanel(session){
   }catch(e){ return; }
   if(!J || !J.ok) return;
   window.__lpJ = J;
-  drawLedgerFrom(J);
+  /* 표와 그래프의 도착 순서는 정해져 있지 않다 — 그래프 자료가 늦게 오면 표를 다시 그린다(render 가 그래프도 다시 그린다) */
+  if(DATA && DATA.open && DATA.open.length) render(); else drawLedgerFrom(J);
   let tm; window.addEventListener("resize", ()=>{ clearTimeout(tm); tm=setTimeout(()=>drawLedgerFrom(J), 120); });
 }
 
 /* 평균 매수가 — 서버 응답에 있으면 그 값, 없으면 원장(ledger)에서 같은 이름의 자리를 찾는다. 못 찾으면 결측(선을 긋지 않는다). */
+/* 보유 표의 '날마다 변하는 값'은 원장 그래프와 같은 원천(history_positions)에서 읽는다.
+   ledger_positions 의 price·weight 는 자동 기재 주체가 서버에서 대표 PC 로 옮겨간 09-09 이후 갱신되지 않는다(오류 96).
+   같은 사실은 한 곳에서만 나온다 — CEO 결정 2026-09-13. 값이 없으면 추정하지 않고 결측으로 둔다. */
+function liveOf(id){
+  const J = window.__lpJ; if(!J || !J.history_positions) return null;
+  const asOf = (J.meta && J.meta.asOf) || null;
+  let last = null;
+  for(const r of J.history_positions){ if(r.pos_id!==id) continue; if(asOf && r.d>asOf) continue; if(!last || r.d>last.d) last = r; }
+  return last ? { d:last.d, price:lpNum(last.price), weight:lpNum(last.weight) } : null;
+}
 function lpEntry(p){
   for(const k of ["entry","avg_entry","avg_price","entry_price"]) if(lpNum(p[k])!=null) return lpNum(p[k]);
   const hit = [...(DATA.open||[]), ...(DATA.closed||[])].find(q => q.id && q.id===p.id);
