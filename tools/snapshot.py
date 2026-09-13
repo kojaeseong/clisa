@@ -2,10 +2,13 @@
 """Bake the current ledger numbers into index.html and the share card.
 
 The page fetches the ledger with JavaScript, which readers see but crawlers and
-link-preview bots usually do not. This runs after the 07:00 KST calculation and
-writes the same numbers into the HTML as plain text, so a machine that only
-reads the source sees what a person sees. JavaScript still overwrites them on
-load, so nothing about the live page changes.
+link-preview bots usually do not. This runs after the daily 07:05 KST ledger
+write and puts the same numbers into the HTML as plain text, so a machine that
+only reads the source sees what a person sees. JavaScript still overwrites them
+on load, so nothing about the live page changes.
+
+If the ledger has not been written yet, this bakes nothing. A stale number on a
+public page is worse than an old one that at least never claimed to be today's.
 
 Nothing here widens what is public: only the figures the public feed already
 serves (return, days, open/closed counts) are written.
@@ -38,6 +41,22 @@ def days_since(iso):
         return 0
     start = datetime.strptime(iso, "%Y-%m-%d").replace(tzinfo=KST)
     return max(0, (datetime.now(KST) - start).days)
+
+def lag_days(as_of):
+    """How many days behind the ledger is. 0 = yesterday's row is in (normal).
+
+    The daily write lands at ~07:05 KST for the previous day, and this job runs
+    after it. If the write was late or failed, as_of is older and we must not
+    bake it into the public page.
+    """
+    if not as_of:
+        return None
+    try:
+        got = datetime.strptime(as_of, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+    want = (datetime.now(KST) - timedelta(days=1)).date()
+    return (want - got).days
 
 def patch(html, d):
     def span(sid, text):
@@ -85,6 +104,19 @@ def card(d, path):
 
 if __name__ == "__main__":
     d = feed()
+
+    # Freshness gate. Better a missing update than a wrong one.
+    lag = lag_days(d["as_of"])
+    if lag is None:
+        raise SystemExit(f"snapshot: cannot read asOf ({d['as_of']!r}) - baking nothing")
+    if lag > 0:
+        scheduled = os.environ.get("GITHUB_EVENT_NAME") == "schedule"
+        print(f"snapshot: ledger is {lag} day(s) behind (asOf {d['as_of']}) - "
+              "the daily write was late or did not run. Baking nothing.")
+        # On the scheduled run this is a real alarm; on a push it is expected
+        # before the morning write, so do not cry wolf.
+        raise SystemExit(1 if scheduled else 0)
+
     p = os.path.join(ROOT, "index.html")
     out = patch(open(p, encoding="utf-8").read(), d)   # patch first: never truncate before it succeeds
     open(p, "w", encoding="utf-8").write(out)
