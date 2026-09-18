@@ -719,7 +719,7 @@ function drawLedgerFrom(J){
   ["lp-cap3","lp-cap3en"].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden = !hasInv; });
 
   svg.innerHTML = out;
-  const wrap = document.getElementById("lp-wrap"); if(wrap) requestAnimationFrame(()=>{ if(wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = wrap.scrollWidth; });   /* 배치가 끝난 뒤 최신 날짜가 보이도록 오른쪽 끝으로 */
+  const wrap = document.getElementById("lp-wrap"); if(wrap) setTimeout(()=>{ if(wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = wrap.scrollWidth; }, 50);   /* 배치가 끝난 뒤 최신 날짜가 보이도록 오른쪽 끝으로 */
 }
 
 window.onLang = ()=>{ if(!document.getElementById("admin").hidden) loadAdmin(); };
