@@ -71,7 +71,7 @@ document.getElementById("f").addEventListener("submit", async (e)=>{
   const { error } = await sb.auth.signInWithPassword({ email: v("email"), password: v("pw") });
   btn.disabled=false;
   if(error){ const m=/not confirmed/i.test(error.message) ? t("아직 이메일 인증이 끝나지 않았습니다. 받은 메일의 링크를 눌러 주세요.","Your email is not confirmed yet. Please click the link in the verification email.") : (/fetch|network/i.test(error.message) ? t("네트워크 오류입니다. 잠시 후 다시 시도해 주세요.","Network error. Please try again.") : t("이메일 또는 비밀번호가 맞지 않습니다.","Email or password is incorrect.")); return say("m", m); }
-  location.href = "members.html";
+  { const { data:{ user } } = await sb.auth.getUser(); location.href = (user && (user.email||"").toLowerCase()===ADMIN_EMAIL) ? "ops.html#vault" : "members.html"; }
 });
 document.getElementById("forgot").addEventListener("click", async (e)=>{
   e.preventDefault(); const email=document.getElementById("email").value.trim();
@@ -79,6 +79,6 @@ document.getElementById("forgot").addEventListener("click", async (e)=>{
   const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: SITE+"/reset.html" });
   say("m", error ? error.message : t("비밀번호 재설정 메일을 보냈습니다.","Password reset email sent."), !error);
 });
-sb.auth.getSession().then(({data})=>{ if(data.session) location.href="members.html"; });
+sb.auth.getSession().then(({data})=>{ if(data.session) location.href = ((data.session.user.email||"").toLowerCase()===ADMIN_EMAIL) ? "ops.html#vault" : "members.html"; });
 </script>
 </div></body></html>
