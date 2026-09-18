@@ -607,8 +607,9 @@ function lineChart(pts){ // pts: [{d, v}]
     <rect x="${L}" y="0" width="${W-L-R}" height="${H}" fill="transparent" class="hit"/></svg><div class="tip"></div></div>`;
 }
 function hookChart(el,pts){
-  const svg=el.querySelector("svg"),tip=el.querySelector(".tip"),xh=svg.querySelector(".xh"),cur=svg.querySelector(".cur");
-  const W=820,L=64,R=16; if(pts.length<2) return;
+  if(!el||pts.length<2||!el.querySelector("svg")) return;
+  const svg=el.querySelector("svg"),tip=el.querySelector(".tip"),xh=svg.querySelector(".xh");
+  const W=820,L=64,R=16;
   svg.addEventListener("mousemove",e=>{
     const r=svg.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W; const i=Math.max(0,Math.min(pts.length-1,Math.round((px-L)/(W-L-R)*(pts.length-1))));
     const cx=L+(W-L-R)*i/(pts.length-1); xh.setAttribute("x1",cx);xh.setAttribute("x2",cx);xh.style.display="";
