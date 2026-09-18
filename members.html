@@ -129,8 +129,8 @@ td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid v
 .big small{font-size:15px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:0}
 .perf-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);text-align:right;max-width:30ch}
 .ledgerpanel{margin:0 0 40px;padding:22px 0 0;border-top:1px solid var(--rule)}
-#lp-wrap{width:100%}
-#lp{display:block;width:100%;height:auto;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px;font-family:var(--sans);font-variant-numeric:tabular-nums}
+#lp-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#lp{display:block;height:auto;background:#0F0D0B;border:1px solid #241F1A;border-radius:3px;font-family:var(--sans);font-variant-numeric:tabular-nums}
 #lp text{font-family:var(--sans)}
 #lp .lbl{font-family:var(--display);font-weight:800;paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;stroke-linejoin:round}
 .ledgerpanel .note{max-width:none;margin-top:12px}
@@ -607,8 +607,11 @@ function drawLedgerFrom(J){
   const hasInv = rows.some(r=>r.inv!=null);   /* 자료가 없으면 아래 단을 아예 그리지 않는다 */
 
   /* 기하 */
-  const W = Math.max(320, sec.clientWidth||0), narrow = W<560;
+  const cw = Math.max(320, sec.clientWidth||0), narrow = cw<560;
   const padL = narrow?38:46, padR = narrow?104:150, padT = 30, gap = narrow?24:30, TH = narrow?158:190, BH = narrow?150:184, BH2 = narrow?150:184, padB = 30;
+  /* 날짜가 늘어도 막대 폭을 줄이지 않는다 — 열 최소 폭을 두고, 넘치면 가로 스크롤(최신 날짜가 오른쪽). 2026-09-18 CEO 지시 */
+  const minCol = narrow?46:58;
+  const W = Math.max(cw, padL+padR+rows.length*minCol);
   const Hh = padT+TH+gap+BH+(hasInv?gap+BH2:0)+padB;
   svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("width", W); svg.setAttribute("height", Hh);
   const n = rows.length, colW = (W-padL-padR)/n, X = i => padL + colW*(i+0.5);
@@ -716,6 +719,7 @@ function drawLedgerFrom(J){
   ["lp-cap3","lp-cap3en"].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden = !hasInv; });
 
   svg.innerHTML = out;
+  const wrap = document.getElementById("lp-wrap"); if(wrap && wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = wrap.scrollWidth;   /* 최신 날짜가 보이도록 오른쪽 끝으로 */
 }
 
 window.onLang = ()=>{ if(!document.getElementById("admin").hidden) loadAdmin(); };
