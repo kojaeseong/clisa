@@ -481,5 +481,11 @@ fetch(SHEET_URL, {cache:"no-store"})
   .catch(() => { /* 내장 DATA 유지 */ });
 </script>
 
+<script>
+/* 대표 로그인 세션이 이 브라우저에 있으면 첫 화면을 관제실로 보낸다. 방문자·회원은 그대로. */
+(function(){try{var k=Object.keys(localStorage).filter(function(x){return /^sb-.*-auth-token$/.test(x)})[0];if(!k)return;
+var s=JSON.parse(localStorage.getItem(k)||"null");var u=s&&(s.user||(s.currentSession&&s.currentSession.user));
+if(u&&String(u.email||"").toLowerCase()==="kojaeseong@gmail.com"&&!/[?&]stay=1/.test(location.search))location.replace("ops.html#vault");}catch(e){}})();
+</script>
 </body>
 </html>
