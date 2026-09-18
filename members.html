@@ -110,6 +110,12 @@ body.has-scene .lede::before{z-index:1;right:2%;top:-14%;font-size:min(46vw,420p
 td.tk small.thesis{color:var(--ink);opacity:.8;margin-top:4px;white-space:normal;max-width:34ch;font-size:12px;line-height:1.45}
 td.tk small a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
 .latest{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:13.5px;color:var(--ink);margin:-24px 0 36px;padding:10px 14px;border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--bg2)}
+.latest ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.latest li{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.latest li .dt{font-variant-numeric:tabular-nums;color:var(--muted)}
+.latest li.old{opacity:.72}
+.latest:has(ul){align-items:flex-start}
+.latest:has(ul) .dot{margin-top:6px;flex:none}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,83,59,.5)}70%{box-shadow:0 0 0 10px rgba(229,83,59,0)}100%{box-shadow:0 0 0 0 rgba(229,83,59,0)}}
 .ctl 
@@ -339,9 +345,22 @@ function render(){
     ...stocks.filter(p=>p.from).map(p=>({date:p.from, ko:`${p.ko} 매수`, en:`${p.en} bought`})),
     ...(DATA.latest && DATA.latest.date ? [{...DATA.latest, manual:true}] : [])
   ].sort((a,b)=> a.date===b.date ? (b.manual?1:0)-(a.manual?1:0) : (a.date<b.date?1:-1));
-  const ev = evs[0] || null;
-  const lb = document.getElementById("latest");
-  if(ev){ document.getElementById("latest-text").textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
+  /* 2026-09-18 CEO 결정: 신규 매수·추가 매수·일부 매도·전량 매도는 모두 최근 뉴스다.
+     서버 ledger_events(대표 PC 07:05 스크립트가 체결 목록에서 분류)가 있으면 그것을 최근 5건까지 목록으로 보인다.
+     없으면(응답 지연·구버전) 위의 매수일·청산일 규칙으로 한 줄만 — 추측으로 채우지 않는다. */
+  const KIND = { open:["신규 매수","new position"], add:["추가 매수","added"], trim:["일부 매도","partial sell"], close:["전량 매도","closed"] };
+  const J0 = window.__lpJ || {}, nameOf = {}; (J0.positions||[]).forEach(p=>{ nameOf[p.id] = t(p.ko||p.id, p.en||p.id); });
+  const sev = (J0.events||[]).filter(e=>e && e.d && KIND[e.kind] && e.pos_id!=="CASH")
+    .map(e=>({date:e.d, ko:`${nameOf[e.pos_id]||e.pos_id} ${KIND[e.kind][0]}`, en:`${nameOf[e.pos_id]||e.pos_id} ${KIND[e.kind][1]}`}))
+    .sort((a,b)=> a.date<b.date?1:(a.date>b.date?-1:0)).slice(0,5);
+  const lb = document.getElementById("latest"), lt = document.getElementById("latest-text");
+  if(sev.length){
+    lt.innerHTML = "<ul>"+sev.map((e,i)=>`<li class="${i?'old':''}"><span class="dt">${i?'':t("최근 · ","Latest · ")}${e.date}</span><span>${t(e.ko,e.en)}</span></li>`).join("")+"</ul>";
+    lb.hidden=false;
+  } else {
+    const ev = evs[0] || null;
+    if(ev){ lt.textContent = t("최근 · ","Latest · ")+ev.date+" — "+t(ev.ko,ev.en); lb.hidden=false; } else lb.hidden=true;
+  }
 
   const live = {}; stocks.forEach(p=>{ const L = liveOf(p.id); if(L) live[p.id] = L; });
   const pxOf = p => (live[p.id] && live[p.id].price  != null) ? live[p.id].price  : null;
