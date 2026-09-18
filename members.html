@@ -732,9 +732,9 @@ function drawLedgerFrom(J){
     for(let k=1;k<segLabels.length;k++) if(segLabels[k].y < segLabels[k-1].y+lh) segLabels[k].y = segLabels[k-1].y+lh;
     segLabels.forEach(l=>{ out += txt(X(n-1)+bw/2+8, l.y+3.5, l.text, {fill:l.color, anchor:"start", cls:"lbl"}); });
   };
-  /* 구성 비율은 두 단이 같다 — 오른쪽 이름표는 가운데 단에만 단다. 같은 것을 두 번 적지 않는다. */
+  /* 구성 비율은 두 단이 같다. 이름표는 원래 가운데 단에만 달았으나, 가로 스크롤이 생긴 뒤 하단에서도 바로 읽히도록 두 단 모두에 단다 (CEO 결재 2026-09-18). */
   drawBars(padT+TH+gap, BH, r=>r.idx, t("수익 지수와 구성 · 공개 시작일 = 100","Return index & composition · public start = 100"), !hasInv, true);
-  if(hasInv) drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수 · 공개 시작일 = 100","Invested amount index · public start = 100"), true, false);
+  if(hasInv) drawBars(padT+TH+gap+BH+gap, BH2, r=>r.inv, t("투자 금액 지수 · 공개 시작일 = 100","Invested amount index · public start = 100"), true, true);
   ["lp-cap3","lp-cap3en"].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden = !hasInv; });
 
   svg.innerHTML = out;
