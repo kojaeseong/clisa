@@ -796,6 +796,7 @@ document.getElementById("c-send").addEventListener("click",async()=>{
   await openBox("ceo");
   loadArchive();
   loadVault();
+  if(location.hash==="#vault") open_(vaultdrawer,document.getElementById("vclose"));
   setInterval(refresh, 60000);
 })();
 </script>
