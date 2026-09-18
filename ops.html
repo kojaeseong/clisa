@@ -146,6 +146,40 @@
             border-left:2px solid var(--rule);padding:11px 13px;margin:2px 0 10px 86px;border-radius:0 2px 2px 0}
   .doc-none{color:var(--muted)}
   @media (max-width:640px){ .doc-body{margin-left:0} }
+  /* 관제실 */
+  .vdrawer{width:min(980px,100%)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .stats>div{background:var(--bg);padding:12px 14px}
+  .stats .k{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  .stats .v{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums}
+  .stats .v.neg{color:var(--accent)}
+  .stats .s{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
+  .band{display:flex;height:14px;gap:2px;background:var(--bg);margin:6px 0 8px}
+  .band i{display:block;height:100%;border-radius:2px;min-width:2px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .legend b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+  .legend span{color:var(--ink);font-weight:500}
+  .alerts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+  .alerts li{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid #201B17;font-size:13px}
+  .alerts .lv{font-family:var(--mono);font-size:10px;letter-spacing:.08em;flex:none;width:52px;border:1px solid;border-radius:2px;text-align:center;padding:1px 0}
+  .lv.now{color:var(--accent);border-color:var(--accent)} .lv.soon{color:#c98500;border-color:#c98500} .lv.info{color:var(--muted);border-color:var(--rule)}
+  .alerts .d{font-family:var(--mono);font-size:11px;color:var(--muted);flex:none;width:150px;font-variant-numeric:tabular-nums}
+  .vt{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .vt th{font-family:var(--mono);font-weight:500;font-size:10px;color:var(--muted);letter-spacing:.08em;text-align:left;padding:6px 6px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  .vt td{padding:6px 6px;border-bottom:1px solid #201B17;vertical-align:top}
+  .vt td.n,.vt th.n{text-align:right;font-family:var(--mono);font-size:11.5px;white-space:nowrap}
+  .vt td.m{white-space:nowrap}
+  .vt td.m{color:var(--muted)} .vt td.neg{color:var(--accent)}
+  .vt tr:hover td{background:#1F1714}
+  .vt .dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
+  .tw{overflow-x:auto}
+  .chart{position:relative;background:var(--bg);border:1px solid var(--rule);padding:8px 6px 2px}
+  .chart svg{min-width:0;width:100%;height:auto;display:block}
+  .tip{position:absolute;pointer-events:none;font-family:var(--mono);font-size:11px;background:var(--bg2);border:1px solid var(--line);
+       color:var(--ink);padding:5px 8px;border-radius:2px;white-space:nowrap;display:none;z-index:2}
+  .filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .rg td{text-align:right;font-family:var(--mono);font-size:11px} .rg td:first-child{text-align:left;font-family:var(--sans);font-size:12.5px}
+  .rg td.no{color:var(--accent)}
   @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 
@@ -198,12 +232,14 @@
         <path class="corridor" d="M625 357 H825"/>
         <path class="corridor" d="M475 430 V505 H405 V560"/>
         <path class="corridor" d="M565 430 V505 H725 V560"/>
+        <path class="corridor" d="M625 405 H845 V440"/>
         <path class="corridor-in" d="M475 285 V205 H225 V155"/>
         <path class="corridor-in" d="M565 285 V205 H815 V155"/>
         <path class="corridor-in" d="M415 357 H215"/>
         <path class="corridor-in" d="M625 357 H825"/>
         <path class="corridor-in" d="M475 430 V505 H405 V560"/>
         <path class="corridor-in" d="M565 430 V505 H725 V560"/>
+        <path class="corridor-in" d="M625 405 H845 V440"/>
       </g>
 
       <!-- 행낭실 (개통) -->
@@ -261,6 +297,15 @@
         <text class="room-note" x="843" y="396" id="n-cto">—</text>
       </a>
 
+      <!-- 관제실 -->
+      <a class="room" href="#vault" id="vault-door">
+        <rect class="room-shape" x="740" y="440" width="210" height="100" rx="2"/>
+        <text class="room-en" x="760" y="466">CONTROL ROOM</text>
+        <text class="room-name" x="760" y="492">관제실</text>
+        <text class="room-who" x="760" y="513">전 자산 · 부채 · 임대 · 경보</text>
+        <text class="room-note" x="760" y="533" id="n-vault">—</text>
+      </a>
+
       <!-- 자료실 -->
       <a class="room" href="#archive" id="archive-door">
         <rect class="room-shape" x="300" y="560" width="210" height="115" rx="2"/>
@@ -289,7 +334,7 @@
         <text class="block-k" x="14" y="18">도면명</text>
         <text class="block-v" x="14" y="31">클리사 사옥 평면도</text>
         <text class="block-k" x="14" y="56">작성 / 기준일</text>
-        <text class="block-v" x="14" y="69">CTO 홈스 / 2026-09-06</text>
+        <text class="block-v" x="14" y="69">CTO 홈스 / 2026-09-06 · 관제실 2026-09-18</text>
         <text class="block-k" x="14" y="94">취급</text>
         <text class="block-v" x="14" y="107" style="fill:#E5533B">대외비 · 사외 배포 금지</text>
       </g>
@@ -393,6 +438,19 @@
   <div id="shelves"></div>
 </aside>
 
+<aside class="drawer vdrawer" id="vaultdrawer" hidden aria-label="관제실">
+  <div class="drawer-head">
+    <div>
+      <div class="sub">CONTROL ROOM · 대표 + 임원 · 정적 파일에 값 없음</div>
+      <h2>관제실</h2>
+    </div>
+    <button class="close" id="vclose" aria-label="닫기">✕</button>
+  </div>
+  <p class="drawer-note">전 자산을 한 화면에 모아 봅니다 — 부동산·계좌·채권·예금과 대출·보증금. 값은 로그인 뒤 서버에서만 옵니다.
+    <b>자동으로 움직이는 것은 계좌 평가액뿐</b>이고, 부동산 평가·월세 입금·대출 조건은 기재한 날짜가 곧 신선도입니다. 결측은 결측으로 둡니다.</p>
+  <div id="vbody"><p class="shelf-desc">관제실을 서버에서 불러오는 중…</p></div>
+</aside>
+
 <script>
 let ARCH=[]; /* 서버(archive 함수)에서 로그인 뒤 받아온다. 정적 파일에는 아무것도 싣지 않는다. */
 
@@ -446,10 +504,13 @@ async function loadArchive(){
 }
 render("");
 const drawer=document.getElementById("drawer"), maildrawer=document.getElementById("maildrawer"), scrim=document.getElementById("scrim");
-function closeAll(){drawer.hidden=true;maildrawer.hidden=true;scrim.hidden=true;}
+const vaultdrawer=document.getElementById("vaultdrawer");
+function closeAll(){drawer.hidden=true;maildrawer.hidden=true;vaultdrawer.hidden=true;scrim.hidden=true;}
 function open_(el,focusEl){closeAll();el.hidden=false;scrim.hidden=false;if(focusEl)focusEl.focus();}
 document.getElementById("archive-door").addEventListener("click",e=>{e.preventDefault();open_(drawer,document.getElementById("find"));});
 document.getElementById("mail-door").addEventListener("click",e=>{e.preventDefault();open_(maildrawer,document.getElementById("mclose"));});
+document.getElementById("vault-door").addEventListener("click",e=>{e.preventDefault();open_(vaultdrawer,document.getElementById("vclose"));if(!V)loadVault();});
+document.getElementById("vclose").addEventListener("click",closeAll);
 document.getElementById("close").addEventListener("click",closeAll);
 document.getElementById("mclose").addEventListener("click",closeAll);
 scrim.addEventListener("click",closeAll);
@@ -471,6 +532,179 @@ async function call(body){
 }
 const kst=iso=>iso?new Date(iso).toLocaleString("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}):"";
 const NAME={ceo:"대표",cio:"CIO 클리앙",cmo:"CMO 파이브",cto:"CTO 홈스",advisor:"채트 고문"};
+
+/* ===== 관제실 — 값은 전부 서버(vault 함수)에서. 이 파일에는 자산명·숫자가 없다. ===== */
+const VAULT=SB_URL+"/functions/v1/vault";
+let V=null;
+const CLS={real_estate:["부동산","#d95926"],brokerage:["증권계좌","#3987e5"],bond:["채권","#199e70"],deposit:["예금","#c98500"],cash:["현금성","#d55181"],other:["기타","#9085e9"]};
+const OWN={personal:["개인","#d95926"],realcoms:["법인","#3987e5"]};
+const KIND={bank_loan:"은행대출",private_loan:"사인간 대출",tenant_deposit:"임대보증금"};
+const fmtW=n=>n==null?"—":(Math.abs(n)>=1e8?(n/1e8).toFixed(2)+"억":Math.round(n/1e4).toLocaleString("ko-KR")+"만");
+const fmtP=r=>r==null?"—":(r*100).toFixed(2)+"%";
+const TODAY=new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Seoul"}));TODAY.setHours(0,0,0,0);
+const days=s=>s?Math.round((new Date(s+"T00:00:00")-TODAY)/864e5):null;
+const dtxt=n=>n==null?"":(n<0?`${-n}일 경과`:n===0?"오늘":`D-${n}`);
+const nm=id=>(V.assets.find(a=>a.id===id)||{}).name||id;
+async function vcall(body){
+  const r=await fetch(VAULT,{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+TOKEN},body:JSON.stringify(body)});
+  return r.json();
+}
+async function loadVault(){
+  const box=document.getElementById("vbody");
+  try{ const j=await vcall({action:"summary"}); if(!j.ok){ box.innerHTML='<p class="shelf-desc">관제실을 열지 못했습니다: '+esc(j.error||"")+'</p>'; return; } V=j; }
+  catch(e){ box.innerHTML='<p class="shelf-desc">관제실 서버에 닿지 못했습니다.</p>'; return; }
+  renderVault();
+  document.getElementById("n-vault").textContent = vaultNote();
+}
+function vaultNote(){
+  if(!V) return "—";
+  const s=V.snapshots[V.snapshots.length-1]; const al=vaultAlerts().filter(a=>a.lv!=="info").length;
+  return s?`순자산 ${fmtW(s.net_worth)} · 경보 ${al}건`:"스냅샷 없음";
+}
+function vaultAlerts(){
+  const A=[]; const lv=n=>n<=0?"now":n<=90?"soon":null;
+  for(const l of V.liabilities.filter(x=>x.active)){
+    const n=days(l.maturity); const k=lv(n); if(k==null||n==null) continue;
+    const what=l.kind==="tenant_deposit"?"보증금 반환 시점(계약 만료)":"대출 만기 · 금리 재설정";
+    A.push({lv:k,d:l.maturity,n,t:`${nm(l.linked_asset)} — ${what} · ${KIND[l.kind]||l.kind} ${fmtW(l.principal)}${l.rate!=null?" · "+fmtP(l.rate):""} · ${esc(l.counterparty||"")}`});
+  }
+  for(const x of V.leases.filter(x=>x.status==="active")){
+    const end=x.renewed_end_on||x.end_on; const n=days(end); const k=lv(n); if(k==null||n==null) continue;
+    A.push({lv:k,d:end,n,t:`${nm(x.asset_id)} — 임대차 만료 · ${esc(x.tenant||"")} · 월세 ${fmtW(x.rent)}`});
+  }
+  for(const a of V.assets.filter(a=>a.active&&a.cls==="bond"&&a.maturity)){
+    const n=days(a.maturity); if(n==null||n>90) continue;
+    A.push({lv:n<=0?"now":"soon",d:a.maturity,n,t:`${esc(a.name)} — 채권 만기${n<=0?" 경과 · 상환·재투자 미기재(평가액은 만기 전 값)":""} · ${fmtW(a.valuation)}`});
+  }
+  // 전월 입금 기재 확인 — 미납이 아니라 "기재 없음"이다.
+  const pm=new Date(TODAY); pm.setDate(1); pm.setMonth(pm.getMonth()-1); const py=pm.getFullYear(), pmo=pm.getMonth()+1;
+  const have=new Set(V.receipts.filter(r=>r.year===py&&r.month===pmo&&r.amount).map(r=>r.asset_id));
+  const miss=V.leases.filter(x=>x.status==="active"&&x.rent>0&&!have.has(x.asset_id));
+  if(miss.length) A.push({lv:"info",d:`${py}-${String(pmo).padStart(2,"0")}`,n:0,t:`${py}년 ${pmo}월 월세 입금 기재 없음 ${miss.length}건 — ${miss.map(x=>nm(x.asset_id)).join(", ")}`});
+  const stale=V.assets.filter(a=>a.active&&a.valuation!=null&&a.valued_on&&days(a.valued_on)<-60);
+  if(stale.length) A.push({lv:"info",d:"",n:0,t:`평가일이 60일을 넘은 자산 ${stale.length}건 — 평가액은 그날의 값이다`});
+  const nul=V.assets.filter(a=>a.active&&a.valuation==null);
+  if(nul.length) A.push({lv:"info",d:"",n:0,t:`평가액 결측 ${nul.length}건(순자산에서 제외) — ${nul.map(a=>esc(a.name)).join(", ")}`});
+  return A.sort((a,b)=>(a.lv==="info")-(b.lv==="info")||a.n-b.n);
+}
+function band(parts){ // parts: [{k,label,color,v}]
+  const tot=parts.reduce((s,p)=>s+p.v,0)||1;
+  return `<div class="band">${parts.map(p=>`<i style="flex:${p.v/tot};background:${p.color}" title="${esc(p.label)} ${fmtW(p.v)}"></i>`).join("")}</div>
+    <div class="legend">${parts.map(p=>`<div><b style="background:${p.color}"></b>${esc(p.label)} <span>${fmtW(p.v)}</span> · ${(p.v/tot*100).toFixed(1)}%</div>`).join("")}</div>`;
+}
+function lineChart(pts){ // pts: [{d, v}]
+  if(pts.length<2) return `<p class="shelf-desc">추이는 점이 둘 이상 쌓이면 그립니다 (지금 ${pts.length}점).</p>`;
+  const W=820,H=200,L=64,R=16,T=14,B=28; const vs=pts.map(p=>p.v); let lo=Math.min(...vs),hi=Math.max(...vs); if(hi===lo){hi+=1;lo-=1;} const pad=(hi-lo)*.08; lo-=pad;hi+=pad;
+  const x=i=>L+(W-L-R)*i/(pts.length-1), y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+  const path=pts.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.v).toFixed(1)).join(" ");
+  const ticks=[lo+pad,(lo+hi)/2,hi-pad];
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" data-n="${pts.length}">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="#2C2621"/><text x="${L-6}" y="${(y(t)+4).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="#A89C8C">${fmtW(t)}</text>`).join("")}
+    <text x="${L}" y="${H-8}" font-family="IBM Plex Mono" font-size="10" fill="#A89C8C">${pts[0].d}</text><text x="${W-R}" y="${H-8}" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="#A89C8C">${pts[pts.length-1].d}</text>
+    <path d="${path}" fill="none" stroke="#d95926" stroke-width="2" stroke-linejoin="round"/>
+    <circle class="cur" r="4" fill="#d95926" stroke="#16120F" stroke-width="2" cx="${x(pts.length-1)}" cy="${y(pts[pts.length-1].v)}"/>
+    <line class="xh" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="#3A322B" stroke-dasharray="3 3" style="display:none"/>
+    <rect x="${L}" y="0" width="${W-L-R}" height="${H}" fill="transparent" class="hit"/></svg><div class="tip"></div></div>`;
+}
+function hookChart(el,pts){
+  const svg=el.querySelector("svg"),tip=el.querySelector(".tip"),xh=svg.querySelector(".xh"),cur=svg.querySelector(".cur");
+  const W=820,L=64,R=16; if(pts.length<2) return;
+  svg.addEventListener("mousemove",e=>{
+    const r=svg.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W; const i=Math.max(0,Math.min(pts.length-1,Math.round((px-L)/(W-L-R)*(pts.length-1))));
+    const cx=L+(W-L-R)*i/(pts.length-1); xh.setAttribute("x1",cx);xh.setAttribute("x2",cx);xh.style.display="";
+    tip.style.display="block"; tip.style.left=Math.min(r.width-160,(cx/W)*r.width+8)+"px"; tip.style.top="8px";
+    tip.textContent=`${pts[i].d} · 순자산 ${fmtW(pts[i].v)}`;
+  });
+  svg.addEventListener("mouseleave",()=>{xh.style.display="none";tip.style.display="none";});
+}
+let VF={cls:"",own:""};
+function renderVault(){
+  const box=document.getElementById("vbody"); const S=V.snapshots[V.snapshots.length-1];
+  const act=V.assets.filter(a=>a.active), liab=V.liabilities.filter(l=>l.active);
+  const nul=act.filter(a=>a.valuation==null).length;
+  const byC=Object.keys(CLS).map(k=>({k,label:CLS[k][0],color:CLS[k][1],v:act.filter(a=>a.cls===k).reduce((s,a)=>s+(a.valuation||0),0)})).filter(p=>p.v>0);
+  const byO=Object.keys(OWN).map(k=>({k,label:OWN[k][0],color:OWN[k][1],v:act.filter(a=>a.owner===k).reduce((s,a)=>s+(a.valuation||0),0)})).filter(p=>p.v>0);
+  const byL=[{k:"bank",label:"은행·사인간 대출",color:"#d95926",v:liab.filter(l=>l.kind!=="tenant_deposit").reduce((s,l)=>s+(l.principal||0),0)},{k:"dep",label:"임대보증금",color:"#3987e5",v:liab.filter(l=>l.kind==="tenant_deposit").reduce((s,l)=>s+(l.principal||0),0)}].filter(p=>p.v>0);
+  const rentM=V.leases.filter(x=>x.status==="active").reduce((s,x)=>s+(x.rent||0),0);
+  const intM=liab.reduce((s,l)=>s+(l.monthly_interest||0),0);
+  const netM=act.filter(a=>a.cls==="real_estate").reduce((s,a)=>s+(a.net_monthly||0),0);
+  const al=vaultAlerts();
+  const pts=V.snapshots.map(s=>({d:s.d,v:s.net_worth}));
+  const CO=Object.keys(CLS); const A=act.filter(a=>(!VF.cls||a.cls===VF.cls)&&(!VF.own||a.owner===VF.own)).sort((x,y)=>CO.indexOf(x.cls)-CO.indexOf(y.cls)||(x.id<y.id?-1:1));
+  // 월세 격자 — 최근 6개월
+  const months=[]; for(let i=5;i>=0;i--){const m=new Date(TODAY);m.setDate(1);m.setMonth(m.getMonth()-i);months.push([m.getFullYear(),m.getMonth()+1]);}
+  const rmap={}; V.receipts.forEach(r=>{rmap[r.asset_id+"|"+r.year+"|"+r.month]=r;});
+  const re=act.filter(a=>a.cls==="real_estate");
+  box.innerHTML=`
+  <div class="stats">
+    <div><div class="k">순자산</div><div class="v${S&&S.net_worth<0?" neg":""}">${S?fmtW(S.net_worth):"—"}</div><div class="s">${S?S.d+" 스냅샷 · "+esc(S.source):"스냅샷 없음"}</div></div>
+    <div><div class="k">자산 평가액</div><div class="v">${S?fmtW(S.assets):"—"}</div><div class="s">${act.length}건${nul?" · 결측 "+nul:""}</div></div>
+    <div><div class="k">부채</div><div class="v">${S?fmtW(S.liabilities):"—"}</div><div class="s">${liab.length}건 · 보증금 포함</div></div>
+    <div><div class="k">월세 계약액 / 월이자</div><div class="v">${fmtW(rentM)}</div><div class="s">이자 ${fmtW(intM)} · 부동산 월순수익(장부) ${fmtW(netM)}</div></div>
+  </div>
+  <section class="shelf"><div class="shelf-head"><h3>구성</h3></div>
+    <p class="shelf-desc">자산군별</p>${band(byC)}
+    <p class="shelf-desc" style="margin-top:12px">소유 주체별</p>${band(byO)}
+    <p class="shelf-desc" style="margin-top:12px">부채 성격별</p>${band(byL)}
+  </section>
+  <section class="shelf"><div class="shelf-head"><h3>경보 · 90일</h3><span class="count">${al.filter(a=>a.lv!=="info").length}</span></div>
+    <ul class="alerts">${al.length?al.map(a=>`<li><span class="lv ${a.lv}">${a.lv==="now"?"지금":a.lv==="soon"?"임박":"참고"}</span><span class="d">${esc(a.d||"")} ${a.lv==="info"?"":dtxt(a.n)}</span><span class="t">${a.t}</span></li>`).join(""):'<li><span class="lv info">—</span><span class="t">90일 안에 걸린 것이 없습니다.</span></li>'}</ul>
+  </section>
+  <section class="shelf"><div class="shelf-head"><h3>순자산 추이</h3><span class="count">${pts.length}점</span></div><div id="vchart">${lineChart(pts)}</div></section>
+  <section class="shelf"><div class="shelf-head"><h3>자산</h3><span class="count">${A.length}</span></div>
+    <div class="filters"><button class="tab${VF.cls?"":" on"}" data-f="cls" data-v="">전체</button>${Object.keys(CLS).map(k=>`<button class="tab${VF.cls===k?" on":""}" data-f="cls" data-v="${k}">${CLS[k][0]}</button>`).join("")}
+      <span style="width:12px"></span><button class="tab${VF.own?"":" on"}" data-f="own" data-v="">주체 전체</button>${Object.keys(OWN).map(k=>`<button class="tab${VF.own===k?" on":""}" data-f="own" data-v="${k}">${OWN[k][0]}</button>`).join("")}</div>
+    <div class="tw"><table class="vt"><thead><tr><th>명칭</th><th>구분</th><th>주체</th><th>취득</th><th class="n">매입금액</th><th class="n">평가액</th><th>평가일</th><th class="n">월순수익</th><th>만기</th></tr></thead><tbody>
+    ${A.map(a=>`<tr title="${esc(a.note||"")}"><td><span class="dot" style="background:${(CLS[a.cls]||["",""])[1]}"></span>${esc(a.name)}${a.location?`<div class="m" style="font-size:11px;color:var(--muted)">${esc(a.location)}</div>`:""}</td><td class="m">${(CLS[a.cls]||[a.cls])[0]}</td><td class="m">${(OWN[a.owner]||[a.owner])[0]}</td><td class="m">${a.acquired_on||""}</td><td class="n">${fmtW(a.cost)}</td><td class="n">${fmtW(a.valuation)}</td><td class="m">${a.valued_on||"—"}${a.valuation_source?" · "+esc(a.valuation_source):""}</td><td class="n${a.net_monthly<0?" neg":""}">${fmtW(a.net_monthly)}</td><td class="m">${a.maturity||""}</td></tr>`).join("")}
+    </tbody></table></div></section>
+  <section class="shelf"><div class="shelf-head"><h3>부채</h3><span class="count">${liab.length}</span></div>
+    <div class="tw"><table class="vt"><thead><tr><th>물건</th><th>종류</th><th>상대</th><th class="n">원금</th><th class="n">이율</th><th class="n">월이자</th><th>만기</th><th>잔여</th></tr></thead><tbody>
+    ${liab.slice().sort((a,b)=>(a.maturity||"9")<(b.maturity||"9")?-1:1).map(l=>{const n=days(l.maturity);return `<tr title="${esc(l.note||"")}"><td>${esc(nm(l.linked_asset))}</td><td class="m">${KIND[l.kind]||l.kind}</td><td class="m">${esc(l.counterparty||"")}</td><td class="n">${fmtW(l.principal)}</td><td class="n">${fmtP(l.rate)}</td><td class="n">${fmtW(l.monthly_interest)}</td><td class="m">${l.maturity||"—"}</td><td class="${n!=null&&n<=90?"neg":"m"}">${dtxt(n)}</td></tr>`;}).join("")}
+    </tbody></table></div></section>
+  <section class="shelf"><div class="shelf-head"><h3>임대차</h3><span class="count">${V.leases.length}</span></div>
+    <div class="tw"><table class="vt"><thead><tr><th>물건</th><th>임차인</th><th>용도</th><th>개시</th><th>만료(갱신후)</th><th>잔여</th><th class="n">월세</th><th class="n">보증금</th><th>계산서</th></tr></thead><tbody>
+    ${V.leases.slice().sort((a,b)=>((a.renewed_end_on||a.end_on||"9")<(b.renewed_end_on||b.end_on||"9")?-1:1)).map(x=>{const end=x.renewed_end_on||x.end_on,n=days(end);return `<tr><td>${esc(nm(x.asset_id))}</td><td>${esc(x.tenant||"")}</td><td class="m">${esc(x.use||"")}</td><td class="m">${x.start_on||""}</td><td class="m">${end||"—"}</td><td class="${n!=null&&n<=90?"neg":"m"}">${dtxt(n)}</td><td class="n">${fmtW(x.rent)}</td><td class="n">${fmtW(x.deposit)}</td><td class="m">${esc(x.tax_invoice||"")}</td></tr>`;}).join("")}
+    </tbody></table></div></section>
+  <section class="shelf"><div class="shelf-head"><h3>월세 입금 · 최근 6개월</h3></div>
+    <p class="shelf-desc">빈칸은 미납이 아니라 <b>기재 없음</b>입니다. 원천 시트가 멈춘 달부터는 아래 기재 창으로 적어야 채워집니다.</p>
+    <div class="tw"><table class="vt rg"><thead><tr><th>물건</th>${months.map(([y,m])=>`<th class="n">${String(y).slice(2)}.${String(m).padStart(2,"0")}</th>`).join("")}</tr></thead><tbody>
+    ${re.map(a=>`<tr><td>${esc(a.name)}</td>${months.map(([y,m])=>{const r=rmap[a.id+"|"+y+"|"+m];return `<td class="${r&&r.amount?"":"no"}" title="${r?esc((r.pay_day||"")+" "+(r.for_month||"")):""}">${r&&r.amount?fmtW(r.amount):"—"}</td>`;}).join("")}</tr>`).join("")}
+    </tbody></table></div></section>
+  ${V.who==="ceo"?`
+  <section class="shelf" id="vforms"><div class="shelf-head"><h3>기재 · 대표만</h3></div>
+    <p class="shelf-desc">평가액을 고치면 그 자리에서 스냅샷이 다시 찍힙니다. 단위는 <b>만원</b>으로 적습니다. 기록은 전부 로그에 남습니다.</p>
+    <div class="form"><div class="row"><select id="v-asset">${act.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select>
+      <input id="v-val" type="number" placeholder="평가액 (만원)"><input id="v-date" type="date" value="${TODAY.toISOString().slice(0,10)}">
+      <button class="send" id="v-save">평가액 갱신</button><span class="msg" id="v-msg"></span></div></div>
+    <div class="form" style="margin-top:10px"><div class="row"><select id="r-asset">${re.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select>
+      <input id="r-ym" type="month" value="${TODAY.toISOString().slice(0,7)}"><input id="r-day" placeholder="입금일 (예: 28일)" style="flex:0 1 120px"><input id="r-amt" type="number" placeholder="입금액 (만원)" style="flex:0 1 130px">
+      <input id="r-for" placeholder="임차월 (예: 9월치)" style="flex:0 1 140px"><button class="send" id="r-save">월세 입금 기재</button><span class="msg" id="r-msg"></span></div></div>
+  </section>`:`<section class="shelf"><p class="shelf-desc">기재는 대표 로그인에서만 가능합니다. 임원 창은 토큰으로 읽기만 합니다.</p></section>`}
+  <footer style="margin-top:14px">원천: 자산운용 현황 시트(기준일은 각 행의 평가일) · 계좌 평가액은 일일 스크립트가 갱신 · 순자산 = 활성 자산 평가액 − 활성 부채(보증금 포함) · 평가액 결측은 합계에서 제외</footer>`;
+  hookChart(document.getElementById("vchart"),pts);
+  box.querySelectorAll(".filters .tab").forEach(b=>b.addEventListener("click",()=>{VF[b.dataset.f]=b.dataset.v;renderVault();}));
+  if(V.who==="ceo"){
+    document.getElementById("v-save").addEventListener("click",async()=>{
+      const id=document.getElementById("v-asset").value, v=document.getElementById("v-val").value, d=document.getElementById("v-date").value, msg=document.getElementById("v-msg");
+      if(v===""||!d){msg.className="msg bad";msg.textContent="평가액과 날짜를 적으십시오.";return;}
+      const row=Object.assign({},V.assets.find(a=>a.id===id),{valuation:Math.round(+v*10000),valued_on:d,valuation_source:"manual"});
+      msg.className="msg";msg.textContent="기재 중…";
+      const r=await vcall({action:"upsert",table:"assets",row});
+      if(r.ok){msg.className="msg ok";msg.textContent="갱신 · 스냅샷 "+(r.snapshot?fmtW(r.snapshot.net_worth):"");await loadVault();}
+      else{msg.className="msg bad";msg.textContent=r.error||"실패";}
+    });
+    document.getElementById("r-save").addEventListener("click",async()=>{
+      const id=document.getElementById("r-asset").value, ym=document.getElementById("r-ym").value, amt=document.getElementById("r-amt").value, msg=document.getElementById("r-msg");
+      if(!ym||amt===""){msg.className="msg bad";msg.textContent="월과 금액을 적으십시오.";return;}
+      const lease=V.leases.find(x=>x.asset_id===id&&x.status==="active");
+      const row={asset_id:id,year:+ym.slice(0,4),month:+ym.slice(5,7),pay_day:document.getElementById("r-day").value||null,amount:Math.round(+amt*10000),for_month:document.getElementById("r-for").value||null,tenant:lease?lease.tenant:null};
+      msg.className="msg";msg.textContent="기재 중…";
+      const r=await vcall({action:"receipt",row});
+      if(r.ok){msg.className="msg ok";msg.textContent="기재했습니다.";await loadVault();}
+      else{msg.className="msg bad";msg.textContent=r.error||"실패";}
+    });
+  }
+}
 
 async function refresh(){
   const o=await call({action:"overview"});
@@ -560,6 +794,7 @@ document.getElementById("c-send").addEventListener("click",async()=>{
   await refresh();
   await openBox("ceo");
   loadArchive();
+  loadVault();
   setInterval(refresh, 60000);
 })();
 </script>
