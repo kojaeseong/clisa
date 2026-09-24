@@ -110,12 +110,12 @@ td svg{width:100px;height:26px;display:block}
 .step{width:100%;height:110px}
 .events{list-style:none;margin:0;padding:0;font-size:12.5px;display:grid;gap:6px}
 .events li{display:grid;grid-template-columns:78px 1fr auto;gap:8px;border-top:1px solid var(--line);padding-top:6px}
-.events li .calc{display:block;font-size:11.5px;color:var(--muted);font-family:Archivo,"Noto Sans KR",sans-serif;margin-top:2px}.events li .d{color:var(--muted)}.events li .v{color:var(--accent);font-family:Archivo,sans-serif;font-weight:700}
+.events .ex{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.events .ex.open{display:block}.evbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.events li .calc{display:block;font-size:11.5px;color:var(--muted);font-family:Archivo,"Noto Sans KR",sans-serif;margin-top:2px}.events li .d{color:var(--muted)}.events li .v{color:var(--accent);font-family:Archivo,sans-serif;font-weight:700}
 .did{border-top:1px solid var(--line);padding-top:8px;font-size:13px}
 .did .lbl{display:block;margin-bottom:4px}
 .did a{color:var(--ink);font-weight:700;cursor:pointer;text-decoration:underline}
 /* flow & news */
-.grid2{display:grid;grid-template-columns:1.1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:1.1fr 1fr;gap:12px}.grid2.stack{grid-template-columns:1fr}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px 16px;min-width:0}
 .card h4{margin:0 0 8px;font-size:14px}
 .card ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:13px}
@@ -225,7 +225,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
         <button class="chip" data-p="3"><span class="sw" style="background:var(--p3)"></span>기타 정당</button>
         <button class="chip" data-p="4"><span class="sw" style="background:var(--p4)"></span>무소속</button>
       </div>
-      <div class="tbl"><table id="board"><thead><tr><th>순위</th><th>의원</th><th>정당</th><th>누적 점수</th><th>30일</th><th>추이</th><th>최근 사건</th></tr></thead><tbody></tbody></table></div>
+      <div class="tbl"><table id="board"><thead><tr><th>순위</th><th>의원</th><th>정당</th><th>누적 점수</th><th>30일</th><th>추이</th><th>최근 성과</th></tr></thead><tbody></tbody></table></div>
       <div class="more"><button class="btn" id="more">더 보기</button><span id="moreInfo" class="meta"></span></div>
       <div id="zeros" class="did" hidden style="margin-top:10px"></div>
       <form class="search" id="search"><input type="search" id="q" placeholder="의원 이름으로 찾기" aria-label="의원 검색"><button class="btn" type="submit">찾기</button></form>
@@ -240,6 +240,12 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
         <div class="tabs" role="group" aria-label="표시 범위"><button class="tab" data-top="0.1" aria-pressed="true">상위 10%</button><button class="tab" data-top="0.25" aria-pressed="false">상위 25%</button><button class="tab" data-top="0.5" aria-pressed="false">상위 50%</button></div></div>
       <div class="bump" id="bumpBox"><svg id="bump" viewBox="0 0 760 400" aria-label="상위 의원 순위 변동 선 그래프"></svg></div>
       <div class="timebar"><button class="btn" id="play" aria-label="재생">▶ 재생</button><input type="range" id="time" min="0" max="85" value="85" aria-label="기준일"><span>기준일 <b class="num" id="tLabel" style="color:var(--ink)">2026-09-24</b></span><button class="btn" id="toLatest" title="기준일을 가장 최근으로 되돌립니다">최신으로</button></div>
+
+      <div class="sec-h"><div><div class="eyebrow" data-sec="5">5 · 흐름</div><h2 class="disp">정당별 의정성과는 어떻게 움직였나</h2></div></div>
+      <div class="grid2 stack">
+        <div class="card"><h4>정당별 평균 의정성과 <span class="meta">소속 의원의 점수 평균, 개원일부터 기준일까지</span></h4><svg id="partyIdx" viewBox="0 0 520 172" preserveAspectRatio="xMidYMid meet" style="width:100%;height:172px" aria-label="정당별 평균 의정성과 추이"></svg><div class="legend"><span><i style="background:var(--p1)"></i>국민의힘</span><span><i style="background:var(--p2)"></i>더불어민주당</span><span><i style="background:var(--p3)"></i>기타 정당</span><span><i style="background:var(--p4)"></i>무소속</span></div></div>
+        <div class="card"><h4>평가요소별 누적점수 비중 <span class="meta">전체 점수를 요소별로 나눈 몫</span></h4><div class="multiples" id="multiples" style="grid-template-columns:repeat(3,1fr)"></div><p class="meta" style="margin:10px 0 0" id="kindNote"></p><p class="meta" style="margin:6px 0 0">주석 · 의원 114명의 점수를 모두 더한 뒤, 그 점수가 어떤 성과에서 왔는지 세 가지 평가요소로 나눈 것입니다. 상대 당 서명은 조례안에 다른 당 의원이 서명한 성과, 조례 통과·반영은 발의한 조례가 본회의를 통과했거나 대안에 흡수된 성과, 동료 인용은 다른 의원이 회의 중 이름을 들어 인용한 성과입니다. 선은 개원일부터 기준일까지 그 요소의 점수가 쌓인 모양입니다.</p></div>
+      </div>
       </div>
     </div>
 
@@ -255,13 +261,6 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
       <ul class="events" id="sEvents"></ul>
       <div class="meta" id="sMore">점수가 바뀌면 그 근거가 된 문서도 함께 올라옵니다.</div>
     </aside>
-  </div>
-
-
-  <div class="sec-h"><div><div class="eyebrow" data-sec="5">5 · 흐름</div><h2 class="disp">정당별 의정성과는 어떻게 움직였나</h2></div></div>
-  <div class="grid2">
-    <div class="card"><h4>정당별 평균 의정성과 <span class="meta">소속 의원의 점수 평균, 개원일부터 기준일까지</span></h4><svg id="partyIdx" viewBox="0 0 520 172" preserveAspectRatio="xMidYMid meet" style="width:100%;height:172px" aria-label="정당별 평균 의정성과 추이"></svg><div class="legend"><span><i style="background:var(--p1)"></i>국민의힘</span><span><i style="background:var(--p2)"></i>더불어민주당</span><span><i style="background:var(--p3)"></i>기타 정당</span><span><i style="background:var(--p4)"></i>무소속</span></div></div>
-    <div class="card"><h4>평가요소별 누적점수 비중 <span class="meta">전체 점수를 요소별로 나눈 몫</span></h4><div class="multiples" id="multiples" style="grid-template-columns:repeat(3,1fr)"></div><p class="meta" style="margin:10px 0 0" id="kindNote"></p><p class="meta" style="margin:6px 0 0">주석 · 의원 114명의 점수를 모두 더한 뒤, 그 점수가 어떤 사건에서 왔는지 세 가지 평가요소로 나눈 것입니다. 상대 당 서명은 조례안에 다른 당 의원이 서명한 사건, 조례 통과·반영은 발의한 조례가 본회의를 통과했거나 대안에 흡수된 사건, 동료 인용은 다른 의원이 회의 중 이름을 들어 인용한 사건입니다. 선은 개원일부터 기준일까지 그 요소의 점수가 쌓인 모양입니다.</p></div>
   </div>
 
 
@@ -294,7 +293,7 @@ const termLbl=m=>{ if(!m.terms) return ""; const n=m.terms.length||1; return n==
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const PN={1:"국민의힘",2:"더불어민주당",3:"기타 정당",4:"무소속"};
 const WIN=30;
-let cur, members, DOCS, T, D0, STEP;
+let cur, members, DOCS, T, D0, STEP; let evShown=6, evFor=null;
 const infAt=(m,t)=>{ let v=0; for(const e of m.ev){ if(e.t<=t) v+=e.v; else break; } return v; };
 const pressAt=(m,t)=>{ let n=0; for(const d of (m.pd||[])){ if(d<=t) n++; else break; } return n; };
 const medianOf=a=>{ const b=[...a].sort((x,y)=>x-y); return b.length?b[b.length>>1]:0; };
@@ -424,9 +423,13 @@ function showSide(m){
   document.getElementById("sDid").textContent=`조례 등 대표발의 ${a.lead||0}건(통과·반영 ${a.passed||0}건), 공동 서명 ${a.sign||0}건, 상임위·본회의 발언 세션 ${a.sessions||0}회, 집행기관(시·교육청)의 조치 약속 답변 ${a.promise||0}건(표시만, 점수 아님). 기준일까지 상대 당 서명을 받은 안건 ${cross}건.`;
   const tks=Object.keys(curCouncil.terms).map(Number).sort((a,b)=>b-a); const prevK=tks.includes(+filt.term-1)?String(+filt.term-1):null; const pv=document.getElementById("sPrev");
   if(prevK){ const PT=curCouncil.terms[prevK]; const pm=PT.members.find(x=>x.label===m.label); if(pm){ const pvv=pm.ev.reduce((s,e)=>s+e.v,0); const allp=PT.members.map(x=>x.ev.reduce((s,e)=>s+e.v,0)).sort((a,b)=>b-a); const rp=allp.findIndex(x=>x<=pvv)+1; pv.hidden=false; pv.innerHTML=`<span class="lbl">지난 대수 기록</span>${PT.label}(${PT.span.replace(/-\d\d/g,"")}) 의정성과 ${P(pvv)} · 의회 안 ${rp}위 / ${allp.length}명 · 대표발의 ${pm.act.lead||0}건 · <a data-goto="${pm.id}" data-term="${prevK}">${PT.label} 화면에서 보기</a>`; } else { pv.hidden=false; pv.innerHTML=`<span class="lbl">지난 대수 기록</span>${PT.label} ${filt.council} 기록 없음(초선)`; } } else pv.hidden=true;
-  document.getElementById("sEvents").innerHTML=past.slice(-6).reverse().map(e=>`<li><span class="d num">${dstr(e.t)}</span><span><b>${KN[e.k]}</b> · ${e.why}${e.c?`<span class="calc">계산 ${e.c}</span>`:""}<br><span class="sub">${e.u?`<a href="${e.u}" target="_blank" rel="noopener" style="color:inherit">${e.doc}</a>`:e.doc}</span>${e.x?`<div class="sub" style="white-space:normal;margin-top:3px;color:var(--ink)">${e.x}</div>`:""}</span><span class="v num">+${P(e.v)}</span></li>`).join("")||`<li><span class="d">—</span><span>이 기간에는 변동이 없습니다</span><span></span></li>`;
-  document.getElementById("sMore").textContent=past.length>6?`최근 6건만 보입니다. 기준일까지 사건 ${past.length}건.`:"점수가 바뀌면 그 근거가 된 문서도 함께 올라옵니다.";
+  if(evFor!==m){ evFor=m; evShown=6; } document.getElementById("sEvents").innerHTML=past.slice(-evShown).reverse().map(e=>`<li><span class="d num">${dstr(e.t)}</span><span><b>${KN[e.k]}</b> · ${e.why}${e.c?`<span class="calc">계산 ${e.c}</span>`:""}<br><span class="sub">${e.u?`<a href="${e.u}" target="_blank" rel="noopener" style="color:inherit">${e.doc}</a>`:e.doc}</span>${e.x?`<div class="sub ex" title="눌러서 펼치기" style="white-space:normal;margin-top:3px;color:var(--ink)">${e.x}</div>`:""}</span><span class="v num">+${P(e.v)}</span></li>`).join("")||`<li><span class="d">—</span><span>이 기간에는 변동이 없습니다</span><span></span></li>`;
+  { const mo=document.getElementById("sMore"), shownN=Math.min(evShown,past.length), rest=past.length-shownN;
+    mo.innerHTML=past.length>6?`기준일까지 점수로 이어진 성과 ${past.length}건 중 ${shownN}건을 보여 드립니다.<div class="evbtns">${rest>0?`<button class="btn" data-ev="more">더 보기 (남은 ${rest}건)</button>`:""}${shownN>6?`<button class="btn" data-ev="fold">접기</button>`:""}</div>`:"점수가 바뀌면 그 근거가 된 문서도 함께 올라옵니다.";
+    const sd=document.getElementById("side"); sd.style.position=(window.innerWidth>900&&sd.offsetHeight>window.innerHeight-80)?"static":""; }
 }
+document.getElementById("sEvents").addEventListener("click",e=>{ const x=e.target.closest(".ex"); if(x) x.classList.toggle("open"); });
+document.getElementById("sMore").addEventListener("click",e=>{ const b=e.target.closest("[data-ev]"); if(!b||!sel) return; if(b.dataset.ev==="more") evShown+=6; else { evShown=6; document.getElementById("sEvents").scrollIntoView({block:"nearest"}); } showSide(sel); });
 document.getElementById("sPrev").addEventListener("click",e=>{ const a=e.target.closest("[data-goto]"); if(!a) return; loadScope(filt.council,a.dataset.term); const m=members.find(x=>x.id===+a.dataset.goto); if(m) select(m); window.scrollTo({top:0,behavior:"smooth"}); });
 // ---------- bump ----------
 let TOPP=0.1;
