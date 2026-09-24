@@ -163,11 +163,12 @@ canvas{width:100%;height:100%;display:block}
 .caldet{margin-top:10px;font-size:13px}.caldet .lbl{display:block;margin-bottom:4px}
 .caldet ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}.caldet li{border-top:1px solid var(--line);padding-top:4px;display:grid;grid-template-columns:90px 1fr;gap:8px}.caldet li .k{font-family:Archivo,sans-serif;font-weight:700;color:var(--muted);font-size:11px}
 .cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:6px}.cal-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-@media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:36px repeat(31,1fr)}.cal .sb{font-size:0}}
+@media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.cal .sb{font-size:0}}
 .quote{margin:0;padding:10px 12px;border-left:3px solid var(--ink);background:var(--panel2);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.55}.quote .q{font-style:normal}.quote .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}.quote .src a{color:inherit}
 /* footer */
-form.mail{display:flex;gap:8px;flex-wrap:wrap}
-form.mail input{flex:1;min-width:200px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+form.mail{display:grid;gap:8px;max-width:760px}
+form.mail .mrow{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}@media (max-width:700px){form.mail .mrow{grid-template-columns:1fr}}
+form.mail input,form.mail textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font:inherit;color:var(--ink)}form.mail textarea{resize:vertical;min-height:170px;line-height:1.6}form.mail .msend{display:flex;justify-content:flex-end}
 form.mail button{background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
 .foot{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
 .foot a{color:var(--muted)}
@@ -214,7 +215,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
 
   <div class="main">
     <div class="col">
-      <div class="sec-h"><div><div class="eyebrow">1 · 순위표</div><h2 class="disp" id="boardTitle">서울특별시의회</h2><div class="meta">순위는 같은 의회 안에서 매기고, 상위 절반까지만 보입니다. 점수는 다른 의원이 서명하고, 본회의가 통과시키고, 동료가 인용한 결과만 더한 것으로 아직 검증 전 시험값입니다. 행을 누르면 그 근거가 열립니다.</div></div>
+      <div class="sec-h"><div><div class="eyebrow" data-sec="1">1 · 순위표</div><h2 class="disp" id="boardTitle">서울특별시의회</h2><div class="meta">순위는 같은 의회 안에서 매기고, 상위 절반까지만 보입니다. 점수는 다른 의원이 서명하고, 본회의가 통과시키고, 동료가 인용한 결과만 더한 것으로 아직 검증 전 시험값입니다. 행을 누르면 그 근거가 열립니다.</div></div>
         <div class="tabs" role="tablist"><button class="tab" data-tab="score" aria-pressed="true">점수 순</button><button class="tab" data-tab="move" aria-pressed="false">최근 30일 변동 순</button></div></div>
       <div class="tabs" style="margin-bottom:10px" role="group" aria-label="정당">
         <button class="chip" data-p="all" aria-pressed="true">모든 정당</button>
@@ -228,18 +229,18 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
       <div id="zeros" class="did" hidden style="margin-top:10px"></div>
       <form class="search" id="search"><input type="search" id="q" placeholder="의원 이름으로 찾기" aria-label="의원 검색"><button class="btn" type="submit">찾기</button></form>
 
-      <div class="sec-h"><div><div class="eyebrow">2 · 활동 캘린더</div><h2 class="disp" id="calTitle">회기와 활동</h2><div class="meta" id="calMeta">회의가 열린 날은 옅게, 고른 의원이 활동한 날은 진하게 칠해집니다. 날짜를 누르면 그날의 회의와 활동이, 회기 이름을 누르면 그 회기의 요약이 아래에 열립니다. 발언은 한 대목이 인용되고, 누르면 의회 회의록 원문으로 갑니다.</div></div>
+      <div class="sec-h"><div><div class="eyebrow" data-sec="2">2 · 활동 캘린더</div><h2 class="disp" id="calTitle">회기와 활동</h2><div class="meta" id="calMeta">회의가 열린 날은 옅게, 고른 의원이 활동한 날은 진하게 칠해집니다. 날짜를 누르면 그날의 회의와 활동이, 회기 이름을 누르면 그 회기의 요약이 아래에 열립니다. 발언은 한 대목이 인용되고, 누르면 의회 회의록 원문으로 갑니다.</div></div>
         <div class="tabs" id="calYears" role="group" aria-label="연도"></div></div>
       <div class="card" style="padding:12px 14px"><div id="cal" class="cal"></div><div id="calDetail" class="caldet"></div><p class="meta" id="calSrc" style="margin:8px 0 0"></p></div>
 
-      <div class="sec-h"><div><div class="eyebrow">4 · 순위 흐름</div><h2 class="disp" id="bumpTitle">상위 10%의 순위 흐름</h2><div class="meta">개원일부터 기준일까지, 누군가의 값이 바뀔 때마다 순위가 다시 매겨집니다. 선을 누르면 오른쪽에 그 의원이 열립니다.</div></div>
+      <div class="sec-h"><div><div class="eyebrow" data-sec="3">3 · 순위 흐름</div><h2 class="disp" id="bumpTitle">상위 10%의 순위 흐름</h2><div class="meta">개원일부터 기준일까지, 누군가의 값이 바뀔 때마다 순위가 다시 매겨집니다. 선을 누르면 오른쪽에 그 의원이 열립니다.</div></div>
         <div class="tabs" role="group" aria-label="표시 범위"><button class="tab" data-top="0.1" aria-pressed="true">상위 10%</button><button class="tab" data-top="0.25" aria-pressed="false">상위 25%</button><button class="tab" data-top="0.5" aria-pressed="false">상위 50%</button></div></div>
       <div class="bump" id="bumpBox"><svg id="bump" viewBox="0 0 760 400" aria-label="상위 의원 순위 변동 선 그래프"></svg></div>
       <div class="timebar"><button class="btn" id="play" aria-label="재생">▶ 재생</button><input type="range" id="time" min="0" max="85" value="85" aria-label="기준일"><span>기준일 <b class="num" id="tLabel" style="color:var(--ink)">2026-09-24</b></span><button class="btn" id="toLatest" title="기준일을 가장 최근으로 되돌립니다">최신으로</button></div>
     </div>
 
     <aside class="side" id="side">
-      <div class="who"><div class="avatar" id="sAvatar" aria-hidden="true">?</div><div><div class="lbl">3 · 의원</div><h3 id="sName">행이나 선을 누르세요</h3></div></div>
+      <div class="who"><div class="avatar" id="sAvatar" aria-hidden="true">?</div><div><div class="lbl">의원</div><h3 id="sName">행이나 선을 누르세요</h3></div></div>
       <div class="meta" id="sMeta">순위표의 행이나 순위 흐름의 선을 누르면 그 의원의 값과 근거가 여기에 열립니다.</div>
       <blockquote class="quote" id="sQuote" hidden></blockquote>
       <div id="sMap" hidden><svg class="mapbig" viewBox="-2 -2 104 104" id="sMapSvg" aria-label="서울 안의 선거구 위치"></svg><div class="dongs" id="sDongs"></div></div>
@@ -252,24 +253,16 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
     </aside>
   </div>
 
-  <div class="sec-h" id="deepHead"><div><div class="eyebrow">5 · 분석</div><h2 class="disp">의정성과 vs 언론노출</h2><div class="meta">점수는 높은데 아직 언론에 덜 알려진 의원이 누구인지 보는 화면입니다.</div></div></div>
-  <div class="card" id="deep">
-      <p class="meta" style="margin:0 0 10px;max-width:72ch">세로가 의정성과(이 화면의 점수), 가로가 언론노출(서울시의회 언론보도 목록에 실린 기사 수)입니다. 점선은 각각의 의회 중앙값이라, 왼쪽 위가 점수는 높은데 언론에는 덜 알려진 의원입니다. 점 하나가 의원 한 명이고, 누르면 오른쪽 의원 칸이 열립니다. 언론노출은 점수에 들어가지 않습니다.</p>
-      <div class="plane" id="plane"><canvas id="cv" role="img" aria-label="의정성과와 언론노출 분포"></canvas><span class="axis y">의정성과 ↑</span>
-        <span class="quad tl">의정성과 상위 · 언론노출 하위</span><span class="quad tr">의정성과 상위 · 언론노출 상위</span><span class="quad bl">의정성과 하위 · 언론노출 하위</span><span class="quad br">의정성과 하위 · 언론노출 상위</span><div class="tip" id="tip"></div></div>
-      <div class="did" id="planeNote" style="margin:10px 0 0"></div>
-  </div>
-  <p class="meta" id="deepNone" hidden>이 의회는 언론보도 목록이 아직 수집되지 않아 의정성과 vs 언론노출 분석을 보이지 않습니다.</p>
 
-  <div class="sec-h"><div><div class="eyebrow">6 · 흐름</div><h2 class="disp">정당별 의정성과는 어떻게 움직였나</h2></div></div>
+  <div class="sec-h"><div><div class="eyebrow" data-sec="5">5 · 흐름</div><h2 class="disp">정당별 의정성과는 어떻게 움직였나</h2></div></div>
   <div class="grid2">
     <div class="card"><h4>정당별 평균 의정성과 <span class="meta">소속 의원의 점수 평균, 개원일부터 기준일까지</span></h4><svg id="partyIdx" viewBox="0 0 520 172" preserveAspectRatio="xMidYMid meet" style="width:100%;height:172px" aria-label="정당별 평균 의정성과 추이"></svg><div class="legend"><span><i style="background:var(--p1)"></i>국민의힘</span><span><i style="background:var(--p2)"></i>더불어민주당</span><span><i style="background:var(--p3)"></i>기타 정당</span><span><i style="background:var(--p4)"></i>무소속</span></div></div>
     <div class="card"><h4>평가요소별 누적점수 비중 <span class="meta">전체 점수를 요소별로 나눈 몫</span></h4><div class="multiples" id="multiples" style="grid-template-columns:repeat(3,1fr)"></div><p class="meta" style="margin:10px 0 0" id="kindNote"></p><p class="meta" style="margin:6px 0 0">주석 · 의원 114명의 점수를 모두 더한 뒤, 그 점수가 어떤 사건에서 왔는지 세 가지 평가요소로 나눈 것입니다. 상대 당 서명은 조례안에 다른 당 의원이 서명한 사건, 조례 통과·반영은 발의한 조례가 본회의를 통과했거나 대안에 흡수된 사건, 동료 인용은 다른 의원이 회의 중 이름을 들어 인용한 사건입니다. 선은 개원일부터 기준일까지 그 요소의 점수가 쌓인 모양입니다.</p></div>
   </div>
 
 
-  <div class="sec-h"><div><div class="eyebrow">7 · 문의</div><h2 class="disp">정정 요청과 질문</h2><div class="meta">기록이 사실과 다르거나 궁금한 점이 있으면 이메일로 보내 주세요.</div></div></div>
-  <form class="mail" id="mail"><input type="email" id="mailAddr" placeholder="답장 받을 이메일" aria-label="이메일"><input type="text" id="mailBody" placeholder="내용" aria-label="내용"><button type="submit">보내기</button></form>
+  <div class="sec-h"><div><div class="eyebrow" data-sec="6">6 · 문의</div><h2 class="disp">정정 요청과 질문</h2><div class="meta">기록이 사실과 다르거나 궁금한 점이 있으면 이메일로 보내 주세요.</div></div></div>
+  <form class="mail" id="mail"><div class="mrow"><input type="text" id="mailName" placeholder="이름 (선택)" aria-label="이름" autocomplete="name"><input type="text" id="mailOrg" placeholder="소속 (선택)" aria-label="소속" autocomplete="organization"><input type="email" id="mailAddr" placeholder="답장 받을 이메일" aria-label="이메일" autocomplete="email" required></div><textarea id="mailBody" rows="8" placeholder="내용" aria-label="내용" required></textarea><div class="msend"><button type="submit">보내기</button></div></form>
   <p id="mailMsg" class="meta" style="margin:8px 0 0"></p>
 
   <footer class="foot">
@@ -488,7 +481,7 @@ function renderFlow(){
 }
 // ---------- 분석: plane (세로 축만) ----------
 let planeInit=false;
-const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)&&!planeInit){ planeInit=true; initPlane(); } },{rootMargin:"200px"}); io.observe(document.getElementById("deep"));
+const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)&&!planeInit){ planeInit=true; initPlane(); } },{rootMargin:"200px"}); { const d=document.getElementById("deep"); if(d) io.observe(d); }
 let cv,ctx,W,H; const PAD={l:44,r:36,t:62,b:58};
 function initPlane(){ cv=document.getElementById("cv"); ctx=cv.getContext("2d"); const rs=()=>{ const r=cv.getBoundingClientRect(); const dpr=Math.min(2,window.devicePixelRatio||1); W=r.width;H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); drawPlane(); }; window.addEventListener("resize",rs); rs();
   const tip=document.getElementById("tip"), plane=document.getElementById("plane");
@@ -512,9 +505,12 @@ function drawPlane(){ if(!ctx) return; const S=members.filter(m=>infAt(m,t)>0); 
   const note=document.getElementById("planeNote"); if(note){ const Z=members.filter(m=>infAt(m,t)===0).sort((a,b)=>a.label.localeCompare(b.label,"ko")); note.innerHTML=Z.length?`<span class="lbl">점수가 아직 없어 평면에 없는 의원 ${Z.length}명 · 점수가 생기면 평면에 찍힙니다</span><div class="dongs">${Z.map(m=>`<span data-id="${m.id}" style="cursor:pointer" title="${m.pname} · 언론 언급 ${pressAt(m,t)}건"><i class="sw" style="background:var(--p${m.party})"></i>${m.label}</span>`).join("")}</div>`:""; }
   ctx.globalAlpha=1; }
 // ---------- mail ----------
-document.getElementById("mail").addEventListener("submit",e=>{ e.preventDefault(); const from=document.getElementById("mailAddr").value.trim(), body=document.getElementById("mailBody").value.trim(); if(!body){ document.getElementById("mailMsg").textContent="내용을 적어 주세요."; return; } const subj=encodeURIComponent("클리사 문의"+(sel?` · ${sel.label}`:"")); const txt=encodeURIComponent(body+(from?`\n\n답장 받을 이메일: ${from}`:"")+`\n\n(화면: ${filt.council} ${cur.label} · 기준일 ${dstr(t)})`); location.href=`mailto:kojaeseong@gmail.com?subject=${subj}&body=${txt}`; document.getElementById("mailMsg").textContent="메일 프로그램이 열립니다. 열리지 않으면 kojaeseong@gmail.com 으로 직접 보내 주세요."; });
+document.getElementById("mail").addEventListener("submit",e=>{ e.preventDefault(); const from=document.getElementById("mailAddr").value.trim(), body=document.getElementById("mailBody").value.trim(), nm=document.getElementById("mailName").value.trim(), og=document.getElementById("mailOrg").value.trim(); if(!body){ document.getElementById("mailMsg").textContent="내용을 적어 주세요."; return; } const subj=encodeURIComponent("클리사 문의"+(sel?` · ${sel.label}`:"")); const txt=encodeURIComponent(((nm||og)?`보낸 사람: ${[nm,og].filter(Boolean).join(" · ")}
+
+`:"")+body+(from?`\n\n답장 받을 이메일: ${from}`:"")+`\n\n(화면: ${filt.council} ${cur.label} · 기준일 ${dstr(t)})`); location.href=`mailto:kojaeseong@gmail.com?subject=${subj}&body=${txt}`; document.getElementById("mailMsg").textContent="메일 프로그램이 열립니다. 열리지 않으면 kojaeseong@gmail.com 으로 직접 보내 주세요."; });
 // ---------- refresh ----------
-function refresh(){ const hasPress=curCouncil.kind!=="기초"&&members.some(m=>(m.pd||[]).length); document.getElementById("deep").hidden=!hasPress; document.getElementById("deepHead").hidden=!hasPress; document.getElementById("deepNone").hidden=hasPress||curCouncil.kind==="기초"; renderBoard(); renderBump(); stats(); if(sel) showSide(sel); if(planeInit&&hasPress) drawPlane(); }
+function renumber(){ let n=0; [...document.querySelectorAll("[data-sec]")].sort((a,b)=>a.dataset.sec-b.dataset.sec).forEach(el=>{ if(el.closest("[hidden]")) return; n++; el.textContent=el.textContent.replace(/^\d+ · /,n+" · "); }); }
+function refresh(){ const hasPress=false; renderBoard(); renderBump(); stats(); if(sel) showSide(sel); if(planeInit&&hasPress) drawPlane(); renumber(); }
 loadScope("서울특별시의회");
 </script>
 
