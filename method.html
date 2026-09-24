@@ -1,0 +1,272 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>클리사 평가 로직트리</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="/favicon.svg" type="image/svg+xml"></head><body>
+<div style="max-width:1180px;margin:0 auto;padding:12px 16px 0"><a href="/" style="font-family:Archivo,sans-serif;font-weight:900;text-decoration:none;color:inherit">← CLISA</a></div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0F0D0B; --ink:#F1ECE4; --muted:#A39B90; --faint:#6E665E; --line:#2A2521; --panel:#161310; --panel2:#1E1A15;
+  --accent:#E5533B; --on-accent:#0F0D0B;
+  --l-act:#8FA3B8; --l-qua:#C9A85B; --l-inf:#E5533B; --l-sub:#66B08C; --l-flag:#A39B90;
+  --ok:#66B08C; --half:#D9A544; --need:#6E665E;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  color-scheme:light; --bg:#F7F4EF; --ink:#17130F; --muted:#6B645C; --faint:#9A928A; --line:#DDD6CC; --panel:#FFFFFF; --panel2:#EFEAE2;
+  --accent:#C8412C; --on-accent:#FFFFFF; --l-act:#5D7085; --l-qua:#8A6E2F; --l-inf:#C8412C; --l-sub:#33704F; --l-flag:#6B645C; --ok:#33704F; --half:#B8841A; --need:#9A928A;
+}}
+:root[data-theme="light"]{
+  color-scheme:light; --bg:#F7F4EF; --ink:#17130F; --muted:#6B645C; --faint:#9A928A; --line:#DDD6CC; --panel:#FFFFFF; --panel2:#EFEAE2;
+  --accent:#C8412C; --on-accent:#FFFFFF; --l-act:#5D7085; --l-qua:#8A6E2F; --l-inf:#C8412C; --l-sub:#33704F; --l-flag:#6B645C; --ok:#33704F; --half:#B8841A; --need:#9A928A;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-size:14.5px;line-height:1.65;padding-inline:16px;padding-block:28px 72px;margin:0}
+.wrap{max-width:1040px;margin:0 auto}
+.disp{font-family:Archivo,"Noto Sans KR",sans-serif;font-weight:900;letter-spacing:-0.01em;line-height:1.05}
+.eyebrow{font-family:Archivo,sans-serif;font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.lbl{font-family:Archivo,sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+/* hero */
+.hero{padding:8px 0 28px;border-bottom:1px solid var(--line);margin-bottom:24px}
+.hero h1{font-size:clamp(34px,6vw,64px);margin:6px 0 14px;text-wrap:balance}
+.hero p{max-width:60ch;color:var(--muted);margin:0;font-size:15.5px}
+.hero .c{display:inline-block;width:.9em;height:.9em;border-radius:50%;background:var(--accent);vertical-align:-.08em;margin-right:.35em}
+/* path bar */
+.path{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0 0 20px;display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center;font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.path .seg{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;background:var(--panel2);white-space:nowrap}
+.path .seg.k{background:transparent;padding-inline:0;margin-right:4px}
+.path .arrow{color:var(--faint)}
+.path .empty{color:var(--muted)}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 22px;font-size:12.5px;color:var(--muted)}
+.lay{display:inline-block;font-family:Archivo,sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;padding:2px 8px;border-radius:4px;color:var(--bg);background:var(--muted)}
+.lay.act{background:var(--l-act)} .lay.qua{background:var(--l-qua)} .lay.inf{background:var(--l-inf)} .lay.sub{background:var(--l-sub)} .lay.flag{background:var(--l-flag)}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 12px;font-size:12px;cursor:pointer;color:var(--ink);font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* level 0 */
+.l0{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:20px 22px}
+.l0 h2{font-size:22px;margin:4px 0 12px}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.law{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:10px 12px}
+.law b{display:block;font-family:Archivo,sans-serif;font-weight:900;font-size:15px}
+.law span{font-size:12px;color:var(--muted)}
+.l0 p{color:var(--muted);font-size:13px;margin:12px 0 0;max-width:70ch}
+/* spine */
+.spine{margin-left:26px;border-left:2px solid var(--line);padding-left:22px;padding-top:14px}
+details.duty{margin:0 0 14px;position:relative}
+details.duty::before{content:"";position:absolute;left:-24px;top:30px;width:22px;border-top:2px solid var(--line)}
+summary.dh{list-style:none;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:8px 14px;align-items:center}
+summary.dh::-webkit-details-marker{display:none}
+.code{font-size:26px;color:var(--accent)}
+.dh .name{font-weight:700;font-size:16px;display:block}
+.dh .art{color:var(--muted);font-size:12.5px;display:block;margin-top:2px}
+.dh .good{grid-column:2/4;font-size:13px;color:var(--muted)}
+.dh .good b{color:var(--ink);font-weight:500}
+.tw{display:inline-block;color:var(--faint);transition:transform .2s;font-size:18px}
+details[open] .tw{transform:rotate(90deg)}
+.elems{margin-left:24px;border-left:2px solid var(--line);padding-left:20px;margin-top:10px}
+.elem{position:relative;margin:8px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.elem::before{content:"";position:absolute;left:-22px;top:24px;width:20px;border-top:2px solid var(--line)}
+.elem.dim{opacity:.32}
+.eh{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;padding:11px 14px;cursor:pointer;background:transparent;border:0;width:100%;text-align:left;color:var(--ink);font:inherit}
+.eh .id{font-family:Archivo,sans-serif;font-weight:700;color:var(--muted);font-size:12px;letter-spacing:.05em}
+.eh .nm{font-weight:700}
+.eh .rt{white-space:nowrap}
+.elem.sel .eh{background:var(--panel2)}
+.leaf{display:none;border-top:1px dashed var(--line);padding:12px 14px 14px}
+.elem.sel .leaf{display:block}
+.chain{margin-left:12px;border-left:2px solid var(--line);padding-left:14px;display:grid;gap:7px}
+.step{position:relative;display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:start;font-size:13.5px}
+.step::before{content:"";position:absolute;left:-16px;top:11px;width:12px;border-top:2px solid var(--line)}
+.step .k{padding-top:2px}
+.step .v{overflow-wrap:anywhere}
+.step .v.warn{color:var(--muted)}
+.memo{display:none}
+body.memo-on .memo{display:grid}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.dot.ok{background:var(--ok)} .dot.half{background:var(--half)} .dot.need{background:transparent;border:2px solid var(--need)}
+/* sections */
+h2.sec{font-size:22px;margin:40px 0 12px;text-wrap:balance}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:540px;font-size:13.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:Archivo,sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+tr:last-child td{border-bottom:0}
+.principle{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:14px 0 0;color:var(--muted);max-width:70ch}
+.foot{margin-top:44px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center}
+.foot .brand{font-family:Archivo,sans-serif;font-weight:900;font-size:16px;color:var(--ink)}
+.memo-toggle{background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
+@media (max-width:540px){ .step{grid-template-columns:58px 1fr} .eh .rt{grid-column:1/4} .code{font-size:22px} }
+@media (prefers-reduced-motion:reduce){ .tw{transition:none} }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Clisa · 지방의회 읽기 체계</div>
+    <h1 class="disp">클리사 평가 로직트리</h1>
+    <p><span class="c"></span>지방자치법이 지방의회에 맡긴 직무에서 출발해, 각 직무에서 무엇을 어떤 기록으로 읽는지를 조문부터 정보 출처까지 한 줄로 잇는다. 요소를 누르면 로직트리상의 연결선이 위 경로 막대에 표시된다.</p>
+  </header>
+
+  <div class="path" id="path" aria-live="polite"><span class="seg k lbl">경로</span><span class="empty">아래 트리에서 평가요소를 하나 선택하면 조문부터 정보 출처까지의 연결이 여기에 표시된다.</span></div>
+
+  <div class="legend" role="group" aria-label="층 필터">
+    <span class="lbl">층</span>
+    <button class="chip" data-f="lay" data-v="all" aria-pressed="true">전체</button>
+    <button class="chip" data-f="lay" data-v="act"><span class="lay act">활동</span>&nbsp;기록으로 표시</button>
+    <button class="chip" data-f="lay" data-v="qua"><span class="lay qua">품질</span>&nbsp;읽어서 판정</button>
+    <button class="chip" data-f="lay" data-v="inf"><span class="lay inf">영향</span>&nbsp;남이 따른 사건 · 점수</button>
+    <button class="chip" data-f="lay" data-v="sub"><span class="lay sub">실질</span>&nbsp;공식 결과물로 검증</button>
+  </div>
+
+  <section class="l0">
+    <div class="eyebrow">Level 0 · 로직트리의 출발점</div>
+    <h2 class="disp">지방자치법이 정한 지방의회의 일</h2>
+    <div class="laws">
+      <div class="law"><b>제47조</b><span>지방의회의 의결사항 (11개 호)</span></div>
+      <div class="law"><b>제48조</b><span>서류제출 요구</span></div>
+      <div class="law"><b>제49조</b><span>행정사무 감사권 및 조사권</span></div>
+      <div class="law"><b>제51조</b><span>행정사무처리상황 보고와 질의응답</span></div>
+      <div class="law"><b>제43조</b><span>겸직 등 금지</span></div>
+      <div class="law"><b>제44조</b><span>의원의 의무</span></div>
+    </div>
+    <p>의결은 의회 전체의 행위다. 의원 개인은 그 의결에 이르는 과정에서 남긴 흔적, 곧 발의·소개·발언·서명으로만 읽는다. 점수는 영향 층에서만 나오며, 본인이 한 일은 기록으로 두고 다른 사람이 자기 비용을 치르며 따른 사건만 점수로 센다.</p>
+  </section>
+
+  <div class="spine" id="tree"></div>
+
+  <h2 class="sec disp">공통 보정</h2>
+  <p class="principle">모든 영향 지표는 아래 여섯 가지로 보정한 뒤에야 비교한다. 보정하지 않은 건수는 의원이 아니라 소속 정당과 지위를 재는 숫자가 된다.</p>
+  <div class="tbl" style="margin-top:14px"><table>
+    <thead><tr><th>보정</th><th>방법</th><th>근거 기록</th></tr></thead>
+    <tbody>
+      <tr><td>지위</td><td>같은 지위(의장단·위원장·선수)에서 기대되는 반응량을 뺀 초과분만 센다</td><td>의원 경력</td></tr>
+      <tr><td>정당 구성</td><td>상대 당 재적 대비 비율로 보고, 같은 의회·같은 당 안에서 상대 순위로 쓴다</td><td>의원 명단의 정당</td></tr>
+      <tr><td>의회 유형</td><td>경합·편중·과점 의회에 따라 쓰는 신호가 다르다. 과점 의회는 서명·표결을 쓰지 않는다</td><td>의석 구성</td></tr>
+      <tr><td>상호성</td><td>서로 주고받은 반응은 할인하고 일방적으로 받은 반응만 온전히 센다</td><td>서명·인용의 그물</td></tr>
+      <tr><td>놀라움</td><td>사건의 값은 1 − 기대확률. 당연히 일어날 일의 값은 0에 가깝다</td><td>과거 통과·채택률</td></tr>
+      <tr><td>시간</td><td>최근 회기의 반응이 더 무겁다</td><td>회의·의안 날짜</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 class="sec disp">노출 축</h2>
+  <p class="principle">언론 노출은 점수의 재료가 아니라 점수와 맞세우는 축이다. 영향은 높고 노출은 낮은 의원이 이 체계가 찾는 사람이다.</p>
+  <div class="tbl" style="margin-top:14px"><table>
+    <thead><tr><th>지표</th><th>출처</th></tr></thead>
+    <tbody>
+      <tr><td>언론 언급 수</td><td>뉴스 아카이브(빅카인즈), 포털 뉴스 검색</td></tr>
+      <tr><td>보도자료 건수</td><td>의회 홈페이지 보도자료</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 class="sec disp">검증의 원칙</h2>
+  <p class="principle">정답지는 신호를 만든 기록과 다른 출처여야 한다. 회의록에서 얻은 신호는 회의록으로 검증하지 않는다.</p>
+  <div class="tbl" style="margin-top:14px"><table>
+    <thead><tr><th>정답지</th><th>출처</th><th>신호와 출처가 다른가</th></tr></thead>
+    <tbody>
+      <tr><td>계수조정 반영</td><td>예산결산특별위원회 심사보고서</td><td>다르다 (의회의 공식 결과물)</td></tr>
+      <tr><td>감사 시정 완료</td><td>집행부의 감사 처리결과 보고</td><td>다르다 (집행부 문서)</td></tr>
+      <tr><td>타 지자체 전파</td><td>법제처 자치법규정보</td><td>다르다</td></tr>
+      <tr><td>개인 득표 프리미엄</td><td>선관위 선거통계</td><td>다르다</td></tr>
+      <tr><td>후반기 보직·재선</td><td>의원 경력·명단</td><td>다르나 실적과 무관하게 배분되는 경향이 있어 참고로만 둔다</td></tr>
+      <tr><td>회의록 이행 판정</td><td>회의록</td><td>같다. 정답지가 아니라 채택 신호의 정밀화다</td></tr>
+    </tbody>
+  </table></div>
+
+  <footer class="foot">
+    <span><span class="brand">Clisa</span> &nbsp;평가 기준서 v0.2 부속 A · 2026-09-24</span>
+    <button class="memo-toggle" id="memoBtn" aria-pressed="false">작업 메모 보기</button>
+  </footer>
+</div>
+
+<script>
+const LAY={act:"활동",qua:"품질",inf:"영향",sub:"실질",flag:"표시"};
+const AV={ok:"지금 계산 가능",half:"판정 필요",need:"자료 추가 필요"};
+const DUTIES=[
+{code:"A1",name:"조례의 제정·개정·폐지",art:"지방자치법 제47조 제1항 제1호",good:"실질이 있는 조례를 만들어 통과시키고 시행되게 한다",
+ elems:[
+ {id:"A1-1",nm:"발의",lay:"act",av:"ok",ind:"대표발의·서명 건수",calc:"단순 집계. 기록으로 표시하고 점수에 넣지 않는다",src:"의안정보",lim:"쪼개기 발의로 부풀릴 수 있다"},
+ {id:"A1-2",nm:"실질 입법",lay:"qua",av:"half",ind:"제정 / 전부개정 / 실질 일부개정 / 자구·상위법 정비",calc:"원안과 검토보고서를 읽어 네 단계로 분류. 절차적 안건은 제외",src:"의안 첨부 원안, 검토보고서",lim:"판정 전에는 임시 가중"},
+ {id:"A1-3",nm:"동료 설득",lay:"inf",av:"ok",ind:"상대 당 서명 비율 = 상대 당 서명자 수 ÷ 상대 당 재적",calc:"발의자에게만 귀속. 상호 서명은 할인하고 서명자의 지위로 가중",src:"의안정보의 공동발의·찬성의원 명단(정당 포함)",lim:"소수당 편향은 같은 당 안 순위로 보정. 서명 시점은 알 수 없다"},
+ {id:"A1-4",nm:"통과 성사",lay:"inf",av:"ok",ind:"실질등급 × (1 − 통과 기대확률)",calc:"기대확률은 정당·의안유형별 과거 통과율. 위원회 대안에 흡수된 폐기는 반영으로 센다",src:"의안의 위원회·본회의 단계별 결과",lim:"다수당의 자동 통과는 0에 수렴"},
+ {id:"A1-5",nm:"시행·전파",lay:"sub",av:"need",ind:"공포·시행 여부, 다른 지자체의 후속 제정 수",calc:"조례명과 제정일을 대조. 상위법 개정으로 동시에 생긴 것은 제외",src:"의안 공포일, 법제처 자치법규정보",lim:"가짜 전파를 걸러야 한다"},
+ {id:"A1-6",nm:"독립 서명",lay:"qua",av:"ok",ind:"당론과 어긋나는 상대 당 안건 서명 ÷ 서명 총수",calc:"서명자에게 귀속. 서명한 안건의 사후 결과로 판단력을 채점",src:"의안정보 명단",lim:"영향 점수에는 넣지 않는다"}
+ ]},
+{code:"A2",name:"예산 심의·확정, 결산 승인, 재정 사항",art:"제47조 제1항 제2·3·4·5·8호",good:"근거 있는 지적이 최종 예산과 다음 예산에 반영된다",
+ elems:[
+ {id:"A2-1",nm:"심의 참여",lay:"act",av:"ok",ind:"예결특위·상임위 예비심사 발언 세션 수",calc:"진행 발언 제외",src:"회의록",lim:"예결위 소속 여부로 기회 차이가 있다"},
+ {id:"A2-2",nm:"지적 품질",lay:"qua",av:"half",ind:"수치·근거 제시, 삭감·증액 대안 제시 여부",calc:"발언 단위의 좁은 질문으로 판정. 이름을 가리고 두 번 채점해 일치도를 본다",src:"회의록",lim:"발언량 편향은 순위로만 써서 줄인다"},
+ {id:"A2-3",nm:"계수조정 반영",lay:"inf",av:"need",ind:"의원의 삭감·증액 요구가 수정 예산에 반영된 건수·금액",calc:"요구 발언과 계수조정표 항목을 대조",src:"예결위 심사보고서(계수조정 내역), 회의록",lim:"동료 동의로 결정되는 추종이며 동시에 독립 정답지"},
+ {id:"A2-4",nm:"결산 지적의 반영",lay:"sub",av:"need",ind:"결산 심사 지적이 다음 해 예산서에 반영",calc:"지적 항목과 다음 해 예산서를 대조",src:"결산 회의록, 예산서",lim:"개인 귀속이 어렵다"}
+ ]},
+{code:"A3",name:"재산·공공시설·기타 동의안 심사",art:"제47조 제1항 제6·7·10·11호",good:"문제 있는 집행부 제출안을 수정하거나 막는 데 발언이 기여한다",
+ elems:[
+ {id:"A3-1",nm:"심사 참여",lay:"act",av:"ok",ind:"해당 안건 발언 세션 수",calc:"집계",src:"회의록",lim:""},
+ {id:"A3-2",nm:"지적 품질",lay:"qua",av:"half",ind:"근거·대안",calc:"A2-2와 같은 판정",src:"회의록",lim:""},
+ {id:"A3-3",nm:"수정·부결 기여",lay:"inf",av:"ok",ind:"발언 뒤 수정가결·부결·보류로 귀결된 안건 수",calc:"안건 결과 × (1 − 원안가결 기대확률)",src:"의안 결과, 회의록",lim:"다수당의 원안 통과 편향"},
+ {id:"A3-4",nm:"조건 반영",lay:"sub",av:"need",ind:"수정 조건이 계약·사업에 반영",calc:"외부 문서 대조",src:"집행부 공개 자료",lim:""}
+ ]},
+{code:"A4",name:"청원의 수리와 처리",art:"제47조 제1항 제9호",good:"주민 요구를 청원으로 받아 채택시키고 이행되게 한다. 소개의원으로 개인 귀속이 명확하다",
+ elems:[
+ {id:"A4-1",nm:"청원 소개",lay:"act",av:"ok",ind:"소개 청원 수",calc:"집계",src:"의안정보(청원)",lim:"건수가 적어 기록 위주"},
+ {id:"A4-2",nm:"채택",lay:"inf",av:"ok",ind:"채택·불채택",calc:"결과 집계",src:"의안 결과",lim:""},
+ {id:"A4-3",nm:"처리",lay:"sub",av:"need",ind:"집행부 처리 결과",calc:"처리 보고 대조",src:"청원 처리결과 문서",lim:"기초의회에서 비중이 커질 수 있다"}
+ ]},
+{code:"A5",name:"행정사무감사·조사, 서류제출 요구, 출석·질의응답",art:"제49조, 제48조, 제51조",good:"집행부의 문제를 찾아 시정시킨다. 견제의 본체",
+ elems:[
+ {id:"A5-1",nm:"감사·질의 참여",lay:"act",av:"ok",ind:"감사·시정질문·상임위 질의 발언 세션 수",calc:"진행 발언 제외",src:"회의록",lim:""},
+ {id:"A5-2",nm:"질의 품질",lay:"qua",av:"half",ind:"근거·대안·끈기(회기를 넘긴 추궁)",calc:"발언 단위 판정에 이전 회기 인용 여부를 더한다",src:"회의록",lim:"말솜씨 편향은 결과 대조로 걸러낸다"},
+ {id:"A5-3",nm:"지적의 결과보고서 채택",lay:"inf",av:"half",ind:"의원 지적이 감사 결과보고서의 지적사항으로 채택된 건수",calc:"결과보고서 항목과 감사 회의록 발언을 의미로 대조",src:"행정사무감사 결과보고서, 감사 회의록",lim:"보고서에 의원명이 없어 귀속 판정이 필요"},
+ {id:"A5-4",nm:"집행부 채택·이행",lay:"inf",av:"half",ind:"검토·반영 약속 가운데 이후 이행이 확인된 건수",calc:"약속과 후속 회의록을 대조해 판정",src:"회의록",lim:"약속 자체는 0. 이행만 센다"},
+ {id:"A5-5",nm:"감사 시정 완료",lay:"sub",av:"need",ind:"채택된 지적 가운데 처리결과 보고에서 조치 완료된 것",calc:"지적 항목과 처리결과 항목을 대조",src:"집행부의 감사 처리결과 보고",lim:"독립 정답지"},
+ {id:"A5-6",nm:"동료 인용",lay:"inf",av:"ok",ind:"다른 의원·집행부가 이름을 들어 인용한 수(상대 당·일방 가중)",calc:"문자열 검출, 의례적 호명은 제외",src:"회의록",lim:"발언량에 비례한다"},
+ {id:"A5-7",nm:"조사 발의·서류 요구",lay:"act",av:"half",ind:"조사 발의 참여, 서류제출 요구 건수",calc:"집계",src:"의안·회의록",lim:"개인 귀속이 부분적"}
+ ]},
+{code:"A6",name:"의원의 의무·겸직 금지",art:"제44조, 제43조",good:"위반 사항을 표시한다",
+ elems:[
+ {id:"A6-1",nm:"위반 기록",lay:"flag",av:"half",ind:"징계 의결, 윤리특위 회부, 겸직·이해충돌 신고 위반, 확정 판결",calc:"사실 그대로 나열. 점수와 무관",src:"징계 의안, 윤리특위 기록, 겸직 신고 현황, 판결",lim:"선악은 판정하지 않는다"}
+ ]}
+];
+const tree=document.getElementById("tree"), path=document.getElementById("path");
+const EMPTY=`<span class="seg k lbl">경로</span><span class="empty">아래 트리에서 평가요소를 하나 선택하면 조문부터 정보 출처까지의 연결이 여기에 표시된다.</span>`;
+let filt="all", sel=null;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function render(){
+  tree.innerHTML=DUTIES.map(d=>`<details class="duty" open>
+    <summary class="dh"><span class="code disp">${d.code}</span>
+      <span><span class="name">${esc(d.name)}</span><span class="art">${esc(d.art)}</span></span>
+      <span class="tw">›</span>
+      <span class="good">요구되는 행동이나 결과: <b>${esc(d.good)}</b></span></summary>
+    <div class="elems">${d.elems.map(e=>elemHtml(e)).join("")}</div></details>`).join("");
+}
+function elemHtml(e){
+  const on=(filt==="all"||e.lay===filt), s=sel===e.id?" sel":"";
+  return `<div class="elem${on?"":" dim"}${s}" data-id="${e.id}">
+    <button class="eh" aria-expanded="${sel===e.id}"><span class="id">${e.id}</span><span class="nm">${esc(e.nm)}</span><span class="rt"><span class="lay ${e.lay}">${LAY[e.lay]}</span></span></button>
+    <div class="leaf"><div class="chain">
+      <div class="step"><span class="k lbl">지표</span><span class="v">${esc(e.ind)}</span></div>
+      <div class="step"><span class="k lbl">산정</span><span class="v">${esc(e.calc)}</span></div>
+      <div class="step"><span class="k lbl">출처</span><span class="v">${esc(e.src)}</span></div>
+      ${e.lim?`<div class="step"><span class="k lbl">보정·한계</span><span class="v warn">${esc(e.lim)}</span></div>`:""}
+      <div class="step memo"><span class="k lbl">작업 메모</span><span class="v warn"><span class="dot ${e.av}"></span>${AV[e.av]}</span></div>
+    </div></div></div>`;
+}
+function showPath(d,e){
+  const segs=[d.art,d.code+" "+d.name,e.id+" "+e.nm,LAY[e.lay],e.ind,e.src];
+  path.innerHTML=`<span class="seg k lbl">경로</span>`+segs.map((v,i)=>`${i?'<span class="arrow">→</span>':''}<span class="seg">${esc(v)}</span>`).join("");
+}
+tree.addEventListener("click",ev=>{
+  const b=ev.target.closest(".eh"); if(!b) return;
+  const id=b.parentElement.dataset.id; sel=(sel===id)?null:id;
+  document.querySelectorAll(".elem").forEach(x=>{const on=x.dataset.id===sel; x.classList.toggle("sel",on); x.querySelector(".eh").setAttribute("aria-expanded",on)});
+  if(sel){ for(const d of DUTIES){ const e=d.elems.find(x=>x.id===sel); if(e){ showPath(d,e); break; } } } else path.innerHTML=EMPTY;
+});
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+  filt=c.dataset.v; document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c)); render();
+}));
+document.getElementById("memoBtn").addEventListener("click",function(){
+  const on=!document.body.classList.contains("memo-on"); document.body.classList.toggle("memo-on",on);
+  this.setAttribute("aria-pressed",on); this.textContent=on?"작업 메모 숨기기":"작업 메모 보기";
+});
+render();
+</script>
+
+</body></html>

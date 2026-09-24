@@ -117,8 +117,8 @@ if __name__ == "__main__":
         # before the morning write, so do not cry wolf.
         raise SystemExit(1 if scheduled else 0)
 
-    p = os.path.join(ROOT, "index.html")
+    p = os.path.join(ROOT, "invest", "index.html")
     out = patch(open(p, encoding="utf-8").read(), d)   # patch first: never truncate before it succeeds
     open(p, "w", encoding="utf-8").write(out)
-    card(d, os.path.join(ROOT, "og.png"))
+    card(d, os.path.join(ROOT, "invest", "og.png"))
     print("snapshot:", pct(d["ret"]), d["as_of"], f"open {d['open']} closed {d['closed']}")
