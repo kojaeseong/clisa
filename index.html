@@ -34,13 +34,14 @@ button,select,input{font:inherit;color:var(--ink)}
 select{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;max-width:46vw}
 .ribbon{background:var(--accent);color:var(--on-accent);font-family:Archivo,sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.1em;padding:4px 9px;border-radius:4px;white-space:nowrap}
 /* hero */
-.hero{padding:28px 0 20px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:start}
+.hero{padding:28px 0 20px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:end}
 .hero h1{font-size:clamp(28px,4.6vw,50px);margin:6px 0 10px;text-wrap:balance}
 .hero p{color:var(--muted);margin:0;max-width:56ch;font-size:15px}
+.feedwrap{margin:8px 0 4px}
 .feed{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:12px 14px;display:grid;gap:8px;min-width:0}
 .feed .fh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.feed .fh .btn{flex:none;white-space:nowrap}.feed .fh .meta{margin-top:2px}
-.feed .fl{display:grid;gap:6px;max-height:340px;overflow:auto;padding-right:2px;scroll-behavior:smooth}
-@media (max-width:900px){.feed .fl{max-height:300px}}
+.feed .fl{display:grid;gap:8px;max-height:380px;overflow:auto;padding-right:2px;scroll-behavior:smooth;grid-template-columns:1fr 1fr;align-items:start}
+@media (max-width:900px){.feed .fl{max-height:300px;grid-template-columns:1fr;gap:6px}}
 .fi{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.5;cursor:pointer;background:var(--bg);transition:background .35s,border-color .35s}
 .fi.cur{background:var(--panel2);border-color:var(--ink)}
 .fi .fk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}.fi .fk b{color:var(--ink);font-size:12.5px}.fi .fk .tag{font-family:Archivo,sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}.fi.cur .fk .tag{border-color:var(--ink);color:var(--ink)}
@@ -219,13 +220,16 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
           <a href="#" class="pickBack" id="pickCity" hidden>← 서울특별시의회로 돌아가기</a>
         </div>
       </div>
-    <div class="feed" id="feed" aria-label="최근 활동">
-      <div class="fh"><div><span class="lbl">최근 활동</span><div class="meta" id="feedMeta"></div></div><button class="btn" id="feedPause" type="button" aria-pressed="false" title="자동으로 넘어가는 것을 멈춥니다">멈춤</button></div>
-      <div class="fl" id="feedList"></div>
-      <div class="meta" id="feedNote"></div>
-    </div>
     </div>
   </header>
+
+  <section class="feedwrap">
+    <div class="feed" id="feed" aria-label="최근 활동">
+    <div class="fh"><div><span class="lbl">최근 활동</span><div class="meta" id="feedMeta"></div></div><button class="btn" id="feedPause" type="button" aria-pressed="false" title="자동으로 넘어가는 것을 멈춥니다">멈춤</button></div>
+    <div class="fl" id="feedList"></div>
+    <div class="meta" id="feedNote"></div>
+  </div>
+  </section>
 
   <div class="main">
     <div class="col">
@@ -592,19 +596,17 @@ function renderFeed(){ const box=document.getElementById("feedList"); if(!box) r
     const body=x.k==="S"?(x.r.x?`“${x.r.x}”`:""):x.k==="R"?(x.r.x||""):`<b>${x.r.r}</b>${x.r.x?`<div class="sub" style="white-space:normal">${x.r.x}</div>`:""}`;
     return `<div class="fi${i===0?" cur":""}" data-i="${i}" data-id="${x.m.id}"><div class="fk"><span class="tag">${FK[x.k]}</span><b><i class="sw" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--p${x.m.party});margin-right:5px;vertical-align:0"></i>${x.m.label}</b><span>${dstr(x.t)}</span></div>${body?`<div class="fx">${body}</div>`:""}<div class="fs">${x.k==="S"||x.k==="R"?link:""}${x.k==="L"||x.k==="P"?(x.r.u?`<a href="${x.r.u}" target="_blank" rel="noopener" data-src>의안 원문</a>`:""):""}</div></div>`; };
   const n=feedItemsCache.length; box.scrollTop=0;
-  box.innerHTML=n?feedItemsCache.map(card).join("")+(n>1?feedItemsCache.map((x,i)=>card(x,i+n)).join(""):""):`<div class="none">기준일까지 기록된 활동이 없습니다.</div>`;
+  box.innerHTML=n?feedItemsCache.map(card).join(""):`<div class="none">기준일까지 기록된 활동이 없습니다.</div>`;
   const gaps=curCouncil.gaps?` 의회가 아직 게시하지 않은 자료: ${curCouncil.gaps}.`:"";
   document.getElementById("feedNote").textContent=(feedItemsCache.length?`최근 회의부터 시간순으로 보여 드립니다. 발언은 회의마다 가장 긴 발언 ${FEED_SPK}건에서 인사말을 뺀 첫 부분이고, 발의·통과·의결은 의안 원문의 제안이유 첫 부분이며, 누르면 그 의원이, 회의 이름을 누르면 원문이 열립니다.`:"")+gaps;
-  if(feedItemsCache.length>1&&feedAuto()) feedTimer=setInterval(feedStep,3000); }
+  if(feedItemsCache.length>1&&feedAuto()) feedTimer=setInterval(feedStep,4000); }
 function feedMark(pos){ const n=feedItemsCache.length; box_=document.getElementById("feedList"); box_.querySelectorAll(".fi").forEach(el=>el.classList.toggle("cur",(+el.dataset.i)%n===pos%n)); }
-let box_=null, feedWrapT=null;
-function feedGo(pos,instant){ const box=document.getElementById("feedList"); const n=feedItemsCache.length; if(!n) return; feedI=pos; feedMark(pos); const el=box.querySelector(`.fi[data-i="${pos}"]`); if(!el) return; const top=el.offsetTop-box.offsetTop-8; const smooth=!instant&&!matchMedia("(prefers-reduced-motion:reduce)").matches; box.scrollTo({top:Math.max(0,top),behavior:smooth?"smooth":"auto"});
-  // 끝(복제된 첫 카드)에 닿으면 같은 그림의 진짜 첫 카드로 소리 없이 되돌린다
-  clearTimeout(feedWrapT); if(pos>=n){ const back=()=>{ const a=box.querySelector(`.fi[data-i="${n}"]`), b=box.querySelector(`.fi[data-i="0"]`); if(a&&b) box.scrollTop=box.scrollTop-(a.offsetTop-b.offsetTop); feedI=pos-n; }; if(!smooth){ back(); return; } let done=false; const once=()=>{ if(done) return; done=true; box.removeEventListener("scrollend",once); back(); }; if("onscrollend" in box){ box.addEventListener("scrollend",once); feedWrapT=setTimeout(once,1500); } else feedWrapT=setTimeout(once,800); } }
+let box_=null;
+function feedGo(pos,instant){ const box=document.getElementById("feedList"); const n=feedItemsCache.length; if(!n) return; feedI=pos%n; feedMark(feedI); const el=box.querySelector(`.fi[data-i="${feedI}"]`); if(!el) return; const top=el.offsetTop-box.offsetTop-8; const smooth=!instant&&!matchMedia("(prefers-reduced-motion:reduce)").matches; box.scrollTo({top:Math.max(0,top),behavior:smooth?"smooth":"auto"}); }
 function feedStep(){ const n=feedItemsCache.length; if(!n) return; feedGo(feedI+1); }
 function feedAt(){ // 지금 화면 맨 위에 보이는 카드 번호
   const box=document.getElementById("feedList"); const cs=[...box.querySelectorAll(".fi")]; const st=box.scrollTop+box.offsetTop+12; let best=0; for(const c of cs){ if(c.offsetTop<=st) best=+c.dataset.i; else break; } return best; }
-{ const box=document.getElementById("feedList"); const pause=()=>{ clearInterval(feedTimer); feedTimer=null; }; const resume=()=>{ if(!feedTimer&&feedItemsCache.length>1&&feedAuto()){ feedI=feedAt(); feedMark(feedI); feedTimer=setInterval(feedStep,3000); } };
+{ const box=document.getElementById("feedList"); const pause=()=>{ clearInterval(feedTimer); feedTimer=null; }; const resume=()=>{ if(!feedTimer&&feedItemsCache.length>1&&feedAuto()){ feedI=feedAt(); feedMark(feedI); feedTimer=setInterval(feedStep,4000); } };
   box.addEventListener("mouseenter",pause); box.addEventListener("mouseleave",resume); box.addEventListener("focusin",pause); box.addEventListener("focusout",resume); box.addEventListener("touchstart",pause,{passive:true}); let tr=null; box.addEventListener("touchend",()=>{ clearTimeout(tr); tr=setTimeout(resume,4000); },{passive:true});
   box.addEventListener("click",e=>{ if(e.target.closest("[data-src]")) return; const dd=e.target.closest(".fi[data-day]"); if(dd){ calYear=+dd.dataset.day.slice(0,4); renderCal(); calDetailDay(dd.dataset.day); document.getElementById("cal").scrollIntoView({behavior:"smooth",block:"start"}); return; } const el=e.target.closest(".fi[data-id]"); if(!el) return; feedI=+el.dataset.i; feedMark(feedI); const m=members.find(x=>x.id===+el.dataset.id); if(m) select(m); });
   document.getElementById("feedPause").addEventListener("click",function(){ feedPaused=!feedPaused; this.setAttribute("aria-pressed",feedPaused); this.textContent=feedPaused?"자동 넘김":"멈춤"; if(feedPaused) pause(); else resume(); });
