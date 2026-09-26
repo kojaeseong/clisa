@@ -4,19 +4,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 :root{
-  color-scheme:dark;
-  --bg:#0F0D0B; --ink:#F1ECE4; --muted:#A39B90; --faint:#6E665E; --line:#2A2521; --panel:#161310; --panel2:#1E1A15;
-  --accent:#E5533B; --on-accent:#0F0D0B;
-  --l-act:#8FA3B8; --l-qua:#C9A85B; --l-inf:#E5533B; --l-sub:#66B08C; --l-flag:#A39B90;
-  --ok:#66B08C; --half:#D9A544; --need:#6E665E;
-}
-@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
-  color-scheme:light; --bg:#F7F4EF; --ink:#17130F; --muted:#6B645C; --faint:#9A928A; --line:#DDD6CC; --panel:#FFFFFF; --panel2:#EFEAE2;
-  --accent:#C8412C; --on-accent:#FFFFFF; --l-act:#5D7085; --l-qua:#8A6E2F; --l-inf:#C8412C; --l-sub:#33704F; --l-flag:#6B645C; --ok:#33704F; --half:#B8841A; --need:#9A928A;
-}}
-:root[data-theme="light"]{
-  color-scheme:light; --bg:#F7F4EF; --ink:#17130F; --muted:#6B645C; --faint:#9A928A; --line:#DDD6CC; --panel:#FFFFFF; --panel2:#EFEAE2;
-  --accent:#C8412C; --on-accent:#FFFFFF; --l-act:#5D7085; --l-qua:#8A6E2F; --l-inf:#C8412C; --l-sub:#33704F; --l-flag:#6B645C; --ok:#33704F; --half:#B8841A; --need:#9A928A;
+  color-scheme:light only;
+  --bg:#F7F4EF; --ink:#17130F; --muted:#6B645C; --faint:#B5ADA3; --line:#DDD6CC; --panel:#FFFFFF; --panel2:#EFEAE2; --grid:#E9E3D9; --accent:#17130F; --on-accent:#F7F4EF;
+  --p1:#D93A4E; --p2:#2F6FD8; --p3:#B8841A; --p4:#7A828A;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-size:14.5px;line-height:1.65;padding-inline:16px;padding-block:28px 72px;margin:0}
