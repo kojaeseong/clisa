@@ -43,7 +43,7 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
   body:not(.mview) .restBlock{display:contents}
   body:not(.mview) .restBlock>*{grid-column:1}
   body:not(.mview) .restBlock>#feedHead{display:none}
-  body:not(.mview) .feedwrap{grid-column:2;grid-row:1 / span 40;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);align-self:start;margin:0}
+  body:not(.mview) .feedwrap{grid-column:2;grid-row:1 / span 9;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);align-self:start;margin:0}
   body:not(.mview) .feed{max-height:calc(100vh - env(safe-area-inset-top,0px) - 96px);display:grid;grid-template-rows:auto minmax(0,1fr) auto}
   body:not(.mview) .feed .fl{max-height:none;min-height:0}
 }
@@ -182,7 +182,10 @@ canvas{width:100%;height:100%;display:block}
 .cal .sb{grid-column:var(--c1) / var(--c2);height:18px;border-radius:4px;background:var(--line);font-size:11px;line-height:18px;padding:0 6px;white-space:nowrap;overflow:hidden;color:var(--muted);cursor:pointer;font-family:Archivo,"Noto Sans KR",sans-serif;font-weight:700}
 .cal .sb.reg{background:var(--muted);color:var(--bg)}
 .cal .sb.fut{background:transparent;border:1px dashed var(--muted);color:var(--ink);line-height:16px}
-.caldet{margin-top:10px;font-size:13px}.caldet .lbl{display:block;margin-bottom:4px}
+.caldet{margin-top:10px;font-size:13px}
+.cmon{padding:6px 0;border-top:1px solid var(--line)}.cmon:first-child{border-top:0}.cml{font-weight:700;font-size:13px;margin-bottom:4px}
+.cmon .slist{display:grid;gap:2px;margin:0 0 6px 0}.cmon .sl{font-size:12px;line-height:1.4;color:var(--muted);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}.cmon .sl b{color:var(--ink);font-weight:700}.cmon .sl.fut b{color:var(--muted)}
+.dchips{display:flex;flex-wrap:wrap;gap:6px}.dchip{min-width:34px;height:34px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);font-size:13px;font-family:inherit;color:var(--ink);cursor:pointer}.dchip.act{background:var(--ink);color:var(--bg);border-color:var(--ink)}.dchip.today{outline:2px solid var(--accent);outline-offset:-2px}.dchip.sel{box-shadow:0 0 0 2px var(--ink) inset}.caldet .lbl{display:block;margin-bottom:4px}
 .caldet ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}.caldet li{border-top:1px solid var(--line);padding-top:4px;display:grid;grid-template-columns:90px 1fr;gap:8px}.caldet li .k{font-family:Archivo,sans-serif;font-weight:700;color:var(--muted);font-size:11px}
 .cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:6px}.cal-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .cal .slist{display:none}
@@ -399,12 +402,16 @@ function renderCalK(k){
   const met={}; for(const d of DOCS){ if(/회의록$/.test(d.n)){ (met[d.t]=met[d.t]||[]).push(d.n.replace(/ 회의록$/,"")); } }
   const act={}; if(useSel){ for(const a of sel.al||[]){ (act[a[0]]=act[a[0]]||[]).push(a); } }
   const today=dstr(T); const d2t=ds=>{ const [y,m,d]=ds.split("-").map(Number); return Math.round((new Date(y,m-1,d)-D0)/86400000); };
-  let h=`<div class="mrow hdr"><span class="ml"></span>${[...Array(31).keys()].map(i=>`<span class="dn${(i+1)%5===0||i===0?" k":""}">${i+1}</span>`).join("")}</div>`;
+  const compact=window.innerWidth<=700;
+  let h=compact?"":`<div class="mrow hdr"><span class="ml"></span>${[...Array(31).keys()].map(i=>`<span class="dn${(i+1)%5===0||i===0?" k":""}">${i+1}</span>`).join("")}</div>`;
   for(let mo=1;mo<=12;mo++){
     const first=`${calYear}-${String(mo).padStart(2,"0")}-01`; const dim=new Date(calYear,mo,0).getDate();
     let bands="", labels="";
     for(const x of S){ const ms=`${calYear}-${String(mo).padStart(2,"0")}-01`, me=`${calYear}-${String(mo).padStart(2,"0")}-${String(dim).padStart(2,"0")}`; if(x.end<ms||x.start>me) continue; const c1=x.start<ms?1:+x.start.slice(8), c2=x.end>me?dim:+x.end.slice(8); bands+=`<span class="sb ${x.kind==="정례회"?"reg":""} ${x.start>today?"fut":""}" style="--c1:${c1+1};--c2:${c2+2}" data-s="${x.no}" title="제${x.no}회 ${x.kind||""} ${x.start}~${x.end}${x.items&&x.items.length?" · "+x.items.join(", "):""}">제${x.no}회 ${x.kind||""}${x.items&&x.items.length?` · ${x.items.join(", ")}`:""}</span>`; const kd=ds=>`${+ds.slice(5,7)}.${+ds.slice(8)}`; if(x.start.slice(0,7)===ms.slice(0,7)||(x.start<ms&&mo===1)) labels+=`<button class="sl ${x.start>today?"fut":""}" type="button" data-s="${x.no}"><b>제${x.no}회 ${x.kind||""}</b> ${kd(x.start)}~${kd(x.end)}${x.items&&x.items.length?` · ${x.items.join(", ")}`:""}</button>`; }
     const monthInTerm=d2t(`${calYear}-${String(mo).padStart(2,"0")}-${String(dim).padStart(2,"0")}`)>=0&&d2t(first)<=T+365; if(!monthInTerm&&!bands) continue;
+    if(compact){ let chips="";
+      for(let d=1;d<=dim;d++){ const ds=`${calYear}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}`; const tt=d2t(ds); const m=met[tt]||[], a=act[tt]||[]; if(!m.length&&!a.length&&ds!==today) continue; const cls=["dchip"]; if(a.length) cls.push("act"); if(ds===today) cls.push("today"); if(C.day===ds) cls.push("sel"); chips+=`<button type="button" class="${cls.join(" ")}" data-d="${ds}" title="${ds}${m.length?` · 회의 ${m.length}건`:""}${a.length?` · ${sel.label} 활동 ${a.length}건`:""}">${d}</button>`; }
+      h+=`<div class="cmon"><div class="cml">${mo}월</div>${labels?`<div class="slist">${labels}</div>`:""}${chips?`<div class="dchips">${chips}</div>`:(first<=today?`<div class="meta" style="margin:2px 0 4px">회의 없음</div>`:"")}</div>`; continue; }
     h+=`<div class="mrow"><span class="ml">${mo}월</span>`;
     for(let d=1;d<=31;d++){
       if(d>dim){ h+=`<span class="dc none"></span>`; continue; }
@@ -413,7 +420,7 @@ function renderCalK(k){
       const tip=`${ds}`+(m.length?` · 회의 ${m.length}건`:"")+(a.length?` · ${sel.label} 활동 ${a.length}건`:"");
       h+=`<span class="${cls.join(" ")}" data-d="${ds}" title="${tip}"><i>${d}</i></span>`; }
     h+=`</div><div class="srow"><span></span>${bands}</div>${labels?`<div class="slist">${labels}</div>`:""}`; }
-  box.innerHTML=h+`<div class="cal-legend"><span><i style="background:var(--line)"></i>회의가 열린 날</span>${useSel?`<span><i style="background:var(--ink)"></i>${sel.label} 의원이 활동한 날</span>`:""}<span><i style="border:1px dashed var(--line)"></i>예정</span><span><i style="background:var(--muted)"></i>정례회</span><span><i style="outline:2px solid var(--accent);outline-offset:-2px"></i>기준일</span></div>`;
+  box.innerHTML=h+`<div class="cal-legend"><span><i style="background:var(--${compact?"panel2":"line"});${compact?"border:1px solid var(--line)":""}"></i>회의가 열린 날</span>${useSel?`<span><i style="background:var(--ink)"></i>${sel.label} 의원이 활동한 날</span>`:""}<span><i style="border:1px dashed var(--line)"></i>예정</span><span><i style="background:var(--muted)"></i>정례회</span><span><i style="outline:2px solid var(--accent);outline-offset:-2px"></i>기준일</span></div>`;
   if(k==="c") document.getElementById("calSrc").innerHTML=curCouncil.schedule_src?`회기 범위는 회의록과 <a href="${curCouncil.schedule_src}" target="_blank" rel="noopener" style="color:inherit">연간 의사일정</a>에서 가져옵니다. 회기는 의회 사정으로 바뀔 수 있습니다.`:"";
   if(C.day) calDetailDay(k,C.day); }
 function renderCal(){ renderCalK("c"); renderCalK("m"); const sc=document.getElementById("sCal"); if(sc) sc.hidden=!sel; }
@@ -425,7 +432,7 @@ function calDetailDay(k,ds){ const C=CAL[k]; C.day=ds; const useSel=C.useSel&&!!
   h+=`<div style="margin-top:8px"><b>의회</b> · 회의 ${meet.length}건${bills.length?`, 의안 처리 ${bills.length}건`:""}</div>`;
   if(meet.length) h+=`<ul>${meet.slice(0,12).map(x=>`<li><span class="k">회의</span><span>${x}</span></li>`).join("")}${meet.length>12?`<li><span class="k"></span><span>… 외 ${meet.length-12}건</span></li>`:""}</ul>`;
   if(!meet.length&&!bills.length&&!acts.length) h+=`<div class="meta">이날은 회의도 의안 처리도 없었습니다.</div>`;
-  document.getElementById(C.det).innerHTML=h; document.querySelectorAll(`#${C.box} .dc.sel`).forEach(e=>e.classList.remove("sel")); const el=document.querySelector(`#${C.box} .dc[data-d="${ds}"]`); if(el) el.classList.add("sel"); }
+  document.getElementById(C.det).innerHTML=h; document.querySelectorAll(`#${C.box} .dc.sel, #${C.box} .dchip.sel`).forEach(e=>e.classList.remove("sel")); document.querySelectorAll(`#${C.box} .dc[data-d="${ds}"], #${C.box} .dchip[data-d="${ds}"]`).forEach(el=>el.classList.add("sel")); }
 function calDetailSession(k,no){ const C=CAL[k]; const useSel=C.useSel&&!!sel; const S=sessionsOf(); const x=S.find(s=>s.no===no); if(!x) return; const d2t=ds=>{ const [y,m,d]=ds.split("-").map(Number); return Math.round((new Date(y,m-1,d)-D0)/86400000); }; const t0=d2t(x.start), t1=d2t(x.end);
   const meet=DOCS.filter(d=>d.t>=t0&&d.t<=t1&&/회의록$/.test(d.n)); const comm={}; for(const d of meet){ const c=(d.n.match(/제\d+회 (\S+)/)||[])[1]||"회의"; comm[c]=(comm[c]||0)+1; }
   let h=`<span class="lbl">제${x.no}회 ${x.kind||""} · ${x.start} ~ ${x.end}${x.start>dstr(T)?" · 예정":""}</span>`;
@@ -436,7 +443,7 @@ function calDetailSession(k,no){ const C=CAL[k]; const useSel=C.useSel&&!!sel; c
     if(acts.length) h+=`<ul>${acts.slice(0,20).map(a=>`<li><span class="k">${dstr(a[0]).slice(5)} ${AK[a[1]]}</span><span>${refHtml(a[2])}</span></li>`).join("")}${acts.length>20?`<li><span class="k"></span><span>… 외 ${acts.length-20}건</span></li>`:""}</ul>`; }
   document.getElementById(C.det).innerHTML=h; }
 for(const k of ["c","m"]){ const C=CAL[k];
-  document.getElementById(C.box).addEventListener("click",e=>{ const b=e.target.closest(".sb,.sl"); if(b){ calDetailSession(k,+b.dataset.s); return; } const c=e.target.closest(".dc[data-d]"); if(c&&!c.classList.contains("none")) calDetailDay(k,c.dataset.d); });
+  document.getElementById(C.box).addEventListener("click",e=>{ const b=e.target.closest(".sb,.sl"); if(b){ calDetailSession(k,+b.dataset.s); return; } const c=e.target.closest(".dc[data-d],.dchip[data-d]"); if(c&&!c.classList.contains("none")){ calDetailDay(k,c.dataset.d); if(window.innerWidth<=700){ const det=document.getElementById(C.det); det.style.scrollMarginTop=(document.querySelector(".top").getBoundingClientRect().height+8)+"px"; det.scrollIntoView({behavior:"smooth",block:"start"}); } } });
   document.getElementById(C.years).addEventListener("click",e=>{ const b=e.target.closest("[data-y]"); if(!b) return; C.year=+b.dataset.y; C.day=null; document.getElementById(C.det).innerHTML=""; renderCalK(k); }); }
 function renderSched(){ for(const k in CAL){ CAL[k].day=null; CAL[k].year=null; document.getElementById(CAL[k].det).innerHTML=""; } renderCal(); }
 function scope(){ return members.filter(m=>filt.party==="all"||String(m.party)===filt.party); }
@@ -663,6 +670,7 @@ async function renderProfile(m){ const box=document.getElementById("sProf"); con
   box.hidden=!(tp.length||dg.length||sp.length||cr.length); }
 function placeScope(){ const sc=document.querySelector(".scope"), top=document.querySelector(".top"), slot=document.getElementById("scopeSlot"); if(!sc) return; if(window.innerWidth<900){ if(sc.parentNode!==slot) slot.appendChild(sc); } else if(sc.parentNode!==top){ top.insertBefore(sc, document.getElementById("dongF")); } }
 placeScope(); window.addEventListener("resize",placeScope);
+{ const n=1+[...document.querySelectorAll(".restBlock>*")].filter(e=>!e.classList.contains("feedwrap")&&e.id!=="feedHead").length; document.querySelector(".feedwrap").style.gridRow="1 / span "+n; }
 function scrollTarget(){ const el=window.innerWidth<900?document.getElementById("side"):document.querySelector(".main"); el.style.scrollMarginTop=(document.querySelector(".top").getBoundingClientRect().height+10)+"px"; el.scrollIntoView({block:"start"}); }
 async function openMem(key,id){ document.getElementById("dongRes").innerHTML=""; const cn=byKey[key]; if(filt.council!==cn||filt.term!==COUNCILS[cn].default) await loadScope(cn,null,true); const m=members.find(x=>x.id===+id); if(m) select(m); }
 function memChip(x){ return `<button class="chip" type="button" data-ck="${x.key}" data-mid="${x.m.id}" title="${x.m.pname} · ${x.m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${x.m.party})"></span>${x.m.label} <span class="meta">${x.cn.replace("특별시의회","시의회")}</span></button>`; }
