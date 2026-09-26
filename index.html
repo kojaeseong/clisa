@@ -171,7 +171,8 @@ canvas{width:100%;height:100%;display:block}
 .caldet{margin-top:10px;font-size:13px}.caldet .lbl{display:block;margin-bottom:4px}
 .caldet ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}.caldet li{border-top:1px solid var(--line);padding-top:4px;display:grid;grid-template-columns:90px 1fr;gap:8px}.caldet li .k{font-family:Archivo,sans-serif;font-weight:700;color:var(--muted);font-size:11px}
 .cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:6px}.cal-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-@media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.cal .dc{height:auto;aspect-ratio:1}.cal .sb{font-size:0;height:10px}.cal .srow{height:12px}.cal .ml{font-size:11px}}
+.cal .slist{display:none}
+@media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.cal .dc{height:auto;aspect-ratio:1}.cal .dc i{display:none}.cal .hdr .dn:not(.k){visibility:hidden}.cal .sb{font-size:0;height:10px}.cal .srow{height:12px;margin-bottom:2px}.cal .ml{font-size:11px}.cal .slist{display:grid;gap:2px;margin:0 0 10px 31px}.cal .sl{font-size:11.5px;line-height:1.4;color:var(--muted);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}.cal .sl b{color:var(--ink);font-weight:700}.cal .sl.fut b{color:var(--muted)}}
 .quote{margin:0;padding:10px 12px;border-left:3px solid var(--ink);background:var(--panel2);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.55}.quote .q{font-style:normal}.quote .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}.quote .src a{color:inherit}
 /* footer */
 .mailwrap{display:grid;grid-template-columns:1fr 340px;gap:16px}@media (max-width:900px){.mailwrap{grid-template-columns:1fr}}
@@ -366,12 +367,12 @@ function renderCal(){
   const met={}; for(const d of DOCS){ if(/회의록$/.test(d.n)){ (met[d.t]=met[d.t]||[]).push(d.n.replace(/ 회의록$/,"")); } }
   const act={}; if(sel){ for(const a of sel.al||[]){ (act[a[0]]=act[a[0]]||[]).push(a); } }
   const today=dstr(T); const d2t=ds=>{ const [y,m,d]=ds.split("-").map(Number); return Math.round((new Date(y,m-1,d)-D0)/86400000); };
-  let h=`<div class="mrow hdr"><span class="ml"></span>${[...Array(31).keys()].map(i=>`<span class="dn">${i+1}</span>`).join("")}</div>`;
+  let h=`<div class="mrow hdr"><span class="ml"></span>${[...Array(31).keys()].map(i=>`<span class="dn${(i+1)%5===0||i===0?" k":""}">${i+1}</span>`).join("")}</div>`;
   for(let mo=1;mo<=12;mo++){
     const first=`${calYear}-${String(mo).padStart(2,"0")}-01`; const dim=new Date(calYear,mo,0).getDate();
     // session bands for this month
-    let bands="";
-    for(const x of S){ const ms=`${calYear}-${String(mo).padStart(2,"0")}-01`, me=`${calYear}-${String(mo).padStart(2,"0")}-${String(dim).padStart(2,"0")}`; if(x.end<ms||x.start>me) continue; const c1=x.start<ms?1:+x.start.slice(8), c2=x.end>me?dim:+x.end.slice(8); bands+=`<span class="sb ${x.kind==="정례회"?"reg":""} ${x.start>today?"fut":""}" style="--c1:${c1+1};--c2:${c2+2}" data-s="${x.no}" title="제${x.no}회 ${x.kind||""} ${x.start}~${x.end}${x.items&&x.items.length?" · "+x.items.join(", "):""}">제${x.no}회 ${x.kind||""}${x.items&&x.items.length?` · ${x.items.join(", ")}`:""}</span>`; }
+    let bands="", labels="";
+    for(const x of S){ const ms=`${calYear}-${String(mo).padStart(2,"0")}-01`, me=`${calYear}-${String(mo).padStart(2,"0")}-${String(dim).padStart(2,"0")}`; if(x.end<ms||x.start>me) continue; const c1=x.start<ms?1:+x.start.slice(8), c2=x.end>me?dim:+x.end.slice(8); bands+=`<span class="sb ${x.kind==="정례회"?"reg":""} ${x.start>today?"fut":""}" style="--c1:${c1+1};--c2:${c2+2}" data-s="${x.no}" title="제${x.no}회 ${x.kind||""} ${x.start}~${x.end}${x.items&&x.items.length?" · "+x.items.join(", "):""}">제${x.no}회 ${x.kind||""}${x.items&&x.items.length?` · ${x.items.join(", ")}`:""}</span>`; const kd=ds=>`${+ds.slice(5,7)}.${+ds.slice(8)}`; if(x.start.slice(0,7)===ms.slice(0,7)||(x.start<ms&&mo===1)) labels+=`<button class="sl ${x.start>today?"fut":""}" type="button" data-s="${x.no}"><b>제${x.no}회 ${x.kind||""}</b> ${kd(x.start)}~${kd(x.end)}${x.items&&x.items.length?` · ${x.items.join(", ")}`:""}</button>`; }
     const monthInTerm=d2t(`${calYear}-${String(mo).padStart(2,"0")}-${String(dim).padStart(2,"0")}`)>=0&&d2t(first)<=T+365; if(!monthInTerm&&!bands) continue;
     h+=`<div class="mrow"><span class="ml">${mo}월</span>`;
     for(let d=1;d<=31;d++){
@@ -380,7 +381,7 @@ function renderCal(){
       const m=met[tt]||[], a=act[tt]||[]; const cls=["dc"]; if(!inTerm) cls.push(ds>today?"future":"none"); if(m.length) cls.push("met"); if(a.length) cls.push("act"); if(a.length>2) cls.push("a2"); if(ds===today) cls.push("today"); if(calSel===ds) cls.push("sel");
       const tip=`${ds}`+(m.length?` · 회의 ${m.length}건`:"")+(a.length?` · ${sel.label} 활동 ${a.length}건`:"");
       h+=`<span class="${cls.join(" ")}" data-d="${ds}" title="${tip}"><i>${d}</i></span>`; }
-    h+=`</div><div class="srow"><span></span>${bands}</div>`; }
+    h+=`</div><div class="srow"><span></span>${bands}</div>${labels?`<div class="slist">${labels}</div>`:""}`; }
   box.innerHTML=h+`<div class="cal-legend"><span><i style="background:var(--line)"></i>회의가 열린 날</span><span><i style="background:var(--ink)"></i>${sel?sel.label+" 의원이":"고른 의원이"} 활동한 날</span><span><i style="border:1px dashed var(--line)"></i>예정</span><span><i style="background:var(--muted)"></i>정례회</span><span><i style="outline:2px solid var(--accent);outline-offset:-2px"></i>기준일</span></div>`;
   document.getElementById("calSrc").innerHTML=curCouncil.schedule_src?`회기 범위는 회의록과 <a href="${curCouncil.schedule_src}" target="_blank" rel="noopener" style="color:inherit">연간 의사일정</a>에서 가져옵니다. 회기는 의회 사정으로 바뀔 수 있습니다.`:"";
   if(calSel) calDetailDay(calSel); }
@@ -402,7 +403,7 @@ function calDetailSession(no){ const S=sessionsOf(); const x=S.find(s=>s.no===no
     h+=`<div style="margin-top:6px"><b>${sel.label}</b> · ${acts.length?Object.entries(cnt).map(([k,n])=>`${AK[k]} ${n}`).join(", "):"활동 없음"}${dv>0?` · 이 회기에 오른 점수 +${P(dv)}`:""}</div>`;
     if(acts.length) h+=`<ul>${acts.slice(0,20).map(a=>`<li><span class="k">${dstr(a[0]).slice(5)} ${AK[a[1]]}</span><span>${refHtml(a[2])}</span></li>`).join("")}${acts.length>20?`<li><span class="k"></span><span>… 외 ${acts.length-20}건</span></li>`:""}</ul>`; }
   document.getElementById("calDetail").innerHTML=h; }
-document.getElementById("cal").addEventListener("click",e=>{ const b=e.target.closest(".sb"); if(b){ calDetailSession(+b.dataset.s); return; } const c=e.target.closest(".dc[data-d]"); if(c&&!c.classList.contains("none")) calDetailDay(c.dataset.d); });
+document.getElementById("cal").addEventListener("click",e=>{ const b=e.target.closest(".sb,.sl"); if(b){ calDetailSession(+b.dataset.s); return; } const c=e.target.closest(".dc[data-d]"); if(c&&!c.classList.contains("none")) calDetailDay(c.dataset.d); });
 document.getElementById("calYears").addEventListener("click",e=>{ const b=e.target.closest("[data-y]"); if(!b) return; calYear=+b.dataset.y; calSel=null; document.getElementById("calDetail").innerHTML=""; renderCal(); });
 function renderSched(){ calSel=null; calYear=null; document.getElementById("calDetail").innerHTML=""; renderCal(); }function scope(){ return members.filter(m=>filt.party==="all"||String(m.party)===filt.party); }
 // ---------- scope selectors ----------
