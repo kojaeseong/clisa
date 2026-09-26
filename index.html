@@ -204,7 +204,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
       <div class="eyebrow" id="heroEyebrow">서울특별시의회 12대 · 의원 118명</div>
       <h1 class="disp">우리 동네 구의원·시의원은<br>지금 무엇을 하고 있나</h1>
       <p id="heroLead">우리 동네 구의원·시의원이 무엇을 하고 있는지 확인하는 곳입니다. 선거 때가 아니면 의원의 일을 살펴볼 방법이 없어서 만들었습니다. 점수는 의안과 회의록에 남은 사실만으로 계산합니다. 발언이나 발의를 얼마나 많이 했는지가 아니라 다른 의원이 서명했는지, 본회의를 통과했는지, 집행기관이 그 지적을 따랐는지를 기준으로 삼고, 점수가 바뀔 때마다 근거가 된 의안과 회의록을 함께 볼 수 있습니다.</p>
-      <div class="dongbox"><span class="lbl">의원 찾기</span><form class="search dongf" id="dongF"><input type="search" id="dq" list="dlist" placeholder="동 이름이나 의원 이름 (예: 상계1동, 홍길동)" aria-label="동 이름이나 의원 이름으로 찾기" autocomplete="off"><button class="btn" type="submit">찾기</button></form><datalist id="dlist"></datalist><div id="dongRes" class="dongres" aria-live="polite"></div></div>
+      <div class="dongbox"><span class="lbl">의원 찾기</span><form class="search dongf" id="dongF"><input type="search" id="dq" placeholder="동 이름이나 의원 이름 (예: 상계1동, 홍길동)" aria-label="동 이름이나 의원 이름으로 찾기" autocomplete="off"><button class="btn" type="submit">찾기</button></form><div id="dongRes" class="dongres" aria-live="polite"></div></div>
     </div>
     <div class="heroR">
       <div class="pick">
@@ -587,7 +587,6 @@ const ndong=x=>x.replace(/\s+/g,"").replace(/·/g,".").replace(/(?<!홍)제(\d)/
 const byKey={}; for(const cn in COUNCILS) byKey[COUNCILS[cn].key]=cn;
 const guHas={}; for(const cn in COUNCILS){ if(COUNCILS[cn].gu) guHas[COUNCILS[cn].gu]=cn; }
 const ALLMEM=[]; for(const cn in COUNCILS){ const c=COUNCILS[cn]; for(const m of (c.terms[c.default].members||[])) ALLMEM.push({cn,key:c.key,m}); }
-document.getElementById("dlist").innerHTML=[...new Set(ALLMEM.map(x=>x.m.label))].sort((a,b)=>a.localeCompare(b,"ko")).map(n=>`<option value="${n}"></option>`).join("")+Object.keys(COUNCILS).map(cn=>`<option value="${cn}"></option>`).join("")+Object.keys(DONGIX).sort((a,b)=>a.localeCompare(b,"ko")).flatMap(g=>[...Object.values(DONGIX[g]).map(e=>e.n),...Object.values(DONGAL[g]||{}).map(e=>e.n)].sort((a,b)=>a.localeCompare(b,"ko")).map(n=>`<option value="${n} (${g})"></option>`)).join("");
 function memOf(key,id){ const cn=byKey[key]; const c=COUNCILS[cn]; return (c.terms[c.default].members||[]).find(m=>m.id===id); }
 function dongChip(key,id){ const m=memOf(key,id); if(!m) return ""; return `<button class="chip" type="button" data-ck="${key}" data-mid="${id}" title="${m.pname} · ${m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${m.party})"></span>${m.label}</button>`; }
 function findDong(raw){ let q=raw.replace(/\((.*?)\)/,(_,g)=>" "+g+" ").trim(); let gu=null; for(const g of Object.keys(DONGIX)){ if(q.includes(g)){ gu=g; q=q.replace(g,""); } } q=ndong(q); if(!q) return [];
@@ -602,12 +601,14 @@ document.getElementById("dongF").addEventListener("submit",e=>{ e.preventDefault
   const cHit=Object.keys(COUNCILS).find(cn=>cn===q0||cn.replace("특별시","시")===q0||cn===q0+"의회"||cn===q0+"구의회");
   if(cHit){ box.innerHTML=""; loadScope(cHit); return; }
   let mh=ALLMEM.filter(x=>x.m.label===q0||x.m.label.replace(/\(.*\)$/,"")===q0); if(!mh.length&&q0.length>=2) mh=ALLMEM.filter(x=>x.m.label.includes(q0));
+  if(mh.length===1){ box.innerHTML=""; openMem(mh[0].key,mh[0].m.id); return; }
   if(mh.length){ box.innerHTML=`<div class="dr"><div class="dh">${mh.length===1?"의원":`이름이 맞는 의원 ${mh.length}명`}</div><div class="dm">${mh.slice(0,12).map(x=>`<button class="chip" type="button" data-ck="${x.key}" data-mid="${x.m.id}" title="${x.m.pname} · ${x.m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${x.m.party})"></span>${x.m.label} <span class="meta">${x.cn.replace("특별시의회","시의회")}</span></button>`).join("")}${mh.length>12?`<span class="none">… 외 ${mh.length-12}명, 이름을 더 정확히 적어 주세요</span>`:""}</div></div>`; return; }
   const hits=findDong(raw); if(!hits.length){ box.innerHTML=`<div class="none">그 이름의 동이나 의원을 찾지 못했습니다. ‘상계1동’처럼 동 이름으로, 또는 의원 이름으로 적어 주세요.</div>`; return; }
   const more=hits.length>8?`<div class="none">비슷한 동이 ${hits.length}곳 있습니다. 동 이름을 더 정확히 적어 주세요.</div>`:"";
   box.innerHTML=hits.slice(0,8).map(h=>{ const city=h.e.m.filter(x=>x[0]==="seoul"), gu=h.e.m.filter(x=>x[0]!=="seoul"); const gcn=guHas[h.g];
     return `<div class="dr"><div class="dh">${h.e.n}<span class="meta">${h.g}${h.via?(h.via.k==="o"?` · 옛 이름 ${h.via.n}`:` · 주소상 ${h.via.n}`):""}</span></div><div class="dm"><span class="lbl">서울시의원</span>${city.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`}</div><div class="dm"><span class="lbl">${h.g}의원</span>${gcn?(gu.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`):`<span class="none">${h.g}의회는 준비 중입니다</span>`}</div></div>`; }).join("")+more; });
-document.getElementById("dongRes").addEventListener("click",async e=>{ const b=e.target.closest("[data-ck]"); if(!b) return; const cn=byKey[b.dataset.ck]; await loadScope(cn); const m=members.find(x=>x.id===+b.dataset.mid); if(m){ select(m); if(window.innerWidth>=900) document.querySelector(".main").scrollIntoView({behavior:"smooth",block:"start"}); } });
+async function openMem(key,id){ const cn=byKey[key]; await loadScope(cn); const m=members.find(x=>x.id===+id); if(m){ select(m); if(window.innerWidth>=900) document.querySelector(".main").scrollIntoView({behavior:"smooth",block:"start"}); } }
+document.getElementById("dongRes").addEventListener("click",e=>{ const b=e.target.closest("[data-ck]"); if(!b) return; openMem(b.dataset.ck,b.dataset.mid); });
 
 // ---------- 최근 활동 (고르지 않고 최근 회의부터 시간순) ----------
 const FK={"S":"발언","R":"집행기관 답변","L":"대표발의","P":"통과·반영"};
