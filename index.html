@@ -36,6 +36,17 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
 .feed .fh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.feed .fh .btn{flex:none;white-space:nowrap}.feed .fh .meta{margin-top:2px}
 .feed .fl{display:grid;gap:6px;max-height:380px;overflow:auto;padding-right:2px;scroll-behavior:smooth}
 @media (max-width:900px){.feed .fl{max-height:300px}}
+@media (min-width:1100px){
+  body:not(.mview) .main{grid-template-columns:minmax(0,1fr) 380px;gap:20px}
+  body:not(.mview) .main>.col{display:contents}
+  body:not(.mview) .boardBlock{grid-column:1;grid-row:1}
+  body:not(.mview) .restBlock{display:contents}
+  body:not(.mview) .restBlock>*{grid-column:1}
+  body:not(.mview) .restBlock>#feedHead{display:none}
+  body:not(.mview) .feedwrap{grid-column:2;grid-row:1 / span 40;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);align-self:start;margin:0}
+  body:not(.mview) .feed{max-height:calc(100vh - env(safe-area-inset-top,0px) - 96px);display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+  body:not(.mview) .feed .fl{max-height:none;min-height:0}
+}
 .fi{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.5;cursor:pointer;background:var(--bg);transition:background .35s,border-color .35s}
 .fi.cur{background:var(--panel2);border-color:var(--ink)}
 .fi .fk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}.fi .fk b{color:var(--ink);font-size:12.5px}.fi .fk .tag{font-family:Archivo,sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}.fi.cur .fk .tag{border-color:var(--ink);color:var(--ink)}
@@ -248,10 +259,10 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
 
       </div>
       <div class="restBlock">
-      <div class="sec-h"><div><div class="eyebrow" data-sec="2">2 · 최근 활동</div><h2 class="disp">최근 활동</h2></div></div>
+      <div class="sec-h" id="feedHead"><div><div class="eyebrow" data-sec="2">2 · 최근 활동</div><h2 class="disp">최근 활동</h2></div></div>
       <section class="feedwrap">
         <div class="feed" id="feed" aria-label="최근 활동">
-        <div class="fh"><div><div class="meta" id="feedMeta"></div></div><button class="btn" id="feedPause" type="button" aria-pressed="false" title="자동으로 넘어가는 것을 멈춥니다">멈춤</button></div>
+        <div class="fh"><div><span class="lbl">최근 활동</span><div class="meta" id="feedMeta"></div></div><button class="btn" id="feedPause" type="button" aria-pressed="false" title="자동으로 넘어가는 것을 멈춥니다">멈춤</button></div>
         <div class="fl" id="feedList"></div>
         <div class="meta" id="feedNote"></div>
       </div>
@@ -678,7 +689,7 @@ function feedItems(){ let items=[]; for(const m of members){ for(const a of (m.a
 function renderFeed(){ const box=document.getElementById("feedList"); if(!box) return; clearInterval(feedTimer); feedTimer=null;
   const meets=DOCS.filter(d=>d.t<=t&&/회의록$/.test(d.n)); const lastM=meets[meets.length-1];
   document.getElementById("feedMeta").textContent=`${filt.council} ${cur.label}`+(lastM?` · 마지막으로 반영한 회의 ${dstr(lastM.t)} ${lastM.n.replace(/ 회의록$/,"")}`:" · 아직 반영한 회의가 없습니다");
-  const all=feedItems(); feedItemsCache=all.slice(0,30); feedI=0;
+  const all=feedItems(); feedItemsCache=all.slice(0,60); feedI=0;
   const card=(x,i)=>{ if(x.k==="D"){ const n=x.dec.length; const res={}; for(const d of x.dec) res[d.res]=(res[d.res]||0)+1; const head=Object.entries(res).map(([r,c])=>`${r} ${c}건`).join(", "); const list=x.dec.slice(0,3).map(d=>`<div><b>${d.title}</b> · ${d.res}${d.x?`<div class="sub" style="white-space:normal">${d.x}</div>`:""}</div>`).join("")+(n>3?`<div class="sub">외 ${n-3}건</div>`:""); return `<div class="fi${i===0?" cur":""}" data-i="${i}" data-day="${dstr(x.t)}"><div class="fk"><span class="tag">의결</span><b>본회의</b><span>${dstr(x.t)}</span><span>${head}</span></div><div class="fx">${list}</div><div class="fs">누르면 그날의 회의와 의안이 캘린더에 열립니다</div></div>`; }
     const link=x.r.u?`<a href="${x.r.u}" target="_blank" rel="noopener" data-src>${x.r.r}</a>`:x.r.r;
     const body=x.k==="S"?(x.r.x?`“${x.r.x}”`:""):x.k==="R"?(x.r.x||""):`<b>${x.r.r}</b>${x.r.x?`<div class="sub" style="white-space:normal">${x.r.x}</div>`:""}`;
