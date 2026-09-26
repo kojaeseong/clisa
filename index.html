@@ -68,9 +68,10 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
 .kpi b{display:block;font-family:Archivo,sans-serif;font-weight:900;font-size:26px;line-height:1}
 .kpi span{font-size:11.5px;color:var(--muted)}
 /* layout */
-.main{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;margin-top:8px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 74px)}
+.main{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;margin-top:8px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 74px)}
+body.mview .hero,body.mview .main>.col,body.mview #inqHead,body.mview #inqWrap{display:none}body:not(.mview) .side{display:none}body.mview .main{margin-top:14px}
 .col{min-width:0}
-.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);max-height:calc(100vh - env(safe-area-inset-top,0px) - 90px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.side{position:static;max-width:860px;margin:0 auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
 h2.sec{font-size:20px;margin:26px 0 8px}
 .sec-h{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:26px 0 10px}
 .sec-h h2{margin:0}
@@ -175,8 +176,6 @@ canvas{width:100%;height:100%;display:block}
 .cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:6px}.cal-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .cal .slist{display:none}
 @media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.cal .dc{height:auto;aspect-ratio:1}.cal .dc i{display:none}.cal .hdr .dn:not(.k){visibility:hidden}.cal .sb{font-size:0;height:10px}.cal .srow{height:12px;margin-bottom:2px}.cal .ml{font-size:11px}.cal .slist{display:grid;gap:2px;margin:0 0 10px 31px}.cal .sl{font-size:11.5px;line-height:1.4;color:var(--muted);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}.cal .sl b{color:var(--ink);font-weight:700}.cal .sl.fut b{color:var(--muted)}}
-.side .cal .mrow,.side .cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.side .cal .dc{height:auto;aspect-ratio:1}.side .cal .dc i{display:none}.side .cal .hdr .dn:not(.k){visibility:hidden}.side .cal .sb{font-size:0;height:10px}.side .cal .srow{height:12px;margin-bottom:2px}.side .cal .ml{font-size:11px}.side .cal .slist{display:grid;gap:2px;margin:0 0 10px 31px}.side .cal .sl{font-size:11.5px;line-height:1.4;color:var(--muted);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}.side .cal .sl b{color:var(--ink);font-weight:700}.side .cal .sl.fut b{color:var(--muted)}
-.side .cal .cal-legend{font-size:10.5px}
 .quote{margin:0;padding:10px 12px;border-left:3px solid var(--ink);background:var(--panel2);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.55}.quote .q{font-style:normal}.quote .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}.quote .src a{color:inherit}
 .prof{display:grid;gap:12px}.pfsec{border-top:1px solid var(--line);padding-top:8px}.pfsec>.lbl{display:block;margin-bottom:6px}
 .pfchips{display:flex;flex-wrap:wrap;gap:6px}.pfchips .chip{cursor:pointer}.pfchips .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}.pfchips .chip .n{opacity:.65;margin-left:3px;font-size:11px}
@@ -191,7 +190,7 @@ form.mail input,form.mail textarea{width:100%;min-width:0;padding:10px 12px;bord
 form.mail button{background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
 .foot{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
 .foot a{color:var(--muted)}
-@media (max-width:900px){ .hero{grid-template-columns:1fr} .main{display:flex;flex-direction:column;gap:0} .main>.col{display:contents} .boardBlock{order:1;min-width:0;width:100%} .side{position:static;order:2;margin-top:18px;scroll-margin-top:150px;max-height:none;overflow:visible} .restBlock{order:3;min-width:0;width:100%} .grid2,.grid3{grid-template-columns:1fr} .plane{aspect-ratio:4/3} select{max-width:100%}
+@media (max-width:900px){ .hero{grid-template-columns:1fr} .main{display:flex;flex-direction:column;gap:0} .main>.col{display:contents} .boardBlock{order:1;min-width:0;width:100%} .side{order:2;margin-top:0;scroll-margin-top:150px} .restBlock{order:3;min-width:0;width:100%} .grid2,.grid3{grid-template-columns:1fr} .plane{aspect-ratio:4/3} select{max-width:100%}
   .top{flex-wrap:wrap;padding:8px 0;gap:8px 12px} .top .brand{order:0;flex:1} .top .ribbon{order:1;font-size:9.5px;padding:3px 7px} .top .dongf{order:2;flex-basis:100%;max-width:none} .top .dongf input{font-size:16px} #scopeSlot .scope{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;justify-content:stretch} #scopeSlot .scope select{width:100%;min-width:0;max-width:100%;font-size:12px;padding:6px 8px} #scopeSlot .scope #fTerm{grid-column:1 / -1} }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
@@ -276,6 +275,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
     </div>
 
     <aside class="side" id="side">
+      <div style="text-align:left"><button class="btn" id="sBack" type="button">← 의회로 돌아가기</button></div>
       <div class="who"><div class="avatar" id="sAvatar" aria-hidden="true">?</div><div><div class="lbl">의원</div><h3 id="sName">행이나 선을 누르세요</h3></div><button class="btn share" id="sShare" type="button" hidden>링크 복사</button></div>
       <div class="meta" id="sMeta">순위표의 행이나 순위 흐름의 선을 누르면 그 의원의 값과 근거가 여기에 열립니다.</div>
       <p class="sSum" id="sSum" hidden></p>
@@ -298,8 +298,8 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
   </div>
 
 
-  <div class="sec-h"><div><div class="eyebrow" data-sec="6">6 · 문의</div><h2 class="disp">건의와 질문</h2><div class="meta">건의하실 사항이나 궁금한 점이 있으면 아래에 남겨 주세요.</div></div></div>
-  <div class="mailwrap"><div>
+  <div class="sec-h" id="inqHead"><div><div class="eyebrow" data-sec="6">6 · 문의</div><h2 class="disp">건의와 질문</h2><div class="meta">건의하실 사항이나 궁금한 점이 있으면 아래에 남겨 주세요.</div></div></div>
+  <div class="mailwrap" id="inqWrap"><div>
   <form class="mail" id="mail"><div class="mrow"><input type="text" id="mailName" placeholder="이름 (선택)" aria-label="이름" autocomplete="name"><input type="text" id="mailOrg" placeholder="소속 (선택)" aria-label="소속" autocomplete="organization"><input type="email" id="mailAddr" placeholder="답장 받을 이메일" aria-label="이메일" autocomplete="email" required></div><textarea id="mailBody" rows="5" placeholder="내용" aria-label="내용" required></textarea><input type="text" id="mailHp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><div class="msend"><span class="meta">보내 주신 이름·소속·이메일과 내용은 답변과 오류 수정에만 쓰고, 처리 후 1년이 지나면 삭제됩니다.</span><button type="submit" id="mailBtn">보내기</button></div></form>
   <p id="mailMsg" class="meta" style="margin:8px 0 0"></p>
   </div></div>
@@ -348,7 +348,7 @@ async function loadScope(cn,k,keepHash){ const cc=COUNCILS[cn]; if(!cc) return; 
   for(const m of members){ m.posts=(m.posts||[]).filter(p=>!/부위원장$/.test(p)); if(/^비례대표/.test(m.district)) m.district="비례대표"; }
   const keys=Object.keys(curCouncil.terms).sort((a,b)=>+b-+a); fT.innerHTML=keys.map((kk,i)=>`<option value="${kk}">${curCouncil.terms[kk].label} · ${i===0?"현재":curCouncil.terms[kk].span.replace(/-\d\d/g,"")} (${curCouncil.terms[kk].n||curCouncil.terms[kk].members.length}명)</option>`).join(""); fT.value=k;
   if(fC.value!==cn) fC.value=cn;
-  if(window.syncPick) syncPick(); renderCouncilSummary(); renderSched(); renderFlow(); refresh(); const first=scope().sort((a,b)=>infAt(b,T)-infAt(a,T))[0]; if(first) select(first,true); if(!keepHash) setHash(k===curCouncil.default&&curCouncil.gu?curCouncil.key:""); }
+  if(window.syncPick) syncPick(); renderCouncilSummary(); renderSched(); renderFlow(); refresh(); document.body.classList.remove("mview"); if(!keepHash) setHash(k===curCouncil.default&&curCouncil.gu?curCouncil.key:""); }
 
 // 의회 요약 (지금 보는 의회 카드)
 const kdate=ds=>{ const [y,m,d]=ds.split("-").map(Number); return `${m}월 ${d}일`; };
@@ -469,7 +469,12 @@ document.addEventListener("click",e=>{ const el=e.target.closest("#zeros [data-i
 document.querySelectorAll(".tab[data-tab]").forEach(b=>b.addEventListener("click",()=>{ boardTab=b.dataset.tab; boardN=20; document.querySelectorAll(".tab[data-tab]").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderBoard(); }));
 document.getElementById("more").addEventListener("click",()=>{ boardN+=20; renderBoard(); });
 document.querySelector("#board tbody").addEventListener("click",e=>{ const tr=e.target.closest("tr[data-id]"); if(!tr) return; select(members.find(x=>x.id===+tr.dataset.id)); });
-function select(m,quiet){ sel=m; if(!quiet) setHash(m.sl); showSide(m); renderBoard(); renderBump(); if(planeInit) drawPlane(); renderCal(); if(!quiet&&window.innerWidth<900) document.getElementById("side").scrollIntoView({behavior:"smooth",block:"start"}); }
+let mDepth=0;
+function select(m,quiet){ sel=m; showSide(m); renderBoard(); renderBump(); if(planeInit) drawPlane(); renderCal(); document.body.classList.add("mview"); document.getElementById("sBack").textContent=`← ${filt.council}로 돌아가기`;
+  if(!quiet){ const h=m.sl; if(decodeURIComponent(location.hash.slice(1))!==h){ history.pushState(null,"",location.pathname+location.search+"#"+h); mDepth++; } }
+  window.scrollTo({top:0,behavior:"instant"}); }
+function closeMember(quiet){ sel=null; document.body.classList.remove("mview"); renderBoard(); renderBump(); if(planeInit) drawPlane(); renderCal(); if(!quiet) setHash(filt.term===curCouncil.default&&curCouncil.gu?curCouncil.key:""); }
+document.getElementById("sBack").addEventListener("click",()=>{ if(mDepth>0){ mDepth--; history.back(); } else { closeMember(false); window.scrollTo({top:0,behavior:"instant"}); } });
 // ---------- side card ----------
 function showSide(m){
   document.getElementById("sName").textContent=m.label; document.getElementById("sShare").hidden=!m.sl; const av=document.getElementById("sAvatar"); av.className="avatar p"+m.party; av.innerHTML=mapSvg(m);
@@ -502,7 +507,7 @@ function showSide(m){
   if(evFor!==m){ evFor=m; evShown=6; } document.getElementById("sEvents").innerHTML=past.slice(-evShown).reverse().map(e=>`<li><span class="d num">${dstr(e.t)}</span><span><b class="ttl">${e.u?`<a href="${e.u}" target="_blank" rel="noopener" style="color:inherit">${e.doc}</a>`:e.doc}</b>${e.g?exBox(e.g):(e.k!=="A5-6"?`<div class="sub" style="white-space:normal;margin-top:3px">의회가 제안이유를 게시하지 않은 의안입니다.</div>`:"")}${e.x?exBox(e.x):""}<div class="sub" style="white-space:normal;margin-top:3px"><b>${KN[e.k]}</b> · ${e.why}</div>${e.c?`<span class="calc">계산 ${e.c}</span>`:""}</span><span class="v num">+${P(e.v)}</span></li>`).join("")||`<li><span class="d">—</span><span>이 기간에는 변동이 없습니다</span><span></span></li>`; exFit();
   { const mo=document.getElementById("sMore"), shownN=Math.min(evShown,past.length), rest=past.length-shownN;
     mo.innerHTML=past.length>6?`기준일까지 점수로 이어진 성과 ${past.length}건 중 ${shownN}건을 보여 드립니다.<div class="evbtns">${rest>0?`<button class="btn" data-ev="more">더 보기 (남은 ${rest}건)</button>`:""}${shownN>6?`<button class="btn" data-ev="fold">접기</button>`:""}</div>`:"점수가 바뀌면 그 근거가 된 의안과 회의록도 함께 올라옵니다.";
-    const sd=document.getElementById("side"); sd.style.position=(window.innerWidth>900&&sd.offsetHeight>window.innerHeight-80)?"static":""; }
+  }
 }
 function exBox(t){ return `<div class="sub ex" style="white-space:normal;margin-top:3px;color:var(--ink)">${t}</div><button class="more exmore" type="button" hidden>더 보기</button>`; }
 function exFit(){ document.querySelectorAll("#sEvents .ex").forEach(x=>{ const b=x.nextElementSibling; if(!b||!b.classList.contains("exmore")) return; if(x.classList.contains("open")) return; b.hidden=!(x.scrollHeight>x.clientHeight+2); }); }
@@ -595,10 +600,10 @@ const T0=Date.now(); document.getElementById("mail").addEventListener("submit",a
 
 // ---------- 주소·공유 ----------
 function setHash(h){ if(decodeURIComponent(location.hash.slice(1))===h) return; history.replaceState(null,"",location.pathname+location.search+(h?"#"+h:"")); }
-async function route(){ const h=decodeURIComponent(location.hash.slice(1)); if(!h) return false;
-  for(const cn in COUNCILS){ const c=COUNCILS[cn]; if(h===c.key){ await loadScope(cn); return true; }
+async function route(){ const h=decodeURIComponent(location.hash.slice(1)); if(!h){ if(sel){ closeMember(false); mDepth=Math.max(0,mDepth-1); } return false; }
+  for(const cn in COUNCILS){ const c=COUNCILS[cn]; if(h===c.key){ if(filt.council===cn&&filt.term===c.default){ if(sel){ closeMember(true); mDepth=Math.max(0,mDepth-1); } } else await loadScope(cn,null,true); return true; }
     for(const k in c.terms){ const tm=c.terms[k]; const has=tm.sls?tm.sls.includes(h):(tm.members||[]).some(m=>m.sl===h); if(!has) continue;
-      await loadScope(cn,k,true); if(filt.council!==cn||filt.term!==k) return true; const m=members.find(x=>x.sl===h); if(m){ select(m); if(window.innerWidth>=900) document.querySelector(".main").scrollIntoView({behavior:"smooth",block:"start"}); } return true; } }
+      await loadScope(cn,k,true); if(filt.council!==cn||filt.term!==k) return true; const m=members.find(x=>x.sl===h); if(m) select(m,true); return true; } }
   return false; }
 window.addEventListener("hashchange",()=>{ route(); });
 const shareUrl=m=>filt.term===curCouncil.default?`https://clisa.ai/m/${m.sl}.html`:`https://clisa.ai/#${m.sl}`;
@@ -648,7 +653,7 @@ async function renderProfile(m){ const box=document.getElementById("sProf"); con
 function placeScope(){ const sc=document.querySelector(".scope"), top=document.querySelector(".top"), slot=document.getElementById("scopeSlot"); if(!sc) return; if(window.innerWidth<900){ if(sc.parentNode!==slot) slot.appendChild(sc); } else if(sc.parentNode!==top){ top.insertBefore(sc, document.getElementById("dongF")); } }
 placeScope(); window.addEventListener("resize",placeScope);
 function scrollTarget(){ const el=window.innerWidth<900?document.getElementById("side"):document.querySelector(".main"); el.style.scrollMarginTop=(document.querySelector(".top").getBoundingClientRect().height+10)+"px"; el.scrollIntoView({block:"start"}); }
-async function openMem(key,id){ document.getElementById("dongRes").innerHTML=""; const cn=byKey[key]; await loadScope(cn); const m=members.find(x=>x.id===+id); if(m){ select(m,true); setHash(m.sl); scrollTarget(); [120,400,900].forEach(t=>setTimeout(scrollTarget,t)); } }
+async function openMem(key,id){ document.getElementById("dongRes").innerHTML=""; const cn=byKey[key]; if(filt.council!==cn||filt.term!==COUNCILS[cn].default) await loadScope(cn,null,true); const m=members.find(x=>x.id===+id); if(m) select(m); }
 function memChip(x){ return `<button class="chip" type="button" data-ck="${x.key}" data-mid="${x.m.id}" title="${x.m.pname} · ${x.m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${x.m.party})"></span>${x.m.label} <span class="meta">${x.cn.replace("특별시의회","시의회")}</span></button>`; }
 document.getElementById("dq").addEventListener("input",e=>{ const box=document.getElementById("dongRes"); const q=e.target.value.replace(/\s+/g,""); if(q.length<2){ box.innerHTML=""; return; }
   const mh=ALLMEM.filter(x=>x.m.label.replace(/\(.*\)$/,"").includes(q)).sort((a,b)=>(b.m.label.startsWith(q)-a.m.label.startsWith(q))||a.m.label.localeCompare(b.m.label,"ko"));
