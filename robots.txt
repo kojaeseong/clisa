@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /$
+Allow: /index.html
+Allow: /icon.svg
+Allow: /og.png
+Disallow: /m/
+Disallow: /data/
+Disallow: /invest/
+Disallow: /join.html
+Disallow: /login.html
+Disallow: /members.html
+Disallow: /reset.html
+Disallow: /ops.html
+Disallow: /tools/
+Disallow: /media/
+Sitemap: https://clisa.ai/sitemap.xml
