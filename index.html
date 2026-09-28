@@ -106,7 +106,7 @@ h2.sec{font-size:20px;margin:26px 0 8px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab,.chip,.btn{font-size:12.5px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer}
 .tab[aria-pressed="true"],.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.chip.off{color:var(--faint);border-style:dashed;background:transparent}.chip .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 /* table */
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 table{border-collapse:collapse;width:100%;min-width:600px;font-size:13.5px}
@@ -209,6 +209,8 @@ canvas{width:100%;height:100%;display:block}
 @media (max-width:700px){.cal .mrow,.cal .srow{grid-template-columns:30px repeat(31,minmax(0,1fr));gap:1px}.cal .dc{height:auto;aspect-ratio:1}.cal .dc i{display:none}.cal .hdr .dn:not(.k){visibility:hidden}.cal .sb{font-size:0;height:10px}.cal .srow{height:12px;margin-bottom:2px}.cal .ml{font-size:11px}.cal .slist{display:grid;gap:2px;margin:0 0 10px 31px}.cal .sl{font-size:11.5px;line-height:1.4;color:var(--muted);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}.cal .sl b{color:var(--ink);font-weight:700}.cal .sl.fut b{color:var(--muted)}}
 .quote{margin:0;padding:10px 12px;border-left:3px solid var(--ink);background:var(--panel2);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.55}.quote .q{font-style:normal}.quote .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}.quote .src a{color:inherit}
 .prof{display:grid;gap:12px}.pfsec{border-top:1px solid var(--line);padding-top:8px}.pfsec>.lbl{display:block;margin-bottom:6px}
+.crow{display:flex;flex-wrap:wrap;gap:5px 6px;margin:10px 0 4px}.crow .cb{font-family:inherit;font-size:12.5px;line-height:1;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}.crow .cb.seoul{font-weight:700}.crow .cb[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}.crow .cb.off{color:var(--faint);background:transparent;border-style:dashed;cursor:default}.crowNote{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+@media (max-width:900px){.heroL{min-width:0;max-width:100%}.crow{min-width:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}.crow::-webkit-scrollbar{display:none}}
 .pfchips{display:flex;flex-wrap:wrap;gap:6px}.pfchips .chip{cursor:pointer}.pfchips .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}.pfchips .chip .n{opacity:.65;margin-left:3px;font-size:11px}
 .pfrefs{display:grid;gap:6px;margin-top:8px}.pfrefs .pr{font-size:12.5px;line-height:1.5;padding:8px 10px;background:var(--panel2);border-radius:8px}.pfrefs .pr .src{display:block;font-size:11px;color:var(--muted);margin-top:3px}.pfrefs .pr .src a{color:inherit}
 .pfsp{margin:0 0 8px;padding:10px 12px;border-left:3px solid var(--ink);background:var(--panel2);border-radius:0 8px 8px 0;font-size:13px;line-height:1.55}.pfsp .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}.pfsp .src a{color:inherit}.pfsp .more,.events .exmore{border:0;background:none;color:var(--muted);font-size:11.5px;text-decoration:underline;cursor:pointer;padding:0;margin-top:2px}
@@ -234,7 +236,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
       <select id="fCouncil" aria-label="의회"></select>
       <select id="fTerm" aria-label="대수"></select>
     </div>
-    <form class="search dongf" id="dongF" role="search"><input type="search" id="dq" placeholder="의원 이름이나 동 이름" aria-label="의원 이름이나 동 이름으로 찾기" autocomplete="off"><button class="btn" type="submit">찾기</button></form>
+    <form class="search dongf" id="dongF" role="search"><input type="search" id="dq" placeholder="구·동·의원 이름" aria-label="구, 동, 의원 이름으로 찾기" autocomplete="off"><button class="btn" type="submit">찾기</button></form>
     <span class="ribbon" id="ribbon">서울 12대 · 시범 운영</span>
     <div id="dongRes" class="dongres" aria-live="polite"></div>
   </div>
@@ -244,6 +246,7 @@ form.mail button{background:var(--accent);color:var(--on-accent);border:0;border
       <div id="scopeSlot"></div>
       <div class="eyebrow" id="heroEyebrow">서울특별시의회 12대 · 의원 118명</div>
       <h1 class="disp">우리 동네 구의원·시의원은 지금 어떤 일을 하고 있나</h1>
+      <div class="crow" id="councilRow" aria-label="의회 고르기"></div><div class="crowNote" id="councilNote" hidden></div>
       <p id="heroLead">우리 동네 구의원·시의원이 어떤 일을 하고 있는지 확인하는 곳입니다. <button class="more" id="leadMore" type="button">더 보기</button><span id="leadRest" hidden> 선거 때가 아니면 의원의 일을 살펴볼 방법이 없어서 만들었습니다. 점수는 의안과 회의록에 남은 사실만으로 계산합니다. 발언이나 발의를 얼마나 많이 했는지가 아니라 다른 의원이 서명했는지, 본회의를 통과했는지, 집행기관이 그 지적을 따랐는지를 기준으로 삼고, 점수가 바뀔 때마다 근거가 된 의안과 회의록을 함께 볼 수 있습니다.</span></p>
       <div class="bigmap" id="bigMap"><svg id="bigSvg" viewBox="-2 -2 104 104" role="img" aria-label="선거구 지도"></svg><div id="mapTip" class="maptip" hidden></div></div>
       <div class="maplegend" id="mapLegend"></div>
@@ -381,7 +384,7 @@ async function loadScope(cn,k,keepHash){ const cc=COUNCILS[cn]; if(!cc) return; 
   for(const m of members){ m.posts=(m.posts||[]).filter(p=>!/부위원장$/.test(p)); if(/^비례대표/.test(m.district)) m.district="비례대표"; }
   const keys=Object.keys(curCouncil.terms).sort((a,b)=>+b-+a); fT.innerHTML=keys.map((kk,i)=>`<option value="${kk}">${curCouncil.terms[kk].label} · ${i===0?"현재":curCouncil.terms[kk].span.replace(/-\d\d/g,"")} (${curCouncil.terms[kk].n||curCouncil.terms[kk].members.length}명)</option>`).join(""); fT.value=k;
   if(fC.value!==cn) fC.value=cn;
-  if(window.syncPick) syncPick(); renderCouncilSummary(); renderSched(); renderFlow(); refresh(); document.body.classList.remove("mview"); if(!keepHash) setHash(k===curCouncil.default&&curCouncil.gu?curCouncil.key:""); }
+  if(window.syncPick) syncPick(); renderCouncilRow(); renderCouncilSummary(); renderSched(); renderFlow(); refresh(); document.body.classList.remove("mview"); if(!keepHash) setHash(k===curCouncil.default&&curCouncil.gu?curCouncil.key:""); }
 
 // 의회 요약 (지금 보는 의회 카드)
 const kdate=ds=>{ const [y,m,d]=ds.split("-").map(Number); return `${m}월 ${d}일`; };
@@ -684,6 +687,12 @@ const ndong=x=>x.replace(/\s+/g,"").replace(/·/g,".").replace(/(?<!홍)제(\d)/
 const byKey={}; for(const cn in COUNCILS) byKey[COUNCILS[cn].key]=cn;
 const guHas={}; for(const cn in COUNCILS){ if(COUNCILS[cn].gu) guHas[COUNCILS[cn].gu]=cn; }
 const ALLMEM=[]; for(const cn in COUNCILS){ const c=COUNCILS[cn]; for(const m of (c.terms[c.default].members||[])) ALLMEM.push({cn,key:c.key,m}); }
+const GU25=["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"];
+function councilMatches(q){ q=q.replace(/\s+/g,""); if(q.length<1) return []; const out=[]; if("서울특별시의회".includes(q)||"서울시의회".includes(q)||"시의회".startsWith(q)) out.push({cn:"서울특별시의회",ok:true}); for(const g of GU25){ const gs=g.replace(/구$/,""); if(g.startsWith(q)||gs.startsWith(q)||(g+"의회").startsWith(q)||(q.length>=2&&gs.includes(q.replace(/구(의회)?$/,"")))) out.push({cn:guHas[g]||g+"의회",g,ok:!!guHas[g]}); } return out; }
+function councilChip(x){ const c=COUNCILS[x.cn]; return x.ok?`<button class="chip" type="button" data-cn="${x.cn}"><b>${x.cn.replace("특별시의회","시의회")}</b> <span class="meta">의원 ${c.terms[c.default].members.length}명</span></button>`:`<span class="chip off" title="준비 중">${x.cn} <span class="meta">준비 중</span></span>`; }
+function renderCouncilRow(){ const row=document.getElementById("councilRow"); if(!row) return; const nt=document.getElementById("councilNote"); if(nt&&!nt.dataset.keep) nt.hidden=true; const curName=filt.council; const gus=GU25.slice().sort((a,b)=>a.localeCompare(b,"ko")); row.innerHTML=`<button class="cb seoul" type="button" data-cn="서울특별시의회" aria-current="${curName==="서울특별시의회"}">서울시의회</button>`+gus.map(g=>{ const cn=guHas[g]; return cn?`<button class="cb" type="button" data-cn="${cn}" aria-current="${curName===cn}">${g.replace(/구$/,"")}</button>`:`<button class="cb off" type="button" data-g="${g}" title="${g}의회는 준비 중입니다">${g.replace(/구$/,"")}</button>`; }).join("");
+  const cur=row.querySelector('[aria-current="true"]'); if(cur&&row.scrollWidth>row.clientWidth) cur.scrollIntoView({block:"nearest",inline:"center"}); }
+document.getElementById("councilRow").addEventListener("click",e=>{ const b=e.target.closest(".cb"); if(!b) return; const note=document.getElementById("councilNote"); if(b.dataset.cn){ note.hidden=true; loadScope(b.dataset.cn); return; } note.textContent=`${b.dataset.g}의회는 준비 중입니다.`; note.hidden=false; });
 function memOf(key,id){ const cn=byKey[key]; const c=COUNCILS[cn]; return (c.terms[c.default].members||[]).find(m=>m.id===id); }
 function dongChip(key,id){ const m=memOf(key,id); if(!m) return ""; return `<button class="chip" type="button" data-ck="${key}" data-mid="${id}" title="${m.pname} · ${m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${m.party})"></span>${m.label}</button>`; }
 function findDong(raw){ let q=raw.replace(/\((.*?)\)/,(_,g)=>" "+g+" ").trim(); let gu=null; for(const g of Object.keys(DONGIX)){ if(q.includes(g)){ gu=g; q=q.replace(g,""); } } q=ndong(q); if(!q) return [];
@@ -702,8 +711,9 @@ document.getElementById("dongF").addEventListener("submit",e=>{ e.preventDefault
   if(mh.length){ box.innerHTML=`<div class="dr"><div class="dh">${mh.length===1?"의원":`이름이 맞는 의원 ${mh.length}명`}</div><div class="dm">${mh.slice(0,12).map(x=>`<button class="chip" type="button" data-ck="${x.key}" data-mid="${x.m.id}" title="${x.m.pname} · ${x.m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${x.m.party})"></span>${x.m.label} <span class="meta">${x.cn.replace("특별시의회","시의회")}</span></button>`).join("")}${mh.length>12?`<span class="none">… 외 ${mh.length-12}명, 이름을 더 정확히 적어 주세요</span>`:""}</div></div>`; return; }
   const hits=findDong(raw); if(!hits.length){ box.innerHTML=`<div class="none">그 이름의 동이나 의원을 찾지 못했습니다. ‘상계1동’처럼 동 이름으로, 또는 의원 이름으로 적어 주세요.</div>`; return; }
   const more=hits.length>8?`<div class="none">비슷한 동이 ${hits.length}곳 있습니다. 동 이름을 더 정확히 적어 주세요.</div>`:"";
-  box.innerHTML=hits.slice(0,8).map(h=>{ const city=h.e.m.filter(x=>x[0]==="seoul"), gu=h.e.m.filter(x=>x[0]!=="seoul"); const gcn=guHas[h.g];
-    return `<div class="dr"><div class="dh">${h.e.n}<span class="meta">${h.g}${h.via?(h.via.k==="o"?` · 옛 이름 ${h.via.n}`:` · 주소상 ${h.via.n}`):""}</span></div><div class="dm"><span class="lbl">서울시의원</span>${city.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`}</div><div class="dm"><span class="lbl">${h.g}의원</span>${gcn?(gu.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`):`<span class="none">${h.g}의회는 준비 중입니다</span>`}</div></div>`; }).join("")+more; });
+  box.innerHTML=dongHitsHtml(hits.slice(0,8))+more; });
+function dongHitsHtml(hits){ return hits.map(h=>{ const city=h.e.m.filter(x=>x[0]==="seoul"), gu=h.e.m.filter(x=>x[0]!=="seoul"); const gcn=guHas[h.g];
+    return `<div class="dr"><div class="dh">${h.e.n}<span class="meta">${h.g}${h.via?(h.via.k==="o"?` · 옛 이름 ${h.via.n}`:` · 주소상 ${h.via.n}`):""}</span></div><div class="dm"><span class="lbl">서울시의원</span>${city.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`}</div><div class="dm"><span class="lbl">${h.g}의원</span>${gcn?(gu.map(x=>dongChip(...x)).join("")||`<span class="none">확인 중</span>`):`<span class="none">${h.g}의회는 준비 중입니다</span>`}</div></div>`; }).join(""); }
 const PF={};
 function pfKey(){ return `${curCouncil.key}-${cur.gen}`; }
 async function ensureProfile(){ const k=pfKey(); if(PF[k]) return PF[k]; if(PF["_"+k]) return PF["_"+k]; PF["_"+k]=fetch(`data/pf-${k}.json`).then(r=>r.ok?r.json():null).then(d=>{ PF[k]=d||{}; return PF[k]; }).catch(()=>{ PF[k]={}; return PF[k]; }); return PF["_"+k]; }
@@ -724,12 +734,15 @@ placeScope(); window.addEventListener("resize",placeScope);
 function scrollTarget(){ const el=window.innerWidth<900?document.getElementById("side"):document.querySelector(".main"); el.style.scrollMarginTop=(document.querySelector(".top").getBoundingClientRect().height+10)+"px"; el.scrollIntoView({block:"start"}); }
 async function openMem(key,id){ document.getElementById("dongRes").innerHTML=""; const cn=byKey[key]; if(filt.council!==cn||filt.term!==COUNCILS[cn].default) await loadScope(cn,null,true); const m=members.find(x=>x.id===+id); if(m) select(m); }
 function memChip(x){ return `<button class="chip" type="button" data-ck="${x.key}" data-mid="${x.m.id}" title="${x.m.pname} · ${x.m.district.split(" (")[0]}"><span class="sw" style="background:var(--p${x.m.party})"></span>${x.m.label} <span class="meta">${x.cn.replace("특별시의회","시의회")}</span></button>`; }
-document.getElementById("dq").addEventListener("input",e=>{ const box=document.getElementById("dongRes"); const q=e.target.value.replace(/\s+/g,""); if(q.length<2){ box.innerHTML=""; return; }
-  const mh=ALLMEM.filter(x=>x.m.label.replace(/\(.*\)$/,"").includes(q)).sort((a,b)=>(b.m.label.startsWith(q)-a.m.label.startsWith(q))||a.m.label.localeCompare(b.m.label,"ko"));
-  box.innerHTML=mh.length?`<div class="dr"><div class="dm">${mh.slice(0,8).map(memChip).join("")}${mh.length>8?`<span class="none">… 외 ${mh.length-8}명</span>`:""}</div></div>`:""; });
+document.getElementById("dq").addEventListener("input",e=>{ const box=document.getElementById("dongRes"); const raw=e.target.value.trim(); const q=raw.replace(/\s+/g,""); if(q.length<1){ box.innerHTML=""; return; }
+  const parts=[]; const ch=councilMatches(q); if(ch.length) parts.push(`<div class="dr"><div class="dm">${ch.slice(0,6).map(councilChip).join("")}</div></div>`);
+  if(q.length>=2){ const mh=ALLMEM.filter(x=>x.m.label.replace(/\(.*\)$/,"").includes(q)).sort((a,b)=>(b.m.label.startsWith(q)-a.m.label.startsWith(q))||a.m.label.localeCompare(b.m.label,"ko"));
+    if(mh.length) parts.push(`<div class="dr"><div class="dm">${mh.slice(0,8).map(memChip).join("")}${mh.length>8?`<span class="none">… 외 ${mh.length-8}명</span>`:""}</div></div>`);
+    if(!ch.length){ const hits=findDong(raw); if(hits.length) parts.push(dongHitsHtml(hits.slice(0,4))+(hits.length>4?`<div class="none">비슷한 동이 ${hits.length}곳 있습니다. 동 이름을 더 정확히 적어 주세요.</div>`:"")); } }
+  box.innerHTML=parts.join(""); });
 document.addEventListener("click",e=>{ if(!e.target.closest(".top")) document.getElementById("dongRes").innerHTML=""; });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.getElementById("dongRes").innerHTML=""; });
-document.getElementById("dongRes").addEventListener("click",e=>{ const b=e.target.closest("[data-ck]"); if(!b) return; openMem(b.dataset.ck,b.dataset.mid); });
+document.getElementById("dongRes").addEventListener("click",e=>{ const c=e.target.closest("[data-cn]"); if(c){ document.getElementById("dongRes").innerHTML=""; document.getElementById("dq").value=""; loadScope(c.dataset.cn); return; } const b=e.target.closest("[data-ck]"); if(!b) return; openMem(b.dataset.ck,b.dataset.mid); });
 
 // ---------- 최근 활동 (고르지 않고 최근 회의부터 시간순) ----------
 const FK={"S":"발언","R":"집행기관 답변","L":"대표발의","P":"통과·반영"};
