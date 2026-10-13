@@ -5,4 +5,4 @@ Allow: /icon.svg
 Allow: /og.png
 Disallow: /m/
 Disallow: /data/
-Sitemap: https://clisa.ai/sitemap.xml
+Sitemap: https://korea.clisa.ai/sitemap.xml
